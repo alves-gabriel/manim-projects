@@ -29,7 +29,6 @@ class Colisional_Model(Scene):
 
             return mobj.move_to(RIGHT * x + UP * y)
 
-
     '''
     SCENE
     '''
@@ -87,8 +86,15 @@ class Colisional_Model(Scene):
         self.add(SEint.scale(1))
 
         # SE interaction label
-        SEint_label = self.label(text = r'$\mathcal{L}(\rho) = i [\rho, H] + (n + 1) D[\sigma_-] + n D[\sigma_+]$', x = 3, y = 1, color = BLACK).scale(0.5)
+        SEint_label = self.label(text = r'$\mathcal{L}(\rho) = i [\rho, H] + (n + 1) D[\sigma_-] + n D[\sigma_+]$', x = 3, y = 0.75, color = BLACK).scale(0.5)
         self.play(Write(SEint_label))
+
+        # Shifts the SE interaction  label up and shows the corresponding unitary
+        self.play(SEint_label.animate.shift(0.5 * UP))
+        SEint_label2 = self.label(text = r'$\mathcal{E}(\rho) = e^{\mathcal{L} \tau_{SE}}(\rho)$', x = 0, y = 0.75, color = BLACK).scale(0.5)
+        SEint_label2.align_to(SEint_label, LEFT)
+        self.play(Write(SEint_label2))
+        self.wait(5)
 
         ######################################################
 
@@ -116,19 +122,45 @@ class Colisional_Model(Scene):
         self.wait(0.05)
 
         # SWAP label, aligned to the SE interaction label
-        swap_label = self.label(text = r'$V = \sigma_ + \otimes \sigma_- + \sigma_- \otimes \sigma_+$', x = 2, y = -1, color = BLACK).scale(0.5)
+        swap_label = self.label(text = r'$V = \sigma_ + \otimes \sigma_- + \sigma_- \otimes \sigma_+$', x = 2, y = -1.25, color = BLACK).scale(0.5)
         swap_label.align_to(SEint_label, LEFT)
         self.play(Write(swap_label))
         self.wait(1)
 
         # Shifts the SWAP label up and shows the corresponding unitary
         self.play(swap_label.animate.shift(0.5 * UP))
-        swap_label2 = self.label(text = r'$U = U_{SWAP} = \exp \left( - i V \tau_{SA} \right)$', x = 2, y = -1, color = BLACK).scale(0.5)
+        swap_label2 = self.label(text = r'$U = U_{SWAP} = \exp \left( - i V \tau_{SA} \right)$', x = 2, y = -1.25, color = BLACK).scale(0.5)
         swap_label2.align_to(swap_label, LEFT)
         self.play(Write(swap_label2))
         self.wait(5)
 
         ######################################################
 
+        # Draws the ancillae trail
+        n_ancillae = 5
+        ancilla_trail = []
+        ancilla_trail_label = []
+
+        for i in range(5):
+            ancilla_trail.append(RoundedRectangle(width = 2, height = 2, color = crimson).scale(0.5))
+            ancilla_trail[i].set_fill(crimson, opacity=0.25)
+            self.add(ancilla_trail[i])
+            self.mob_pos(ancilla_trail[i], x = 2*(i+1), y = -2)
+            self.play(FadeIn(ancilla_trail[i]))
+
+            # Ancillae label
+            ancilla_trail_label.append(self.label(text = r'$A_%i$' %(i+2), x = 2*(i + 1), y = -2, color = crimson))
+            self.play(FadeIn(ancilla_trail_label[i]))
+
+        # Throws one ancilla away
+        self.play(ancilla.animate.shift(3 * LEFT), ancilla_label.animate.shift(3 * LEFT))
+
+        for i in range(5):
+            self.play(ancilla_trail[i].animate.shift(2 * LEFT), ancilla_trail_label[i].animate.shift(2 * LEFT))
+
+        self.wait(2)
+
         # Throws one ancilla away
         self.play(FadeOutAndShift(ancilla, 2 * LEFT), FadeOutAndShift(ancilla_label, 2 * LEFT))
+
+        ######################################################
