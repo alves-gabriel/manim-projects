@@ -10,11 +10,6 @@ class Colisional_Model(Scene):
 
         return np.array((t, 2 * t ** 2, 0))
 
-    # Defines a parabola from an array
-    def ysin(self, t):
-
-        return np.array((np.sin(25*t)/8, t, 0))
-
     def label(self, text, x, y, color = WHITE):
 
             text_label = Tex(text, color = color).scale(1)
@@ -56,11 +51,24 @@ class Colisional_Model(Scene):
         system_label = self.label(text = r'$S$', x = 0, y = 0, color = royal_blue)
         self.play(FadeIn(system_label))
 
-        # Draws the interaction
-        SEint = ParametricFunction(self.ysin, t_min = -1/2, t_max = 1/2, color = BLACK, fill_opacity=0)
+        # Draws the interaction animation
+        for i in range(20):
+
+            # Sine with variable phase
+            def ysin(t):
+
+                return np.array((np.sin(25*(t + i*np.pi/80))/8, t, 0))
+
+            # Draws the sine function for the given phase
+            SEint = ParametricFunction(ysin, t_min = -1/2, t_max = 1/2, color = BLACK, fill_opacity=0, a = 1)
+            self.add(SEint.scale(1))
+            self.mob_pos(SEint, x = 0, y = 1)
+
+            # Animation interval
+            self.wait(0.1)
+            self.remove(SEint)
+
         self.add(SEint.scale(1))
-        self.mob_pos(SEint, x = 0, y = 1)
-        self.play(FadeIn(SEint))
 
         SEint_label = self.label(text = r'$\mathcal{L}(\rho) = i [\rho, H] + (n + 1) D[\sigma_-] + n D[\sigma_+]$', x = 3, y = 1, color = BLACK).scale(0.5)
         self.play(ShowCreation(SEint_label))
@@ -84,9 +92,9 @@ class Colisional_Model(Scene):
         self.wait(1)
 
         self.play(SWAP1.animate.rotate(np.pi, axis = RIGHT), SWAP2.animate.rotate(np.pi, axis = RIGHT))
-        self.wait(5)
+        self.wait(0.05)
 
         swap_label = self.label(text = r'$U = \sigma_ + \otimes \sigma_- + \sigma_- \otimes \sigma_+$', x = 2, y = -1, color = BLACK).scale(0.5)
         self.play(FadeIn(swap_label))
 
-        self.wait(1)
+        self.wait(5)
