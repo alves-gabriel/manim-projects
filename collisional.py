@@ -3,7 +3,7 @@ import numpy as np
 
 config.background_color = WHITE
 
-class Colisional_Model(Scene):
+class Collisional_Model(Scene):
 
     '''
     AUXILIARY FUNCTIONS
@@ -94,7 +94,7 @@ class Colisional_Model(Scene):
         SEint_label2 = self.label(text = r'$\mathcal{E}(\rho) = e^{\mathcal{L} \tau_{SE}}(\rho)$', x = 0, y = 0.75, color = BLACK).scale(0.5)
         SEint_label2.align_to(SEint_label, LEFT)
         self.play(Write(SEint_label2))
-        self.wait(5)
+        self.wait(2)
 
         ######################################################
 
@@ -122,17 +122,17 @@ class Colisional_Model(Scene):
         self.wait(0.05)
 
         # SWAP label, aligned to the SE interaction label
-        swap_label = self.label(text = r'$V = \sigma_ + \otimes \sigma_- + \sigma_- \otimes \sigma_+$', x = 2, y = -1.25, color = BLACK).scale(0.5)
+        swap_label = self.label(text = r'$V = \sigma_ + \otimes \sigma_- + \sigma_- \otimes \sigma_+$', x = 2, y = -1.2, color = BLACK).scale(0.5)
         swap_label.align_to(SEint_label, LEFT)
         self.play(Write(swap_label))
         self.wait(1)
 
         # Shifts the SWAP label up and shows the corresponding unitary
         self.play(swap_label.animate.shift(0.5 * UP))
-        swap_label2 = self.label(text = r'$U = U_{SWAP} = \exp \left( - i V \tau_{SA} \right)$', x = 2, y = -1.25, color = BLACK).scale(0.5)
+        swap_label2 = self.label(text = r'$U = U_{SWAP} = \exp \left( - i V \tau_{SA} \right)$', x = 2, y = -1.2, color = BLACK).scale(0.5)
         swap_label2.align_to(swap_label, LEFT)
         self.play(Write(swap_label2))
-        self.wait(5)
+        self.wait(1)
 
         ######################################################
 
@@ -141,6 +141,7 @@ class Colisional_Model(Scene):
         ancilla_trail = []
         ancilla_trail_label = []
 
+        # Trail with 5 ancillae
         for i in range(5):
             ancilla_trail.append(RoundedRectangle(width = 2, height = 2, color = crimson).scale(0.5))
             ancilla_trail[i].set_fill(crimson, opacity=0.25)
@@ -155,12 +156,40 @@ class Colisional_Model(Scene):
         # Throws one ancilla away
         self.play(ancilla.animate.shift(3 * LEFT), ancilla_label.animate.shift(3 * LEFT))
 
+        # Moves the ancillae to the lefts
         for i in range(5):
             self.play(ancilla_trail[i].animate.shift(2 * LEFT), ancilla_trail_label[i].animate.shift(2 * LEFT))
 
-        self.wait(2)
-
-        # Throws one ancilla away
-        self.play(FadeOutAndShift(ancilla, 2 * LEFT), FadeOutAndShift(ancilla_label, 2 * LEFT))
+        self.wait(1)
 
         ######################################################
+
+        # Draws the equiptment
+        detector = ImageMobject("detector_img").scale(0.25)
+        detector_line = Line(detector.get_center(), detector.get_center()-0.01*RIGHT + 0.35*UP).set_color(RED)
+        self.add(detector)
+        self.mob_pos(detector, x = -3, y = -.5)
+
+        # Creates a needle in the detector
+        detector_line = Line(detector.get_center() - 0.01*RIGHT, detector.get_center() - 0.01*RIGHT + 0.35*UP).set_color(RED)
+        self.add(detector_line)
+
+        # Equipment fade in
+        self.play(FadeIn(detector_line), FadeIn(detector))
+        self.wait(2)
+
+        # Rotates the needle around its edge
+        self.play(detector_line.animate.rotate(angle = PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+        self.wait(1)
+
+        # Performs the first measurement and stores it in the measurement record
+        outcome = self.label(text = r'$0$', x = -3, y = .5, color = BLACK).scale(1)
+        self.play(FadeIn(outcome))
+        self.wait(1)
+
+        d_record = self.label(text = r'$D = ($', x = -6, y = 2, color = BLACK).scale(1)
+        self.play(Write(d_record))
+        self.play(outcome.animate.align_to(d_record, UP).align_to(d_record, RIGHT).shift(0.25 * RIGHT, -0.05 * UP))
+
+        # Throws one ancilla away
+        self.play(FadeOutAndShift(ancilla, 2 * LEFT), FadeOutAndShift(ancilla_label, 3 * LEFT))
