@@ -137,28 +137,28 @@ class Collisional_Model(Scene):
         ######################################################
 
         # Draws the ancillae trail
-        n_ancillae = 5
+        n_ancillae = 4
         ancilla_trail = []
         ancilla_trail_label = []
 
         # Trail with 5 ancillae
-        for i in range(5):
+        for i in range(4):
             ancilla_trail.append(RoundedRectangle(width = 2, height = 2, color = crimson).scale(0.5))
             ancilla_trail[i].set_fill(crimson, opacity=0.25)
             self.add(ancilla_trail[i])
-            self.mob_pos(ancilla_trail[i], x = 2*(i+1), y = -2)
+            self.mob_pos(ancilla_trail[i], x = 3*(i+1), y = -2)
             self.play(FadeIn(ancilla_trail[i]))
 
             # Ancillae label
-            ancilla_trail_label.append(self.label(text = r'$A_%i$' %(i+2), x = 2*(i + 1), y = -2, color = crimson))
+            ancilla_trail_label.append(self.label(text = r'$A_%i$' %(i+2), x = 3*(i + 1), y = -2, color = crimson))
             self.play(FadeIn(ancilla_trail_label[i]))
 
         # Throws one ancilla away
         self.play(ancilla.animate.shift(3 * LEFT), ancilla_label.animate.shift(3 * LEFT))
 
         # Moves the ancillae to the lefts
-        for i in range(5):
-            self.play(ancilla_trail[i].animate.shift(2 * LEFT), ancilla_trail_label[i].animate.shift(2 * LEFT))
+        for i in range(4):
+            self.play(ancilla_trail[i].animate.shift(3 * LEFT), ancilla_trail_label[i].animate.shift(3 * LEFT))
 
         self.wait(1)
 
@@ -187,9 +187,83 @@ class Collisional_Model(Scene):
         self.play(FadeIn(outcome))
         self.wait(1)
 
+        # Writes the detection record vector
         d_record = self.label(text = r'$D = ($', x = -6, y = 2, color = BLACK).scale(1)
         self.play(Write(d_record))
         self.play(outcome.animate.align_to(d_record, UP).align_to(d_record, RIGHT).shift(0.25 * RIGHT, -0.05 * UP))
+        self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
 
         # Throws one ancilla away
-        self.play(FadeOutAndShift(ancilla, 2 * LEFT), FadeOutAndShift(ancilla_label, 3 * LEFT))
+        self.play(FadeOutAndShift(ancilla, 3 * LEFT), FadeOutAndShift(ancilla_label, 3 * LEFT))
+
+        ######################################################
+
+        detection_record = [0, 1, 0, 0, 1]
+
+        for i in range(n_ancillae-1):
+
+            # # Animates the SE interaction again
+            # self.remove(SEint)
+            # for j in range(20*(i+1) - 1, 20*(i+2)):
+            #
+            #     # Sine with variable phase
+            #     def ysin(t):
+            #
+            #         return np.array((np.sin(25*(t + j*np.pi/80))/8, t, 0))
+            #
+            #     # Draws the sine function for the given phase
+            #     SEint = ParametricFunction(ysin, t_min = -1/2, t_max = 1/2, color = BLACK, fill_opacity=0, a = 1)
+            #     self.add(SEint.scale(1))
+            #     self.mob_pos(SEint, x = 0, y = 1)
+            #
+            #     # Animation interval
+            #     self.wait(0.1)
+            #     self.remove(SEint)
+
+            # Renders the wave one last time otherwise it disappears
+            self.add(SEint.scale(1))
+
+            # Flips the SWAP arrows
+            self.play(SWAP1.animate.rotate(np.pi, axis = RIGHT), SWAP2.animate.rotate(np.pi, axis = RIGHT))
+            self.wait(0.05)
+
+            # Moves the ancillae to the left
+            for j in range(n_ancillae - i):
+                self.play(ancilla_trail[i + j].animate.shift(3 * LEFT), ancilla_trail_label[i + j].animate.shift(3 * LEFT))
+
+            self.wait(1)
+
+            # Rotates the needle around its edge
+            if detection_record[i+1]==0:
+                self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+            else:
+                self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+
+            # Performs the first measurement and stores it in the measurement record
+            outcome_new = self.label(text = r'$%d$' %detection_record[i+1], x = -3, y = .5, color = BLACK).scale(1)
+            self.play(FadeIn(outcome_new))
+            self.wait(1)
+
+            # Writes the detection record vector
+            self.play(outcome_new.animate.align_to(d_record, UP).align_to(outcome, RIGHT).shift(0.55 * RIGHT, -0.05 * UP))
+
+            if detection_record[i+1]==0:
+                self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+            else:
+                self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+
+            outcome = outcome_new
+
+            #Throws one ancilla away
+            self.play(FadeOutAndShift(ancilla_trail[i], 3 * LEFT), FadeOutAndShift(ancilla_trail_label[i], 3 * LEFT))
+
+        d_close = self.label(text = r'$...)$', x = -2.9, y = 2, color = BLACK).scale(1)
+        # d_close.align_to(d_record, UP).align_to(outcome, RIGHT).shift(1.5 * RIGHT, -0.05 * UP)
+        self.play(FadeIn(d_close))
+        self.wait(1)
+
+        ######################################################
+
+        thermal_map = self.label(text = r'$\rho_n = \mathcal{E}(\rho_{n-1})$', x = 0, y = -3, color = BLACK).scale(0.5)
+        self.play(Write(thermal_map))
+        self.wait(1)
