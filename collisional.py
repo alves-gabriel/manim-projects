@@ -187,7 +187,7 @@ class Collisional_Model(Scene):
         self.play(FadeIn(outcome))
         self.wait(1)
 
-        # Writes the detection record vector
+        # Writes the detection record vector and erturns the needle to the middle
         d_record = self.label(text = r'$D = ($', x = -6, y = 2, color = BLACK).scale(1)
         self.play(Write(d_record))
         self.play(outcome.animate.align_to(d_record, UP).align_to(d_record, RIGHT).shift(0.25 * RIGHT, -0.05 * UP))
@@ -244,26 +244,52 @@ class Collisional_Model(Scene):
             self.play(FadeIn(outcome_new))
             self.wait(1)
 
-            # Writes the detection record vector
+            # Writes into the detection record vector
             self.play(outcome_new.animate.align_to(d_record, UP).align_to(outcome, RIGHT).shift(0.55 * RIGHT, -0.05 * UP))
 
+            # Returns the needle to the middle
             if detection_record[i+1]==0:
                 self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
             else:
                 self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center() - 0.01*RIGHT))
 
+            # Updates the last digit in the detection record vectors
             outcome = outcome_new
 
             #Throws one ancilla away
             self.play(FadeOutAndShift(ancilla_trail[i], 3 * LEFT), FadeOutAndShift(ancilla_trail_label[i], 3 * LEFT))
 
+        # Closes the detection record vector with a "...)" and erases the detector
         d_close = self.label(text = r'$...)$', x = -2.9, y = 2, color = BLACK).scale(1)
-        # d_close.align_to(d_record, UP).align_to(outcome, RIGHT).shift(1.5 * RIGHT, -0.05 * UP)
         self.play(FadeIn(d_close))
+        self.play(FadeOut(detector), FadeOut(detector_line))
         self.wait(1)
+
+        # Hightlights the Detection Record
+        d_highlight = Rectangle(width = 4.5, height = 1.0, color = royal_blue)
+        self.mob_pos(d_highlight, x = -4.6, y = 2)
+        self.play(ShowCreation(d_highlight))
+
+        # Highlight
+        d_highlight = self.label(text = 'Detection Record', x = -4.6, y = 1, color = royal_blue).scale(1)
+        self.play(Write(d_highlight))
 
         ######################################################
 
-        thermal_map = self.label(text = r'$\rho_n = \mathcal{E}(\rho_{n-1})$', x = 0, y = -3, color = BLACK).scale(0.5)
+        # Thermal map and unitaries
+        thermal_map = self.label(text = r'$\rho_S^n = \tr_{A_n}\{U^\dagger \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U\}$', x = 0, y = -3, color = BLACK).scale(0.5)
         self.play(Write(thermal_map))
         self.wait(1)
+
+        # Hightlights the stroboscopic map
+        d_highlight = Rectangle(width = 3.75, height = .75, color = crimson)
+        self.mob_pos(d_highlight, x = 0, y = -3)
+        self.play(ShowCreation(d_highlight))
+
+        # Highlight
+        d_highlight = self.label(text = 'Stroboscopic Map', x = 0, y = -3.75, color = crimson).scale(.5)
+        self.play(Write(d_highlight))
+
+        ######################################################
+
+        self.wait(5)
