@@ -1,3 +1,4 @@
 file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_1.mp4'
 file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_2.mp4'
 file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_3.mp4'
+file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_4.mp4'

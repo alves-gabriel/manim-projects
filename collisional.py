@@ -27,17 +27,6 @@ class tools(Scene):
 
             return text_label
 
-    def label_list(self, text, x = 0, y = 0, color = WHITE):
-
-            text_list = []
-
-            for i in range(len(text)):
-                text_list.appendTex(text[i], color = color).scale(1)
-                text_list = text_list.move_to(RIGHT * x + UP * y)
-                self.add(text_list)
-
-            return text_list
-
     # Positions a mobject at (x, y)
     def mob_pos(self, mobj, x = 0, y = 0):
 
@@ -469,21 +458,25 @@ class Scene_3(Scene):
 
         ######################################################
 
+        # About the model
         lines.append(tools().label(text = r' $\bullet$ What are the optimal parameter $\tau_{SA}$ and $\tau_{SE}$?', color = BLACK).scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r' $\bullet$ What are the optimal POVMs?', color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
 
         self.play(FadeIn(lines[0]),FadeIn(lines[1]))
 
+        # Paper screenshot
         paper = ImageMobject("landi_paper").scale(.8)
         self.add(paper)
         tools().mob_pos(paper, x = 0, y = -2)
 
+        # Paper fade out
         self.play(FadeIn(paper))
         self.wait(2)
         self.play(FadeOut(paper))
 
         ######################################################
 
+        # About the inference
         subtitle2.next_to(lines[1], DOWN).align_to(subtitle, LEFT)
         self.play(Write(subtitle2))
 
@@ -495,6 +488,7 @@ class Scene_3(Scene):
 
         self.wait(1)
 
+        # Hightlights the text above
         hightlight = Rectangle(width = 8, height = 3, color = royal_blue)
         tools().mob_pos(hightlight, x = -2.5, y = -0.875)
         self.play(ShowCreation(hightlight))
@@ -505,6 +499,95 @@ class Scene_3(Scene):
 
 class Scene_4(Scene):
     def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Bayes Theorem}', x = 0, y = 3, color = royal_blue).scale(2)
+        Underline(title)
+        subtitle = tools().label(text = 'The Question', x = -5, y = 2, color = royal_blue).scale(1)
+
+        self.play(Write(title))
+        self.play(Write(subtitle))
+
+        # Question
+        question=Tex(r' How to \emph{infer} the ', r'parameter', ' from the ', r'data',r'?', color = BLACK)
+        question.scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT)
+        question[1].set_color(crimson)
+        question[3].set_color(royal_blue)
+
+        self.play(Write(question))
+
+        ######################################################
+
+        #Bayes Theorem proof
+        bayes = MathTex(
+            "P(x_1,x_2)=P(x_1|x_2)P(x_2)=P(x_2|x_1)P(x_1)",
+            color = BLACK,
+            tex_to_color_map={r"x_1": crimson, r"x_2": royal_blue}
+        )
+
+        self.play(Write(bayes))
+
+        # Bayes Theorem
+        bayes2 = MathTex(
+            "P(x_1|x_2)={ P(x_2|x_1)P(x_1) \\over P(x_2)}",
+            color = BLACK,
+            tex_to_color_map={r"x_1": crimson, r"x_2": royal_blue}
+        )
+        bayes2.align_to(bayes, DOWN).shift(2 * DOWN)
+        self.play(Write(bayes2))
+        self.play(FadeOut(bayes))
+
+        # Explanation 1
+        bayes_explanation = Tex(r'We usually speak in terms of ', r'hypothesis', ' and ', r'evidence', x = 0, y = 1, color = BLACK).scale(0.75)
+        bayes_explanation[1].set_color(crimson)
+        bayes_explanation[3].set_color(royal_blue)
+        self.play(Write(bayes_explanation))
+
+        # Bayes Theorem
+        bayes3 = MathTex(
+            "P(H|E)={ P(H|E)P(E) \\over P(H)}",
+            color = BLACK,
+            tex_to_color_map={r"E": crimson, r"H": royal_blue}
+        )
+        bayes3.align_to(bayes, DOWN).shift(2 * DOWN)
+        self.play(FadeOut(bayes2), FadeIn(bayes3))
+
+        # Explanation 2
+        bayes_explanation2 = Tex(r'i.e. what are the odds of confirming the ', r'hypothesis', ' given the ', r'evidence','?', color = BLACK).scale(0.75)
+        bayes_explanation2.move_to(-3 * UP)
+        bayes_explanation2[1].set_color(crimson)
+        bayes_explanation2[3].set_color(royal_blue)
+        self.play(Write(bayes_explanation2))
+        self.wait(1)
+
+        # Explanation 3
+        bayes_explanation3 = Tex(r'Here, we consider the parameter, the ', r'temperature', ' and the observed ', r'data', x = 0, y = 1, color = BLACK).scale(0.75)
+        bayes_explanation3[1].set_color(crimson)
+        bayes_explanation3[3].set_color(royal_blue)
+        self.play(FadeOut(bayes_explanation), Write(bayes_explanation3))
+
+        # Bayes Theorem
+        bayes4 = MathTex(
+            "P(T|D)={ P(D|T)P(T) \\over P(D)}",
+            color = BLACK,
+            tex_to_color_map={r"T": crimson, r"D": royal_blue}
+        )
+        bayes4.align_to(bayes, DOWN).shift(2 * DOWN)
+        self.play(FadeOut(bayes3), FadeIn(bayes4))
+
+        # Explanation 4
+        bayes_explanation4 = Tex(r'What are the odds of measuring a certain ', r'temperature', ' given the ', r'data/measurement record','?', color = BLACK).scale(0.75)
+        bayes_explanation4.move_to(-3 * UP)
+        bayes_explanation4[1].set_color(crimson)
+        bayes_explanation4[3].set_color(royal_blue)
+        self.play(FadeOut(bayes_explanation2), Write(bayes_explanation4))
+        self.wait(1)
+
+        self.wait(5)
+
+class Scene_5(Scene):
+    def construct(self):
+        pass
 
         ######################################################
 
