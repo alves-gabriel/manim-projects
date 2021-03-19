@@ -1,6 +1,8 @@
 from manim import *
 import numpy as np
 
+# ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
+
 config.background_color = WHITE
 
 '''
@@ -25,6 +27,17 @@ class tools(Scene):
 
             return text_label
 
+    def label_list(self, text, x = 0, y = 0, color = WHITE):
+
+            text_list = []
+
+            for i in range(len(text)):
+                text_list.appendTex(text[i], color = color).scale(1)
+                text_list = text_list.move_to(RIGHT * x + UP * y)
+                self.add(text_list)
+
+            return text_list
+
     # Positions a mobject at (x, y)
     def mob_pos(self, mobj, x = 0, y = 0):
 
@@ -43,7 +56,7 @@ class tools(Scene):
 SCENES
 '''
 
-class Collisional_Model(Scene):
+class Scene_1(Scene):
 
     # Constructs the scene
     def construct(self):
@@ -298,29 +311,29 @@ class Collisional_Model(Scene):
 
         ######################################################
 
-        self.wait(2)
+        self.wait(5)
 
-class The_Model(Scene):
+class Scene_2(Scene):
     def construct(self):
 
         # Title
         title = tools().label(text = 'The Receipt', x = 0, y = 3, color = royal_blue).scale(2)
-        subtitle1 = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
-        subtitle2 = tools().label(text = 'The Inference', x = -5, y = -2, color = royal_blue).scale(1)
+        title = Underline(title)
+        subtitle = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
 
         # Text lines
         lines = []
 
         self.play(Write(title))
-        self.play(Write(subtitle1))
+        self.play(Write(subtitle))
 
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r' $\bullet$ SE map + SA unitary ' + r'$\rightarrow$ Stroboscopic Map', color = BLACK).scale(0.7).next_to(subtitle1, DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r' $\bullet$ SE map + SA unitary ' + r'$\rightarrow$ Stroboscopic Map', color = BLACK).scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[0]))
 
-        lines.append(tools().label(text = r'$\rho_S^n = \Phi(\rho) := \tr_{A_n}\{U^\dagger \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U\}$' , color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r'$\rho_S^n = \Phi(\rho) := \tr_{A_n}\{U^\dagger \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U\}$' , color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
         lines[1].shift(0.25*RIGHT)
         self.play(FadeIn(lines[1]))
 
@@ -374,11 +387,11 @@ class The_Model(Scene):
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r'$\bullet$ Ancilla measurements after the', color = BLACK).scale(0.7).next_to(lines[1], DOWN).align_to(subtitle1, LEFT))
-        lines.append(tools().label(text = r'system reaches the \emph{steady state}:', color = BLACK).scale(0.7).next_to(lines[2], DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Ancilla measurements after the', color = BLACK).scale(0.7).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'system reaches the \emph{steady state}:', color = BLACK).scale(0.7).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[2]), FadeIn(lines[3]))
 
-        lines.append(tools().label(text = r'$\rho_{S}^* = \Phi(\rho_{S}^*)$', color = BLACK).scale(0.7).next_to(lines[3], DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r'$\rho_{S}^* = \Phi(\rho_{S}^*)$', color = BLACK).scale(0.7).next_to(lines[3], DOWN).align_to(subtitle, LEFT))
         lines[4].shift(0.25*RIGHT)
         self.play(FadeIn(lines[4]))
 
@@ -389,7 +402,7 @@ class The_Model(Scene):
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r'$\bullet$ Local or joint measurements', color = BLACK).scale(0.7).next_to(lines[4], DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Local or joint measurements', color = BLACK).scale(0.7).next_to(lines[4], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[5]))
 
         # Draws the equipment
@@ -406,11 +419,12 @@ class The_Model(Scene):
         self.play(FadeIn(detector_line), FadeIn(detector))
         self.wait(2)
 
-        # Krauss Operators
-        krauss = tools().label(text = 'Krauss Operators: ' + r'$M_0, ... , M_N$', x = 4, y = -3.75, color = BLACK).scale(.6)
-        self.play(FadeIn(krauss))
+        # Kraus Operators
+        Kraus = tools().label(text = 'Kraus Operators: ' + r'$M_0, ... , M_N$', x = 4, y = -3.75, color = BLACK).scale(.6)
+        self.play(FadeIn(Kraus))
         self.wait(2)
 
+        # Measurement Highlight
         local_measurement = Rectangle(width = 1.25, height = 1.15, color = crimson)
         global_measurement = Rectangle(width = 4.25, height = 1.15, color = crimson)
         tools().mob_pos(local_measurement, x = 4, y = -2)
@@ -426,13 +440,75 @@ class The_Model(Scene):
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r'$\bullet$ Probability distribution associated with:', color = BLACK).scale(0.7).next_to(lines[5], DOWN).align_to(subtitle1, LEFT))
-        lines.append(tools().label(text = r'these measurements at the SS:', color = BLACK).scale(0.7).next_to(lines[6], DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Probability distribution associated with', color = BLACK).scale(0.7).next_to(lines[5], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'the measurements in the SS:', color = BLACK).scale(0.7).next_to(lines[6], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[6]), FadeIn(lines[7]))
 
-        lines.append(tools().label(text = r'$p(X_i|T) = \tr\{M_i \rho_{A_1...A_n}^* M_i^\dagger\}$', color = BLACK).scale(0.7).next_to(lines[7], DOWN).align_to(subtitle1, LEFT))
+        lines.append(tools().label(text = r'$p(X_i|T) = \tr\{M_i \rho_{A_1...A_n}^* M_i^\dagger\}$', color = BLACK).scale(0.7).next_to(lines[7], DOWN).align_to(subtitle, LEFT))
         lines[8].shift(0.25*RIGHT)
         self.play(FadeIn(lines[8]))
+
+        ######################################################
+
+        self.wait(5)
+
+class Scene_3(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Thermometry}', x = 0, y = 3, color = royal_blue).scale(2)
+        Underline(title)
+        subtitle = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
+        subtitle2 = tools().label(text = 'Parameter Estimation', x = -5, y = -2, color = royal_blue).scale(1)
+
+        # Text lines
+        lines = []
+
+        self.play(Write(title))
+        self.play(Write(subtitle))
+
+        ######################################################
+
+        lines.append(tools().label(text = r' $\bullet$ What are the optimal parameter $\tau_{SA}$ and $\tau_{SE}$?', color = BLACK).scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r' $\bullet$ What are the optimal POVMs?', color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+
+        self.play(FadeIn(lines[0]),FadeIn(lines[1]))
+
+        paper = ImageMobject("landi_paper").scale(.8)
+        self.add(paper)
+        tools().mob_pos(paper, x = 0, y = -2)
+
+        self.play(FadeIn(paper))
+        self.wait(2)
+        self.play(FadeOut(paper))
+
+        ######################################################
+
+        subtitle2.next_to(lines[1], DOWN).align_to(subtitle, LEFT)
+        self.play(Write(subtitle2))
+
+        lines.append(tools().label(text = r'How to effectively process the data?', color = BLACK).scale(0.7).next_to(subtitle2, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ How to define and construct estimators?', color = BLACK).scale(0.7).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ What are the relevant figures of merit?', color = BLACK).scale(0.7).next_to(lines[3], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ What are the suitable bounds for the problem?', color = BLACK).scale(0.7).next_to(lines[4], DOWN).align_to(subtitle, LEFT))
+        self.play(FadeIn(lines[2]), FadeIn(lines[3]), FadeIn(lines[4]), FadeIn(lines[5]))
+
+        self.wait(1)
+
+        hightlight = Rectangle(width = 8, height = 3, color = royal_blue)
+        tools().mob_pos(hightlight, x = -2.5, y = -0.875)
+        self.play(ShowCreation(hightlight))
+
+        self.play(FadeIn(tools().label(text = r'We can use Bayesian Inference!', x = -3, y = -3, color = royal_blue).scale(0.7)))
+
+        self.wait(5)
+
+class Scene_4(Scene):
+    def construct(self):
+
+        ######################################################
+
+        ######################################################
 
         ######################################################
 
