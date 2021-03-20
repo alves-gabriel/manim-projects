@@ -48,14 +48,25 @@ class tools(Scene):
     def flat(self, t):
 
         return np.array((t, 1, 0))
+
 '''
-SCENES
+###########
+##SCENE 1##
+###########
 '''
 
 class Scene_1(Scene):
 
     # Constructs the scene
     def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{The model}', x = 0, y = 3, color = royal_blue).scale(2)
+        Underline(title)
+
+        self.play(Write(title))
+        self.wait(1)
+        self.play(FadeOut(title))
 
         ######################################################
 
@@ -79,6 +90,12 @@ class Scene_1(Scene):
         # System Label
         system_label = tools().label(text = r'$S$', x = 0, y = 0, color = royal_blue)
         self.play(FadeIn(system_label))
+
+        # System Hamiltonian
+        system_hamiltonian = tools().label(text = r'$H = \frac{\Omega}{2}\sigma_Z$', x = 2, y = 0, color = royal_blue)
+        self.play(FadeIn(system_hamiltonian))
+        self.wait(1.5)
+        self.play(FadeOut(system_hamiltonian))
 
         # Draws the SE interaction animation
         for i in range(20):
@@ -123,6 +140,12 @@ class Scene_1(Scene):
         # Ancilla label
         ancilla_label = tools().label(text = r'$A_1$', x = 0, y = -2, color = crimson)
         self.play(FadeIn(ancilla_label))
+
+        # Ancilla Hamiltonian
+        ancilla_hamiltonian = tools().label(text = r'$H_A = \frac{\Omega}{2}\sigma_Z$', x = 2, y = -2, color = crimson)
+        self.play(FadeIn(ancilla_hamiltonian))
+        self.wait(1.5)
+        self.play(FadeOut(ancilla_hamiltonian))
 
         # Draws the SWAP interaction with two arrows
         SWAP1 = CurvedArrow(0, -1*UP, angle = np.pi/2).set_color(BLACK).scale(.75)
@@ -175,26 +198,22 @@ class Scene_1(Scene):
         for i in range(4):
             self.play(ancilla_trail[i].animate.shift(3 * LEFT), ancilla_trail_label[i].animate.shift(3 * LEFT))
 
-        self.wait(1)
-
         ######################################################
 
         # Draws the equipment
         detector = ImageMobject("detector_img").scale(0.25)
-        detector_line = Line(detector.get_center(), detector.get_center()-0.01*RIGHT + 0.35*UP).set_color(RED)
         self.add(detector)
         tools().mob_pos(detector, x = -3, y = -.5)
 
         # Creates a needle in the detector
-        detector_line = Line(detector.get_center() - 0.01*RIGHT, detector.get_center() - 0.01*RIGHT + 0.35*UP).set_color(RED)
+        detector_line = Line(detector.get_center() - 0.01*RIGHT, detector.get_center() + 0.35*UP).set_color(RED)
         self.add(detector_line)
 
         # Equipment fade in
         self.play(FadeIn(detector_line), FadeIn(detector))
-        self.wait(2)
 
         # Rotates the needle around its edge
-        self.play(detector_line.animate.rotate(angle = PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+        self.play(detector_line.animate.rotate(angle = PI/4, about_point = detector.get_center()))
         self.wait(1)
 
         # Performs the first measurement and stores it in the measurement record
@@ -206,7 +225,7 @@ class Scene_1(Scene):
         d_record = tools().label(text = r'$D = ($', x = -6, y = 2, color = BLACK).scale(1)
         self.play(Write(d_record))
         self.play(outcome.animate.align_to(d_record, UP).align_to(d_record, RIGHT).shift(0.25 * RIGHT, -0.05 * UP))
-        self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+        self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center()))
 
         # Throws one ancilla away
         self.play(FadeOutAndShift(ancilla, 3 * LEFT), FadeOutAndShift(ancilla_label, 3 * LEFT))
@@ -239,34 +258,33 @@ class Scene_1(Scene):
             self.add(SEint.scale(1))
 
             # Flips the SWAP arrows
-            self.play(SWAP1.animate.rotate(np.pi, axis = RIGHT), SWAP2.animate.rotate(np.pi, axis = RIGHT))
+            self.play(SWAP1.animate.rotate(np.pi, axis = RIGHT), SWAP2.animate.rotate(np.pi, axis = RIGHT), run_time=0.5)
             self.wait(0.05)
 
             # Moves the ancillae to the left
             for j in range(n_ancillae - i):
-                self.play(ancilla_trail[i + j].animate.shift(3 * LEFT), ancilla_trail_label[i + j].animate.shift(3 * LEFT))
-
-            self.wait(1)
+                self.play(ancilla_trail[i + j].animate.shift(3 * LEFT),
+                          ancilla_trail_label[i + j].animate.shift(3 * LEFT),
+                          run_time=0.5)
 
             # Rotates the needle around its edge
             if detection_record[i+1]==0:
-                self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+                self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center()))
             else:
-                self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+                self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center()))
 
             # Performs the first measurement and stores it in the measurement record
             outcome_new = tools().label(text = r'$%d$' %detection_record[i+1], x = -3, y = .5, color = BLACK).scale(1)
-            self.play(FadeIn(outcome_new))
-            self.wait(1)
+            self.play(FadeIn(outcome_new), run_time=0.5)
 
             # Writes into the detection record vector
-            self.play(outcome_new.animate.align_to(d_record, UP).align_to(outcome, RIGHT).shift(0.55 * RIGHT, -0.05 * UP))
+            self.play(outcome_new.animate.align_to(d_record, UP).align_to(outcome, RIGHT).shift(0.55 * RIGHT, -0.05 * UP), run_time=0.5)
 
             # Returns the needle to the middle
             if detection_record[i+1]==0:
-                self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+                self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center()))
             else:
-                self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center() - 0.01*RIGHT))
+                self.play(detector_line.animate.rotate(angle = +PI/4, about_point = detector.get_center()))
 
             # Updates the last digit in the detection record vectors
             outcome = outcome_new
@@ -308,6 +326,12 @@ class Scene_1(Scene):
         ######################################################
 
         self.wait(5)
+
+'''
+###########
+##SCENE 2##
+###########
+'''
 
 class Scene_2(Scene):
     def construct(self):
@@ -448,6 +472,12 @@ class Scene_2(Scene):
 
         self.wait(5)
 
+'''
+###########
+##SCENE 3##
+###########
+'''
+
 class Scene_3(Scene):
     def construct(self):
 
@@ -504,6 +534,12 @@ class Scene_3(Scene):
 
         self.wait(5)
 
+'''
+###########
+##SCENE 4##
+###########
+'''
+
 class Scene_4(Scene):
     def construct(self):
 
@@ -552,9 +588,9 @@ class Scene_4(Scene):
 
         # Bayes Theorem
         bayes3 = MathTex(
-            "P(H|E)={ P(H|E)P(E) \\over P(H)}",
+            "P(H|E)={ P(E|H)P(H) \\over P(H)}",
             color = BLACK,
-            tex_to_color_map={r"E": crimson, r"H": royal_blue}
+            tex_to_color_map={r"H": crimson, r"E": royal_blue}
         )
         bayes3.align_to(bayes, DOWN).shift(2 * DOWN)
         self.play(FadeOut(bayes2), FadeIn(bayes3))
@@ -640,6 +676,12 @@ class Scene_4(Scene):
         self.wait(4)
 
         self.wait(5)
+
+'''
+###########
+##SCENE 5##
+###########
+'''
 
 class Scene_5(Scene):
 
@@ -838,20 +880,24 @@ class Scene_5(Scene):
 
         ######################################################
 
+        # A triangle to highlight the MAP, a dashed line and the decimal number
         estimator_triangle = RegularPolygon(3, start_angle=PI/2).scale(0.15)\
                             .move_to(1 * RIGHT - 3 * UP).set_color(BLACK)
         estimator_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
         decimal = DecimalNumber(0, num_decimal_places = 3, unit=None).set_color(BLACK).scale(0.4)
 
+        # Updaters for the decimal value, position and for the line position
         decimal.add_updater(lambda d: d.next_to(estimator_triangle, DOWN*0.2))
         decimal.add_updater(lambda d: d.set_value(estimator_triangle.get_center()[0] - 1))
         estimator_line.add_updater(lambda m: m.move_to(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center() + 2 * UP))
 
+        # Initialization of the objects
         estimator_triangle.move_to(1 * RIGHT -3 * UP),
         self.add(estimator_triangle,decimal, estimator_line)
         self.play(FadeIn(estimator_triangle),FadeIn(estimator_line),FadeIn(decimal))
 
         ######################################################
+
         # Updating explanation
         explanation6 = Tex(r"How to further update our knowledge after performing more measurements?", color = BLACK).scale(0.7)
         explanation6.move_to(-3.5 * UP)
@@ -900,6 +946,9 @@ class Scene_5(Scene):
         posterior2 = ParametricFunction(lambda t: np.array([t,(1-2*1/(1+np.exp(1/t)))**2,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior2.scale(1), x = -5 + 6, y = -2.5)
         posterior2.align_to(axis_posterior[1], LEFT).shift(1.2 * UP + 0.2 * RIGHT)
+        ylabel_posterior2 = tools().label(text = '$P(T | X_2 X_1)$', x = -5 + 6, y = 0, color = BLACK).scale(0.5)
+        self.play(ReplacementTransform(ylabel_posterior, ylabel_posterior2))
+
         self.play(ReplacementTransform(posterior1, posterior2))
 
         self.wait(2)
@@ -937,6 +986,8 @@ class Scene_5(Scene):
         tools().mob_pos(posterior3.scale(1), x = -5 + 6, y = -2.5)
         posterior3.align_to(axis_posterior[1], LEFT).shift(0.7 * UP + 0.2 * RIGHT)
         self.play(ReplacementTransform(posterior2, posterior3))
+        ylabel_posterior3 = tools().label(text = '$P(T | X_3 X_2 X_1)$', x = -5 + 6, y = 0, color = BLACK).scale(0.5)
+        self.play(ReplacementTransform(ylabel_posterior2, ylabel_posterior3))
 
         # Moves towards the maximum at 1.443
         self.play(
@@ -969,6 +1020,8 @@ class Scene_5(Scene):
         tools().mob_pos(posterior4.scale(1), x = -5 + 6, y = -2.5)
         posterior4.align_to(axis_posterior[1], LEFT).shift(0.5 * UP + 0.2 * RIGHT)
         self.play(ReplacementTransform(posterior3, posterior4))
+        ylabel_posterior4 = tools().label(text = '$P(T | X_N ... X_1)$', x = -5 + 6, y = 0, color = BLACK).scale(0.5)
+        self.play(ReplacementTransform(ylabel_posterior3, ylabel_posterior4))
 
         # Moves towards the maximum at 0.910
         self.play(
@@ -1020,6 +1073,12 @@ class Scene_5(Scene):
         self.play(FadeOut(explanation11), Write(explanation12))
 
         self.wait(5)
+
+'''
+###########
+##SCENE 6##
+###########
+'''
 
 def Scene_6(Scene):
     def construct(self):
