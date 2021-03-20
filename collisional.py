@@ -568,7 +568,7 @@ class Scene_4(Scene):
 
         # Bayes Theorem
         bayes4 = MathTex(
-            "P(T|D)={ P(D|T)P(T) \\over P(D)}",
+            "P(T|D)={"," P(D|T)","P(T)"," \\over"," P(D)}",
             color = BLACK,
             tex_to_color_map={r"T": crimson, r"D": royal_blue}
         )
@@ -581,15 +581,152 @@ class Scene_4(Scene):
         bayes_explanation4[1].set_color(crimson)
         bayes_explanation4[3].set_color(royal_blue)
         self.play(FadeOut(bayes_explanation2), Write(bayes_explanation4))
+        self.wait(4)
+
+        # Highlights - Prior
+        framebox1 = SurroundingRectangle(bayes4[10:13], buff = .05).set_color(crimson)
+        framebox1_label = Tex('Prior', color = crimson).scale(0.7)
+        framebox1_label.next_to(framebox1, UP)
+        self.play(ShowCreation(framebox1), Write(framebox1_label))
         self.wait(1)
+
+        bayes_explanation5 = Tex(r'The prior represents our initial state-of-knowledge about the temperature', color = BLACK).scale(0.75)
+        bayes_explanation5.move_to(-3 * UP)
+        self.play(FadeOut(bayes_explanation4), Write(bayes_explanation5))
+        self.wait(4)
+
+        # Highlights - Likelihood
+        framebox2 = SurroundingRectangle(bayes4[5:10], buff = .05).set_color(crimson)
+        framebox2_label = Tex('Likelihood', color = crimson).scale(0.7)
+        framebox2_label.next_to(framebox2, UP)
+        self.play(ReplacementTransform(framebox1, framebox2), Write(framebox2_label), FadeOut(framebox1_label))
+        self.wait(1)
+
+        bayes_explanation6 = Tex(r'How likely we are of observing D at a certain temperature T', color = BLACK).scale(0.75)
+        bayes_explanation6.move_to(-3 * UP)
+        self.play(FadeOut(bayes_explanation5), Write(bayes_explanation6))
+        self.wait(4)
+
+        # Highlights - Normalization
+        framebox3 = SurroundingRectangle(bayes4[14:17], buff = .05).set_color(crimson)
+        framebox3_label = Tex('Normalization', color = crimson).scale(0.7)
+        framebox3_label.next_to(framebox3, RIGHT)
+        self.play(ReplacementTransform(framebox2, framebox3), Write(framebox3_label), FadeOut(framebox2_label))
+        self.wait(1)
+
+        bayes_explanation7 = Tex(r'How likely we are of observing D, but \emph{irrespective} of T: a marginal distribution', color = BLACK).scale(0.75)
+        bayes_explanation7.move_to(-3 * UP)
+        self.play(FadeOut(bayes_explanation6), Write(bayes_explanation7))
+        self.wait(4)
+
+        # Highlights - Normalization
+        framebox4 = SurroundingRectangle(bayes4[0:5], buff = .05).set_color(crimson)
+        framebox4_label = Tex('Posterior', color = crimson).scale(0.7)
+        framebox4_label.next_to(framebox4, UP)
+        self.play(ReplacementTransform(framebox3, framebox4), Write(framebox4_label), FadeOut(framebox3_label))
+        self.wait(1)
+
+        bayes_explanation8 = Tex(r'Our updated state-of-knowledge of the system, after acquiring data. If we got D,\
+                                 what are the chances that the temperature is T?', color = BLACK).scale(0.75)
+        bayes_explanation8.move_to(-3 * UP)
+        self.play(FadeOut(bayes_explanation7), Write(bayes_explanation8))
+        self.wait(4)
 
         self.wait(5)
 
 class Scene_5(Scene):
+
+    # Fermi dirac distribution: 1-f and f
+    def fermi_dirac0(self, t):
+
+        return np.array((t, (1-2*1/(1+np.exp(1/t))), 0))
+
+    def fermi_dirac1(self, t):
+
+        return np.array((t, 2*1/(1+np.exp(1/t)), 0))
+
     def construct(self):
-        pass
+
+        # Title
+        title = tools().label(text = '\\underline{An example}', x = 0, y = 3, color = royal_blue).scale(2)
+        Underline(title)
+        subtitle = tools().label(text = 'Qubit Thermal State', x = -4.55, y = 2, color = royal_blue).scale(1)
+
+        self.play(Write(title))
+        self.play(Write(subtitle))
 
         ######################################################
+
+        # Definitions
+        thermal_state = tools().label(
+                       text = r'$\rho_{th} = \frac{e^{-\frac{H}{T}}}{Z} =\begin{matrix}\begin{pmatrix} f & 0 \\ 0& 1 - f\end{pmatrix}\end{matrix}$, \
+                                with $f \equiv \frac{1}{1 + e^{\Omega/T}}$', x = -5, y = 2, color = BLACK).scale(0.75)
+        thermal_state.scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT)
+        self.play(FadeIn(thermal_state))
+
+        # Prob. Distribution
+        distribution_text = tools().label(
+                       text = r'$X_i \in \{0,1\}$ and $P(X_i|T) = f^{X_i}(1-f)^{1-X_i}$' , x = -5, y = 2, color = BLACK).scale(0.75)
+        distribution_text.scale(0.7).next_to(thermal_state, DOWN).align_to(thermal_state, LEFT)
+        self.play(FadeIn(distribution_text))
+
+        # Axis definition
+        def show_axis(x0 = 0, y0 = 0, x_start = -0.01, x_end =  1, y_start = -0.01, y_end = 1):
+
+            x_axis = Arrow((x_start + x0) * RIGHT + y0 * UP, (x_end + x0) * RIGHT + y0 * UP, buff = 0).set_color(BLACK)
+            y_axis = Arrow((y_start + y0) * UP + x0 * RIGHT, (y_end + y0) * UP + x0 * RIGHT, buff = 0).set_color(BLACK)
+
+            return x_axis, y_axis
+
+        #Draws the axis
+        axis = show_axis(x0 = -5, y0 = -2.75, x_start = -0.1, y_start = -0.1, x_end = 4, y_end = 2.5)
+        self.play(ShowCreation(axis[0]))
+        self.play(ShowCreation(axis[1]))
+        xlabel = tools().label(text = '$T$', x = -0.8, y = -2.75, color = BLACK).scale(0.5)
+        ylabel = tools().label(text = '$P(X | T)$', x = -5, y = 0, color = BLACK).scale(0.5)
+        self.play(FadeIn(xlabel), FadeIn(ylabel))
+
+        # Draws the curves
+        fermi_dirac_plot = ParametricFunction(self.fermi_dirac0, t_min = 0.01, t_max = 4, color = ORANGE, fill_opacity=0).scale(1)
+        fermi_dirac_plot2 = ParametricFunction(self.fermi_dirac1, t_min = 0.01, t_max = 4, color = royal_blue, fill_opacity=0).scale(1)
+        tools().mob_pos(fermi_dirac_plot.scale(1), x = -5, y = -2.5)
+        tools().mob_pos(fermi_dirac_plot2.scale(1), x = -5, y = -2.5)
+        fermi_dirac_plot.align_to(axis[1], LEFT).shift(1.2 * UP + 0.2 * RIGHT)
+        fermi_dirac_plot2.align_to(axis[1], LEFT).shift(0.2 * UP + 0.2 * RIGHT)
+        self.play(ShowCreation(fermi_dirac_plot),ShowCreation(fermi_dirac_plot2))
+        X0label = tools().label(text = '$P(X = 0| T)$', x = -1, y = -1.25, color = ORANGE).scale(0.5)
+        X1label = tools().label(text = '$P(X = 1| T)$', x = -1, y = -2.25, color = royal_blue).scale(0.5)
+        self.play(FadeIn(X0label), FadeIn(X1label))
+
+        # Explanation 1
+        explanation = Tex('How can we apply the Bayes theorem here?').set_color(BLACK).scale(0.7)
+        explanation.move_to(-3.5 * UP)
+
+        self.play(Write(explanation))
+        self.wait(2)
+
+        # Bayes Theorem
+        bayes = MathTex(
+            "P(T|X_1)={"," P(X_1|T)","P(T)"," \\over"," \mathcal{N}}",
+            color = BLACK
+        ).scale(0.7)
+        bayes.align_to(thermal_state, DOWN).shift(2 * RIGHT)
+        self.play(FadeIn(bayes))
+
+        # Likelihood and prior highlight
+        framebox1 = SurroundingRectangle(bayes[1], buff = .1).set_color(crimson)
+        framebox2 = SurroundingRectangle(bayes[2], buff = .1).set_color(crimson)
+
+        self.play(ShowCreation(framebox1))
+
+        # Explanation 1
+        explanation1 = Tex('Likelihood: how likely we are to measure the qubit in the ','ground',' or in the ','excited', ' state').set_color(BLACK).scale(0.7)
+        explanation1.move_to(-3.5 * UP)
+        explanation1[1].set_color(ORANGE)
+        explanation1[3].set_color(royal_blue)
+
+        self.play(FadeOut(explanation), Write(explanation1))
+
 
         ######################################################
 
