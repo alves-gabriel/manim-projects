@@ -711,21 +711,21 @@ class Scene_5(Scene):
         explanation = Tex('How can we apply the Bayes theorem here?').set_color(BLACK).scale(0.7)
         explanation.move_to(-3.5 * UP)
 
-        self.play(Write(explanation))
+        self.play(Write(explanation), FadeOut(distribution_text))
         self.wait(2)
 
         ######################################################
 
         # Bayes Theorem
         bayes = MathTex(
-            "P(T|X_1)={"," P(X_1|T)","P(T)"," \\over"," \mathcal{N}}",
+            "P(T|X_1)","={"," P(X_1|T)","P(T)"," \\over"," \mathcal{N}}",
             color = BLACK
         ).scale(0.7)
         bayes.align_to(thermal_state, DOWN).shift(2 * RIGHT)
         self.play(FadeIn(bayes))
 
         # Likelihood hightlight
-        framebox1 = SurroundingRectangle(bayes[1], buff = .1).set_color(crimson)
+        framebox1 = SurroundingRectangle(bayes[2], buff = .1).set_color(crimson)
         likelihood_frame = Rectangle(width = 6, height = 3.5, color = crimson).set_color(crimson)
         tools().mob_pos(likelihood_frame, x = -2.75, y = -1.5)
         self.play(ShowCreation(framebox1), ShowCreation(likelihood_frame))
@@ -739,7 +739,7 @@ class Scene_5(Scene):
         self.play(FadeOut(explanation), FadeOut(framebox1), FadeOut(likelihood_frame), Write(explanation1))
 
         # Prior highlight
-        framebox2 = SurroundingRectangle(bayes[2], buff = .1).set_color(crimson)
+        framebox2 = SurroundingRectangle(bayes[3], buff = .1).set_color(crimson)
         self.play(ShowCreation(framebox2))
         self.wait(1)
 
@@ -785,7 +785,7 @@ class Scene_5(Scene):
 
         ######################################################
 
-        # First result
+        # First outcome
         d_record = []
         d_record.append(MathTex("X_1 = 0", color = royal_blue).scale(0.7))
         d_record[0].align_to(distribution_text, DOWN)
@@ -810,6 +810,217 @@ class Scene_5(Scene):
         axis2 = show_axis(x0 = 4.75, y0 = -2, x_start = -0.1, y_start = -0.1, x_end = 2, y_end = 1.1)
         self.play(FadeIn(axis2[0]), FadeIn(axis2[1]))
 
+        # Draws the curves
+        likelihood_plot1 = ParametricFunction(self.fermi_dirac0, t_min = 0.01, t_max = 3, color = ORANGE, fill_opacity=0).scale(0.5)
+        prior_plot1 = ParametricFunction(tools().flat, t_min = 0.01, t_max = 3, color = crimson, fill_opacity=0).scale(0.5)
+        tools().mob_pos(likelihood_plot1, x = 2.75, y = -1.5)
+        tools().mob_pos(prior_plot1, x = 5.5, y = -1.5)
+        self.play(FadeIn(likelihood_plot1), FadeIn(prior_plot1))
+        self.wait(2)
+
+        # Erases the visual Bayes
+        self.play(FadeOut(posterior),FadeOut(prob_times),FadeOut(axis1[0]),FadeOut(axis1[1]),FadeOut(axis2[0]),FadeOut(axis2[1]),
+                  FadeOut(likelihood_plot1),FadeOut(prior_plot1))
+
+        # Draws the posterior axis
+        axis_posterior = show_axis(x0 = 1, y0 = -2.75, x_start = -0.1, y_start = -0.1, x_end = 4, y_end = 2.5)
+        self.play(ShowCreation(axis_posterior[0]))
+        self.play(ShowCreation(axis_posterior[1]))
+        xlabel_posterior = tools().label(text = '$T$', x = -0.8 + 6, y = -2.75, color = BLACK).scale(0.5)
+        ylabel_posterior = tools().label(text = '$P(T | X_1)$', x = -5 + 6, y = 0, color = BLACK).scale(0.5)
+        self.play(FadeIn(xlabel_posterior), FadeIn(ylabel_posterior))
+
+        # Draws the 1st posterior
+        posterior1 = ParametricFunction(self.fermi_dirac0, t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior1.scale(1), x = -5 + 6, y = -2.5)
+        posterior1.align_to(axis_posterior[1], LEFT).shift(1.2 * UP + 0.2 * RIGHT)
+        self.play(ShowCreation(posterior1))
+
         ######################################################
 
+        estimator_triangle = RegularPolygon(3, start_angle=PI/2).scale(0.15)\
+                            .move_to(1 * RIGHT - 3 * UP).set_color(BLACK)
+        estimator_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
+        decimal = DecimalNumber(0, num_decimal_places = 3, unit=None).set_color(BLACK).scale(0.4)
+
+        decimal.add_updater(lambda d: d.next_to(estimator_triangle, DOWN*0.2))
+        decimal.add_updater(lambda d: d.set_value(estimator_triangle.get_center()[0] - 1))
+        estimator_line.add_updater(lambda m: m.move_to(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center() + 2 * UP))
+
+        estimator_triangle.move_to(1 * RIGHT -3 * UP),
+        self.add(estimator_triangle,decimal, estimator_line)
+        self.play(FadeIn(estimator_triangle),FadeIn(estimator_line),FadeIn(decimal))
+
+        ######################################################
+        # Updating explanation
+        explanation6 = Tex(r"How to further update our knowledge after performing more measurements?", color = BLACK).scale(0.7)
+        explanation6.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation5), Write(explanation6))
+
+        # Second outcome
+        d_record.append(MathTex("X_2 = 0", color = royal_blue).scale(0.7))
+        d_record[1].next_to(d_record[0], RIGHT)
+        self.play(FadeIn(d_record[1]))
         self.wait(5)
+
+        # Posterior becomes Prior
+        substitution_line1 = Line(1.5 * UP + 0.75 * RIGHT , 2.25 * UP + 0.75 * RIGHT, color = crimson)
+        substitution_line2 = Line(2.25 * UP + 0.75 * RIGHT , 2.25 * UP + 3.5 * RIGHT , color = crimson)
+        substitution_line3 = Arrow(2.25 * UP + 3.5 * RIGHT  , 1.8 * UP + 3.5 * RIGHT , color = crimson)
+        substitution_framebox1 = SurroundingRectangle(bayes[0], buff = .1).set_color(crimson)
+        substitution_framebox2 = SurroundingRectangle(bayes[3], buff = .1).set_color(crimson)
+
+        # Substitution indication
+        self.play(ShowCreation(substitution_framebox1), ShowCreation(substitution_framebox2),
+                  ShowCreation(substitution_line1), ShowCreation(substitution_line2), ShowCreation(substitution_line3))
+
+        # Updating explanation
+        explanation7 = Tex(r"Sequential updating: the posterior becomes the new prior", color = BLACK).scale(0.7)
+        explanation7.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation6), Write(explanation7))
+
+        # Substitution deletion
+        self.play(FadeOut(substitution_framebox1), FadeOut(substitution_framebox2),
+                  FadeOut(substitution_line1), FadeOut(substitution_line2), FadeOut(substitution_line3))
+
+        # Bayes Update
+        bayes_update = MathTex(
+            "P(T|X_2 X_1)","={"," P(X_2|T)","P(T | X_1)"," \\over"," \mathcal{N}}",
+            color = BLACK
+        ).scale(0.7)
+        bayes_update.align_to(thermal_state, DOWN).shift(2 * RIGHT)
+        self.play(ReplacementTransform(bayes, bayes_update))
+
+        # Updating explanation
+        explanation8 = Tex(r"And the posterior is further updated", color = BLACK).scale(0.7)
+        explanation8.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation7), Write(explanation8))
+
+        # Draws the 2nd posterior
+        posterior2 = ParametricFunction(lambda t: np.array([t,(1-2*1/(1+np.exp(1/t)))**2,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior2.scale(1), x = -5 + 6, y = -2.5)
+        posterior2.align_to(axis_posterior[1], LEFT).shift(1.2 * UP + 0.2 * RIGHT)
+        self.play(ReplacementTransform(posterior1, posterior2))
+
+        self.wait(2)
+
+        ######################################################
+
+        # Third outcome
+        d_record.append(MathTex("X_3 = 1", color = royal_blue).scale(0.7))
+        d_record[2].next_to(d_record[1], RIGHT)
+        self.play(FadeIn(d_record[2]))
+        self.wait(2)
+
+        # Substitution indication
+        substitution_framebox1 = SurroundingRectangle(bayes_update[0], buff = .1).set_color(crimson)
+        substitution_framebox2 = SurroundingRectangle(bayes_update[3], buff = .1).set_color(crimson)
+
+        self.play(ShowCreation(substitution_framebox1), ShowCreation(substitution_framebox2),
+                  ShowCreation(substitution_line1), ShowCreation(substitution_line2), ShowCreation(substitution_line3))
+        self.wait(1)
+
+        # Substitution deletion
+        self.play(FadeOut(substitution_framebox1), FadeOut(substitution_framebox2),
+                  FadeOut(substitution_line1), FadeOut(substitution_line2), FadeOut(substitution_line3))
+
+        # Bayes Update
+        bayes_update2 = MathTex(
+            "P(T|X_2 X_ 3 X_1)","={"," P(X_3|T)","P(T| X_2 X_1)"," \\over"," \mathcal{N}}",
+            color = BLACK
+        ).scale(0.7)
+        bayes_update2.align_to(thermal_state, DOWN).shift(2 * RIGHT)
+        self.play(ReplacementTransform(bayes_update, bayes_update2))
+
+        # Draws the 3rd posterior
+        posterior3 = ParametricFunction(lambda t: np.array([t,3*(1-1/(1+np.exp(1/t)))**2 * (1/(1+np.exp(1/t)))**1,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior3.scale(1), x = -5 + 6, y = -2.5)
+        posterior3.align_to(axis_posterior[1], LEFT).shift(0.7 * UP + 0.2 * RIGHT)
+        self.play(ReplacementTransform(posterior2, posterior3))
+
+        # Moves towards the maximum at 1.443
+        self.play(
+                estimator_triangle.animate.move_to((-5 + 6 + 1.443) * RIGHT -3 * UP),
+                run_time=5
+            )
+
+        self.wait(2)
+
+        ######################################################
+
+        # Bayes Update
+        bayes_update3 = MathTex(
+            "P(T|X_n ... X_1)","={"," P(X_n|T)","P(T | X_1...X_{n-1})"," \\over"," \mathcal{N}}",
+            color = BLACK
+        ).scale(0.7)
+        bayes_update3.align_to(thermal_state, DOWN).shift(2 * RIGHT)
+        self.play(ReplacementTransform(bayes_update2, bayes_update3))
+
+        self.wait(2)
+
+        # Third outcome
+        d_record.append(MathTex("X_4 = 0", color = royal_blue).scale(0.7))
+        d_record[3].next_to(d_record[2], RIGHT)
+        self.play(FadeIn(d_record[3]))
+        self.wait(2)
+
+        # Draws the 4th posterior
+        posterior4 = ParametricFunction(lambda t: np.array([t,5*(1-1/(1+np.exp(1/t)))**3 * (1/(1+np.exp(1/t)))**1,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior4.scale(1), x = -5 + 6, y = -2.5)
+        posterior4.align_to(axis_posterior[1], LEFT).shift(0.5 * UP + 0.2 * RIGHT)
+        self.play(ReplacementTransform(posterior3, posterior4))
+
+        # Moves towards the maximum at 0.910
+        self.play(
+                estimator_triangle.animate.move_to((-5 + 6 + 0.910) * RIGHT -3 * UP),
+                run_time=1
+            )
+
+        # Last outcome
+        d_record.append(MathTex("...", color = royal_blue).scale(0.7))
+        d_record[4].next_to(d_record[3], RIGHT)
+        self.play(FadeIn(d_record[4]))
+        self.wait(2)
+
+        # Draws the 5th posterior
+        posterior5 = ParametricFunction(lambda t: np.array([t,500000000000*(1-1/(1+np.exp(1/t)))**36 * (1/(1+np.exp(1/t)))**12,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior5.scale(1), x = -5 + 6, y = -2.5)
+        posterior5.align_to(axis_posterior[1], LEFT).shift(0.25 * UP + 0.2 * RIGHT)
+        self.play(ReplacementTransform(posterior4, posterior5))
+
+        self.wait(2)
+
+        # Updating explanation
+        explanation9 = Tex(r"The posterior starts to peak around a value", color = BLACK).scale(0.7)
+        explanation9.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation8), Write(explanation9))
+        self.wait(2)
+
+        # Draws the final posterior
+        posterior_gaussian = ParametricFunction(lambda t: np.array([t,2*np.exp(-(t-0.91)**2/(2*0.0025)),0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior_gaussian.scale(1), x = -5 + 6, y = -2.5)
+        posterior_gaussian.align_to(axis_posterior[1], LEFT).shift(0.75 * UP + 0.2 * RIGHT)
+        self.play(ReplacementTransform(posterior5, posterior_gaussian))
+
+        # Updating explanation
+        explanation10 = Tex(r"And eventually it becomes a Gaussian in the asymptotic limit", color = BLACK).scale(0.7)
+        explanation10.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation9), Write(explanation10))
+        self.wait(2)
+
+        # Updating explanation
+        explanation11 = Tex(r"Choosing the peak of the posterior is an estimator in itself: MAP", color = BLACK).scale(0.65)
+        explanation11.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation10), Write(explanation11))
+        self.wait(2)
+
+        # Updating explanation
+        explanation12 = Tex(r"How do we formally define estimators? How can we construct them?", color = BLACK).scale(0.7)
+        explanation12.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation11), Write(explanation12))
+
+        self.wait(5)
+
+def Scene_6(Scene):
+    def construct(self):
+        pass
