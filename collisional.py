@@ -41,6 +41,13 @@ class tools(Scene):
 
         return np.array((np.sin(25*t)/8, t, 0))
 
+    def gaussian(self, t):
+
+        return np.array((t, np.exp(-(t - 2)**2/(2*0.25)), 0))
+
+    def flat(self, t):
+
+        return np.array((t, 1, 0))
 '''
 SCENES
 '''
@@ -568,7 +575,7 @@ class Scene_4(Scene):
 
         # Bayes Theorem
         bayes4 = MathTex(
-            "P(T|D)={"," P(D|T)","P(T)"," \\over"," P(D)}",
+            "P(T|D)","={"," P(D|T)","P(T)"," \\over"," P(D)}",
             color = BLACK,
             tex_to_color_map={r"T": crimson, r"D": royal_blue}
         )
@@ -584,7 +591,7 @@ class Scene_4(Scene):
         self.wait(4)
 
         # Highlights - Prior
-        framebox1 = SurroundingRectangle(bayes4[10:13], buff = .05).set_color(crimson)
+        framebox1 = SurroundingRectangle(bayes4[11:14], buff = .05).set_color(crimson)
         framebox1_label = Tex('Prior', color = crimson).scale(0.7)
         framebox1_label.next_to(framebox1, UP)
         self.play(ShowCreation(framebox1), Write(framebox1_label))
@@ -596,7 +603,7 @@ class Scene_4(Scene):
         self.wait(4)
 
         # Highlights - Likelihood
-        framebox2 = SurroundingRectangle(bayes4[5:10], buff = .05).set_color(crimson)
+        framebox2 = SurroundingRectangle(bayes4[6:11], buff = .05).set_color(crimson)
         framebox2_label = Tex('Likelihood', color = crimson).scale(0.7)
         framebox2_label.next_to(framebox2, UP)
         self.play(ReplacementTransform(framebox1, framebox2), Write(framebox2_label), FadeOut(framebox1_label))
@@ -608,7 +615,7 @@ class Scene_4(Scene):
         self.wait(4)
 
         # Highlights - Normalization
-        framebox3 = SurroundingRectangle(bayes4[14:17], buff = .05).set_color(crimson)
+        framebox3 = SurroundingRectangle(bayes4[15:18], buff = .05).set_color(crimson)
         framebox3_label = Tex('Normalization', color = crimson).scale(0.7)
         framebox3_label.next_to(framebox3, RIGHT)
         self.play(ReplacementTransform(framebox2, framebox3), Write(framebox3_label), FadeOut(framebox2_label))
@@ -644,6 +651,8 @@ class Scene_5(Scene):
     def fermi_dirac1(self, t):
 
         return np.array((t, 2*1/(1+np.exp(1/t)), 0))
+
+    ######################################################
 
     def construct(self):
 
@@ -705,6 +714,8 @@ class Scene_5(Scene):
         self.play(Write(explanation))
         self.wait(2)
 
+        ######################################################
+
         # Bayes Theorem
         bayes = MathTex(
             "P(T|X_1)={"," P(X_1|T)","P(T)"," \\over"," \mathcal{N}}",
@@ -713,22 +724,91 @@ class Scene_5(Scene):
         bayes.align_to(thermal_state, DOWN).shift(2 * RIGHT)
         self.play(FadeIn(bayes))
 
-        # Likelihood and prior highlight
+        # Likelihood hightlight
         framebox1 = SurroundingRectangle(bayes[1], buff = .1).set_color(crimson)
-        framebox2 = SurroundingRectangle(bayes[2], buff = .1).set_color(crimson)
+        likelihood_frame = Rectangle(width = 6, height = 3.5, color = crimson).set_color(crimson)
+        tools().mob_pos(likelihood_frame, x = -2.75, y = -1.5)
+        self.play(ShowCreation(framebox1), ShowCreation(likelihood_frame))
+        self.wait(1)
 
-        self.play(ShowCreation(framebox1))
-
-        # Explanation 1
+        # Likelihood explanation
         explanation1 = Tex('Likelihood: how likely we are to measure the qubit in the ','ground',' or in the ','excited', ' state').set_color(BLACK).scale(0.7)
         explanation1.move_to(-3.5 * UP)
         explanation1[1].set_color(ORANGE)
         explanation1[3].set_color(royal_blue)
+        self.play(FadeOut(explanation), FadeOut(framebox1), FadeOut(likelihood_frame), Write(explanation1))
 
-        self.play(FadeOut(explanation), Write(explanation1))
+        # Prior highlight
+        framebox2 = SurroundingRectangle(bayes[2], buff = .1).set_color(crimson)
+        self.play(ShowCreation(framebox2))
+        self.wait(1)
 
+        # Prior explanation
+        explanation2 = Tex('There\'s always a certai subjectivity when choosing a prior').set_color(BLACK).scale(0.7)
+        explanation2.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation1), FadeOut(framebox2), Write(explanation2))
+        self.wait(2)
+
+        explanation3 = Tex('For example, they can be a Gaussian...').set_color(BLACK).scale(0.7)
+        explanation3.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation2), Write(explanation3))
+
+        # Draws the axis
+        axis_prior = show_axis(x0 = 1, y0 = -2.75, x_start = -0.1, y_start = -0.1, x_end = 4, y_end = 2.5)
+        self.play(ShowCreation(axis_prior[0]))
+        self.play(ShowCreation(axis_prior[1]))
+        xlabel_prior = tools().label(text = '$T$', x = 5.25, y = -2.75, color = BLACK).scale(0.5)
+        ylabel_prior = tools().label(text = '$P(T)$', x = 1, y = 0, color = BLACK).scale(0.5)
+        self.play(FadeIn(xlabel_prior), FadeIn(ylabel_prior))
+
+        # Draws the curves - Gaussian
+        prior_plot = ParametricFunction(tools().gaussian, t_min = 0.01, t_max = 4, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(prior_plot.scale(1), x = 1, y = -2.5)
+        prior_plot.align_to(axis_prior[1], LEFT).shift(0.3 * UP + 0.2 * RIGHT)
+        self.play(ShowCreation(prior_plot))
+        self.wait(2)
+
+        # Prior explanation - flat
+        explanation4 = Tex('Or simply flat - a state of ignorance...').set_color(BLACK).scale(0.7)
+        explanation4.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation3), Write(explanation4))
+
+        # Draws the curves - flat
+        prior_plot2 = ParametricFunction(tools().flat, t_min = 0.01, t_max = 4, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(prior_plot2.scale(1), x = 1, y = -2.5)
+        prior_plot2.align_to(axis_prior[1], LEFT).shift(0.25 * UP + 0.2 * RIGHT)
+        self.play(FadeOut(prior_plot), ShowCreation(prior_plot2))
+        self.wait(2)
+
+        # Erases the prior
+        self.play(FadeOut(prior_plot2), FadeOut(axis_prior[0]), FadeOut(axis_prior[1]), FadeOut(xlabel_prior), FadeOut(ylabel_prior))
 
         ######################################################
+
+        # First result
+        d_record = []
+        d_record.append(MathTex("X_1 = 0", color = royal_blue).scale(0.7))
+        d_record[0].align_to(distribution_text, DOWN)
+        self.play(FadeIn(d_record[0]))
+
+        # Updating explanation
+        explanation5 = Tex(r"Suppose we measure $X_1 = 0$. We multiply the prior and the likelihood to get the posterior, updating our state-of-knowledge", color = BLACK).scale(0.7)
+        explanation5.move_to(-3.5 * UP)
+        self.play(FadeOut(explanation4), Write(explanation5))
+
+        # Writes the posterior
+        posterior = MathTex("P(T|X_1)=", color = BLACK).scale(0.7)
+        prob_times = MathTex("\\times", color = BLACK).scale(0.7)
+        posterior.move_to(1 * RIGHT - 1.5 * UP)
+        prob_times.move_to(4.25 * RIGHT - 1.5 * UP)
+        self.play(FadeIn(posterior), FadeIn(prob_times))
+
+        #Draws the axis
+        axis1 = show_axis(x0 = 2, y0 = -2, x_start = -0.1, y_start = -0.1, x_end = 2, y_end = 1.1)
+        self.play(FadeIn(axis1[0]), FadeIn(axis1[1]))
+
+        axis2 = show_axis(x0 = 4.75, y0 = -2, x_start = -0.1, y_start = -0.1, x_end = 2, y_end = 1.1)
+        self.play(FadeIn(axis2[0]), FadeIn(axis2[1]))
 
         ######################################################
 
