@@ -1084,7 +1084,7 @@ class Scene_6(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{Bayesian Estimators}', x = 0, y = 3, color = royal_blue).scale(2)
+        title = tools().label(text = '\\underline{Bayesian Estimators}', x = 0, y = 3, color = royal_blue).scale(1.1)
         Underline(title)
 
         self.play(Write(title))
@@ -1093,49 +1093,128 @@ class Scene_6(Scene):
         ######################################################
 
         # About estimators
-        subtitle = tools().label(text = 'Estimators', x = -5, y = 2, color = royal_blue).scale(1)
+        subtitle = tools().label(text = 'Estimators', x = -5, y = 2.5, color = royal_blue).scale(.9)
         self.play(FadeIn(subtitle))
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ An estimator is an arbitrary function of the outcomes $X_1, ..., X_n$', color = BLACK).scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\hat{T} = f(X_1, ..., X_N)$', color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r"$\bullet$ It's a random variable itself", color = BLACK).scale(0.7).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ An estimator is an arbitrary function of the outcomes $X_1, ..., X_n$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\hat{T} = f(X_1, ..., X_N)$', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r"$\bullet$ It's a random variable itself", color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
 
         self.play(FadeIn(lines[0]),FadeIn(lines[1]),FadeIn(lines[2]))
 
         # About Bayesian Estimators
-        subtitle2 = tools().label(text = 'Bayesian Estimators', x = -5, y = 2, color = royal_blue).scale(1).next_to(lines[2], DOWN).align_to(subtitle, LEFT)
+        subtitle2 = tools().label(text = 'Bayesian Estimators', x = -5, y = 2, color = royal_blue).scale(.9).next_to(lines[2], DOWN).align_to(subtitle, LEFT)
         self.play(FadeIn(subtitle2))
 
         # Bayesian estimator definition
-        lines.append(tools().label(text = r'A \emph{bayesian} estimator minimizes an error or risk function', color = BLACK).scale(0.7).next_to(subtitle2, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'A \emph{bayesian} estimator minimizes an error or risk function', color = BLACK).scale(0.6).next_to(subtitle2, DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[3]))
 
         # Error function definition
         error_func = MathTex("\epsilon =","{\displaystyle \int} dT P(T)","{\displaystyle \int}","C(\hat{T}, T)","P(X | T) dX",
-                     color = BLACK).scale(0.7)
-        error_func.move_to(-2 * UP)
+                     color = BLACK).scale(0.6)
+        error_func.move_to(-1 * UP)
         self.play(FadeIn(error_func))
         self.wait(1)
 
         # Error function explanation  - cost function
-        explanation1 = Tex("It depends on a", " cost function", color = BLACK).scale(0.7)
-        explanation1.move_to(-3 * UP)
+        explanation1 = Tex("It depends on a", " cost function", color = BLACK).scale(0.6)
+        explanation1.move_to(-2 * UP)
         explanation1[1].set_color(crimson)
         self.play(FadeIn(explanation1), FadeToColor(error_func[3], crimson))
         self.wait(2)
         self.play(FadeOut(explanation1), FadeToColor(error_func[3], BLACK))
 
         # Error function explanation  - integrals
-        explanation2 = Tex("It's integrated over the", " data", " and", "the parameters", color = BLACK).scale(0.7)
-        explanation2.move_to(-3 * UP)
-        explanation2[1].set_color(royal_blue)
-        explanation2[3].set_color(crimson)
+        explanation2 = Tex("It's integrated over the", " parameters", " and", " the data", color = BLACK).scale(0.6)
+        explanation2.move_to(-2 * UP)
+        explanation2[1].set_color(crimson)
+        explanation2[3].set_color(royal_blue)
         self.play(FadeIn(explanation2), FadeToColor(error_func[1], crimson), FadeToColor(error_func[2], royal_blue), FadeToColor(error_func[4], royal_blue))
         self.wait(3)
         self.play(FadeOut(explanation2), FadeToColor(error_func[1], BLACK), FadeToColor(error_func[2], BLACK), FadeToColor(error_func[4], BLACK))
 
-        # lines.append(tools().label(text = r'$\epsilon_{MSE} =  {\displaystyle \int} dT P(T) {\displaystyle \int} (\hat{T}_{est} - T)^2 P(X | T) dX$', x = 0, y = -2, color = BLACK).scale(0.7))
+        # Error function explanation  - cost function
+        explanation3 = Tex("Different estimators will minimize different cost functions/errors", color = BLACK).scale(0.6)
+        explanation3.move_to(-2 * UP)
+        self.play(FadeIn(explanation3))
+        self.wait(2)
+        self.play(FadeOut(explanation3))
+
+        # Estimators examples
+        # MAP - moves the equation to the right
+        self.play(error_func.animate.align_to(subtitle, LEFT))
+
+        # Axis definition
+        def show_axis(x0 = 0, y0 = 0, x_start = -0.01, x_end =  1, y_start = -0.01, y_end = 1):
+
+            x_axis = Arrow((x_start + x0) * RIGHT + y0 * UP, (x_end + x0) * RIGHT + y0 * UP, buff = 0).set_color(BLACK)
+            y_axis = Arrow((y_start + y0) * UP + x0 * RIGHT, (y_end + y0) * UP + x0 * RIGHT, buff = 0).set_color(BLACK)
+
+            return x_axis, y_axis
+
+        # Draws the axis
+        axis_prior = show_axis(x0 = 1.25, y0 = -3.25, x_start = -0.1, y_start = -0.1, x_end = 4, y_end = 2.5)
+        self.play(ShowCreation(axis_prior[0]), ShowCreation(axis_prior[1]))
+        xlabel_prior = tools().label(text = '$T$', x = 5.5, y = -3.25, color = BLACK).scale(0.5)
+        ylabel_prior = tools().label(text = '$P(T)$', x = 1.75, y = -0.75, color = BLACK).scale(0.5)
+        self.play(FadeIn(xlabel_prior), FadeIn(ylabel_prior))
+
+        # Prior plot
+        prior_plot = ParametricFunction(tools().flat, t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(prior_plot.scale(1), x = 2.25, y = -3.25)
+        prior_plot.align_to(axis_prior[1], LEFT).shift(0.3 * UP + 0.2 * RIGHT)
+        self.play(ShowCreation(prior_plot))
+        self.wait(2)
+
+        # Posterior plot
+        sigma = 0.75
+        mu = 0.5
+        log_normal = lambda t: np.array([t, 3*1/(t*sigma*np.sqrt(2*np.pi))*np.exp(-(np.log(t) - mu)**2/(2*sigma**2)), 0])
+        posterior_plot = ParametricFunction(log_normal, t_min = 0.01, t_max = 3.9, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(posterior_plot.scale(1), x = 2.25, y = -2.9)
+        posterior_plot.align_to(axis_prior[1], LEFT).shift(0.3 * UP + 0.2 * RIGHT)
+        ylabel_posterior = tools().label(text = '$P(T | X)$', x = 2, y = -0.75, color = BLACK).scale(0.5)
+
+        self.play(ReplacementTransform(ylabel_prior, ylabel_posterior))
+        self.play(ReplacementTransform(prior_plot, posterior_plot))
+        self.wait(2)
+
+        # Estimator triangle
+        estimator_triangle = RegularPolygon(3, start_angle=PI/2).scale(0.15)\
+                            .move_to((1.25 + 0.93) * RIGHT - 3.5 * UP).set_color(BLACK) #The origin is at x = 1.25, I add the mode of the log normal
+        MAP_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
+
+        # Initialization of the objects and MAP indicator
+        MAP_indicator=MathTex("{\displaystyle\mu_{MAP}}", color = BLACK).scale(0.45).next_to(MAP_line, 1 * UP)
+        self.add(estimator_triangle, MAP_line)
+        
+        self.play(FadeIn(estimator_triangle),FadeIn(MAP_line))
+        self.wait(2)
+        self.play(FadeIn(MAP_indicator))
+
+        # Median indicator
+        MED_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
+        self.play(estimator_triangle.animate.move_to((1.25 + 1.65) * RIGHT - 3.5 * UP),
+                  MED_line.animate.shift((1.65 - 0.93) * RIGHT))
+        MED_indicator=MathTex("{\displaystyle\mu_{BM}}", color = BLACK).scale(0.45).next_to(MED_line, 1 * UP)
+
+        self.add(MED_line)
+        self.wait(1)
+        self.play(FadeIn(MED_indicator))
+
+        # Average indicator
+        AVG_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
+        self.play(estimator_triangle.animate.move_to((1.25 + 2.18) * RIGHT - 3.5 * UP),
+                  AVG_line.animate.shift((2.18 - 1.65) * RIGHT))
+        AVG_indicator=MathTex("{\displaystyle\mu_{BA}}", color = BLACK).scale(0.45).next_to(AVG_line, 1 * UP)
+
+        self.add(AVG_line)
+        self.wait(1)
+        self.play(FadeIn(AVG_indicator))
+
+        # lines.append(tools().label(text = r'${\displaystyle\epsilon_{MSE}} =  {\displaystyle \int} dT P(T) {\displaystyle \int} (\hat{T}_{est} - T)^2 P(X | T) dX$', x = 0, y = -2, color = BLACK).scale(0.6))
 
 
         ######################################################
