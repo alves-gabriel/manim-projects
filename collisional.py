@@ -1080,6 +1080,68 @@ class Scene_5(Scene):
 ###########
 '''
 
-def Scene_6(Scene):
+class Scene_6(Scene):
     def construct(self):
-        pass
+
+        # Title
+        title = tools().label(text = '\\underline{Bayesian Estimators}', x = 0, y = 3, color = royal_blue).scale(2)
+        Underline(title)
+
+        self.play(Write(title))
+        self.wait(1)
+
+        ######################################################
+
+        # About estimators
+        subtitle = tools().label(text = 'Estimators', x = -5, y = 2, color = royal_blue).scale(1)
+        self.play(FadeIn(subtitle))
+        lines = []
+
+        lines.append(tools().label(text = r'$\bullet$ An estimator is an arbitrary function of the outcomes $X_1, ..., X_n$', color = BLACK).scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\hat{T} = f(X_1, ..., X_N)$', color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r"$\bullet$ It's a random variable itself", color = BLACK).scale(0.7).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+
+        self.play(FadeIn(lines[0]),FadeIn(lines[1]),FadeIn(lines[2]))
+
+        # About Bayesian Estimators
+        subtitle2 = tools().label(text = 'Bayesian Estimators', x = -5, y = 2, color = royal_blue).scale(1).next_to(lines[2], DOWN).align_to(subtitle, LEFT)
+        self.play(FadeIn(subtitle2))
+
+        # Bayesian estimator definition
+        lines.append(tools().label(text = r'A \emph{bayesian} estimator minimizes an error or risk function', color = BLACK).scale(0.7).next_to(subtitle2, DOWN).align_to(subtitle, LEFT))
+        self.play(FadeIn(lines[3]))
+
+        # Error function definition
+        error_func = MathTex("\epsilon =","{\displaystyle \int} dT P(T)","{\displaystyle \int}","C(\hat{T}, T)","P(X | T) dX",
+                     color = BLACK).scale(0.7)
+        error_func.move_to(-2 * UP)
+        self.play(FadeIn(error_func))
+        self.wait(1)
+
+        # Error function explanation  - cost function
+        explanation1 = Tex("It depends on a", " cost function", color = BLACK).scale(0.7)
+        explanation1.move_to(-3 * UP)
+        explanation1[1].set_color(crimson)
+        self.play(FadeIn(explanation1), FadeToColor(error_func[3], crimson))
+        self.wait(2)
+        self.play(FadeOut(explanation1), FadeToColor(error_func[3], BLACK))
+
+        # Error function explanation  - integrals
+        explanation2 = Tex("It's integrated over the", " data", " and", "the parameters", color = BLACK).scale(0.7)
+        explanation2.move_to(-3 * UP)
+        explanation2[1].set_color(royal_blue)
+        explanation2[3].set_color(crimson)
+        self.play(FadeIn(explanation2), FadeToColor(error_func[1], crimson), FadeToColor(error_func[2], royal_blue), FadeToColor(error_func[4], royal_blue))
+        self.wait(3)
+        self.play(FadeOut(explanation2), FadeToColor(error_func[1], BLACK), FadeToColor(error_func[2], BLACK), FadeToColor(error_func[4], BLACK))
+
+        # lines.append(tools().label(text = r'$\epsilon_{MSE} =  {\displaystyle \int} dT P(T) {\displaystyle \int} (\hat{T}_{est} - T)^2 P(X | T) dX$', x = 0, y = -2, color = BLACK).scale(0.7))
+
+
+        ######################################################
+
+        ######################################################
+
+        ######################################################
+
+        self.wait(5)
