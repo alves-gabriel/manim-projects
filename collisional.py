@@ -1256,3 +1256,83 @@ class Scene_6(Scene):
         ######################################################
 
         self.wait(5)
+
+'''
+###########
+##SCENE 7##
+###########
+'''
+
+class Scene_7(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{The Van-Trees inequality}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        Underline(title)
+
+        self.play(Write(title))
+        self.wait(1)
+
+        ######################################################
+
+        # About bayesian framework
+        subtitle = tools().label(text = 'Bounds', x = -5, y = 2.5, color = royal_blue).scale(.9)
+        self.play(FadeIn(subtitle))
+        lines = []
+
+        lines.append(tools().label(text = r'$\bullet$ How to evaluate performance?', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ How does this framework changes non-bayesian bounds?', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+
+        self.play(FadeIn(lines[0]),FadeIn(lines[1]))
+
+        ######################################################
+
+        # About frequentist approach
+        subtitle2 = tools().label(text = 'Non-Bayesian Approach', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
+        self.play(FadeIn(subtitle2))
+
+        lines.append(tools().label(text = 'Cramer-Rao bound', color = BLACK).scale(0.6).next_to(subtitle2, DOWN).align_to(subtitle2, LEFT))
+        self.play(FadeIn(lines[2]))
+
+        lines.append(tools().label(text = r'$\bullet$ A bound for the \emph{variance} of the estimator', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ This is outcome-dependent', color = BLACK).scale(0.6).next_to(lines[3], DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Assumes unbiased estimators - it is restrictive', color = BLACK).scale(0.6).next_to(lines[4], DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ What role does the prior plays here?', color = BLACK).scale(0.6).next_to(lines[5], DOWN).align_to(subtitle2, LEFT))
+
+        # Cramer Rao Bound
+        CR_Bound = MathTex("\displaystyle{\\text{var} (\hat{\\theta}) \geqslant \\frac{1}{I(\\theta)}}",
+                     color = BLACK).scale(0.6).align_to(lines[6], UP).shift(-.5*UP)
+
+        self.play(Write(CR_Bound))
+        self.play(FadeIn(lines[3]))
+        self.play(FadeIn(lines[4]))
+        self.play(FadeIn(lines[5]))
+        self.play(FadeIn(lines[6]))
+
+        self.play(CR_Bound.animate.next_to(lines[6], DOWN))
+
+        ######################################################
+
+        wrong_line1 = Line(-5*RIGHT - 2.5 * UP, +5*RIGHT + UP).set_color(crimson)
+        wrong_line2 = Line(-5*RIGHT + UP, +5*RIGHT - 2.5 * UP).set_color(crimson)
+
+        self.play(ShowCreation(wrong_line1))
+        self.play(ShowCreation(wrong_line2))
+        self.wait(1)
+
+        self.play(FadeOut(subtitle2), FadeOut(lines[2]), FadeOut(lines[3]), FadeOut(lines[4]), FadeOut(lines[5]), FadeOut(lines[6]),
+                  FadeOut(CR_Bound), FadeOut(wrong_line1), FadeOut(wrong_line2))
+
+        ######################################################
+
+        # About frequentist approach
+        subtitle3 = tools().label(text = 'Bayesian Approach', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
+        self.play(FadeIn(subtitle3))
+        lines = []
+
+        lines.append(tools().label(text = r'$\bullet$ MSE $\rightarrow$ new figure of merit', color = BLACK).scale(0.6).next_to(subtitle3, DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ We can incorporate information from the Prior', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle2, LEFT))
+        self.play(FadeIn(lines[0]))
+        self.play(FadeIn(lines[1]))
+
+        self.wait(5)
