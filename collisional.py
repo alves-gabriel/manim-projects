@@ -1,5 +1,6 @@
 from manim import *
 import numpy as np
+import random
 
 # ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
 
@@ -1295,24 +1296,77 @@ class Scene_7(Scene):
         self.play(FadeIn(lines[2]))
 
         lines.append(tools().label(text = r'$\bullet$ A bound for the \emph{variance} of the estimator', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle2, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ This is outcome-dependent', color = BLACK).scale(0.6).next_to(lines[3], DOWN).align_to(subtitle2, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ Assumes unbiased estimators - it is restrictive', color = BLACK).scale(0.6).next_to(lines[4], DOWN).align_to(subtitle2, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ What role does the prior plays here?', color = BLACK).scale(0.6).next_to(lines[5], DOWN).align_to(subtitle2, LEFT))
+        self.play(FadeIn(lines[3]))
 
         # Cramer Rao Bound
         CR_Bound = MathTex("\displaystyle{\\text{var} (\hat{\\theta}) \geqslant \\frac{1}{I(\\theta)}}",
-                     color = BLACK).scale(0.6).align_to(lines[6], UP).shift(-.5*UP)
+                     color = BLACK).scale(0.6).align_to(lines[3], UP).shift(-.5*UP)
 
         self.play(Write(CR_Bound))
-        self.play(FadeIn(lines[3]))
-        self.play(FadeIn(lines[4]))
-        self.play(FadeIn(lines[5]))
-        self.play(FadeIn(lines[6]))
-
-        self.play(CR_Bound.animate.next_to(lines[6], DOWN))
+        self.wait(1)
+        self.play(CR_Bound.animate.next_to(lines[3], DOWN))
 
         ######################################################
 
+        # Axis definition
+        def show_axis(x0 = 0, y0 = 0, x_start = -0.01, x_end =  1, y_start = -0.01, y_end = 1):
+
+            x_axis = Arrow((x_start + x0) * RIGHT + y0 * UP, (x_end + x0) * RIGHT + y0 * UP, buff = 0).set_color(BLACK)
+            y_axis = Arrow((y_start + y0) * UP + x0 * RIGHT, (y_end + y0) * UP + x0 * RIGHT, buff = 0).set_color(BLACK)
+
+            return x_axis, y_axis
+
+        # Draws the axis
+        axis = show_axis(x0 = 1.25, y0 = -3.25, x_start = -0.1, y_start = -0.1, x_end = 4, y_end = 2.5)
+        self.play(ShowCreation(axis[0]), ShowCreation(axis[1]))
+        xlabel = tools().label(text = '$n$', x = 5.5, y = -3.25, color = BLACK).scale(0.6)
+        ylabel = tools().label(text = '$\sigma^2$', x = 1.25, y = -0.5, color = BLACK).scale(0.6)
+        self.play(FadeIn(xlabel), FadeIn(ylabel))
+
+        # Bound Plot w/ Dashed Line
+        fisher_scaling = lambda t: np.array([t, 1.5 - t/4,0])
+        CR_plot = DashedVMobject(ParametricFunction(fisher_scaling, t_min = 0.01, t_max = 3.5, color = BLACK, fill_opacity=0).scale(1))
+        tools().mob_pos(CR_plot.scale(1), x = 2.25, y = -3.25)
+        CR_plot.align_to(axis[1], LEFT).shift(0.5 * UP + 0.2 * RIGHT)
+        self.play(ShowCreation(CR_plot))
+        self.wait(2)
+
+        # Variance example
+        variance_scaling_ex = lambda t: np.array([t, 3 - np.log((t+1)/4),0])
+        Var_plot = ParametricFunction(variance_scaling_ex, t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
+        tools().mob_pos(Var_plot.scale(1), x = 2.25, y = -3.25)
+        Var_plot.align_to(axis[1], LEFT).shift(UP + 0.2 * RIGHT)
+        self.play(ShowCreation(Var_plot))
+        self.wait(2)
+
+        # Variance explanation
+        lines.append(tools().label(text = r'$\bullet$ $\sigma$ is outcome-dependent (in this framework)', color = BLACK).scale(0.6).next_to(CR_Bound, DOWN).align_to(subtitle2, LEFT))
+        self.play(FadeIn(lines[4]))
+
+        #  Several trajectories
+        num_trajectories = 5
+        Var_plot_random = VGroup(*[ParametricFunction(lambda t: np.array([t, 3 - np.log((t+1)/4 + abs(random.gauss(0,.1))),0]),
+                     t_min = 0.01, t_max = 3.5, color = BLACK, stroke_opacity = 0.2).scale(1)
+                     for i in range(num_trajectories)])
+
+        # Move all the trajectories to the axis
+        tools().mob_pos(Var_plot_random.scale(1), x = 2.25, y = -3.25)
+        Var_plot_random.align_to(axis[1], LEFT).shift(UP + 0.2 * RIGHT)
+
+        # Plot the trajectories in order
+        for i in range(num_trajectories):
+            self.play(ShowCreation(Var_plot_random[i]))
+        self.wait(2)
+
+        lines.append(tools().label(text = r'$\bullet$ Assumes unbiased estimators - it is restrictive', color = BLACK).scale(0.6).next_to(lines[4], DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ What role does the prior plays here?', color = BLACK).scale(0.6).next_to(lines[5], DOWN).align_to(subtitle2, LEFT))
+
+        self.play(FadeIn(lines[5]))
+        self.play(FadeIn(lines[6]))
+
+        ######################################################
+
+        # Frequentist Approach Deletion
         wrong_line1 = Line(-5*RIGHT - 2.5 * UP, +5*RIGHT + UP).set_color(crimson)
         wrong_line2 = Line(-5*RIGHT + UP, +5*RIGHT - 2.5 * UP).set_color(crimson)
 
@@ -1323,16 +1377,34 @@ class Scene_7(Scene):
         self.play(FadeOut(subtitle2), FadeOut(lines[2]), FadeOut(lines[3]), FadeOut(lines[4]), FadeOut(lines[5]), FadeOut(lines[6]),
                   FadeOut(CR_Bound), FadeOut(wrong_line1), FadeOut(wrong_line2))
 
+        self.play(FadeOut(axis[0]),FadeOut(axis[1]),FadeOut(CR_plot),FadeOut(Var_plot),FadeOut(Var_plot_random),
+                  FadeOut(xlabel), FadeOut(ylabel))
+
+        ######################################################
+
+        # About the two approaches
+        subtitle3 = tools().label(text = 'Bayesian X Frequentist', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
+        self.play(FadeIn(subtitle3))
+
+        scientists = Group(*[ImageMobject("scientist.png").scale(0.075) for i in range (4)])
+
+        for i in range(len(scientists)):
+            tools().mob_pos(scientists[i], x = -4, y = -i)
+            self.play(FadeIn(scientists[i]))
+        self.wait(2)
+
         ######################################################
 
         # About frequentist approach
-        subtitle3 = tools().label(text = 'Bayesian Approach', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
-        self.play(FadeIn(subtitle3))
+        subtitle4 = tools().label(text = 'Bayesian Approach', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
+        self.play(FadeIn(subtitle4))
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ MSE $\rightarrow$ new figure of merit', color = BLACK).scale(0.6).next_to(subtitle3, DOWN).align_to(subtitle2, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ We can incorporate information from the Prior', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ MSE $\rightarrow$ new figure of merit', color = BLACK).scale(0.6).next_to(subtitle4, DOWN).align_to(subtitle4, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ We can incorporate information from the Prior', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle4, LEFT))
         self.play(FadeIn(lines[0]))
         self.play(FadeIn(lines[1]))
+
+        ######################################################
 
         self.wait(5)
