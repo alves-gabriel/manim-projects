@@ -1142,6 +1142,8 @@ class Scene_6(Scene):
         self.wait(2)
         self.play(FadeOut(explanation3))
 
+        ######################################################
+
         # Estimators examples
         # MAP - moves the equation to the right
         self.play(error_func.animate.align_to(subtitle, LEFT))
@@ -1175,7 +1177,7 @@ class Scene_6(Scene):
         posterior_plot = ParametricFunction(log_normal, t_min = 0.01, t_max = 3.9, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior_plot.scale(1), x = 2.25, y = -2.9)
         posterior_plot.align_to(axis_prior[1], LEFT).shift(0.3 * UP + 0.2 * RIGHT)
-        ylabel_posterior = tools().label(text = '$P(T | X)$', x = 2, y = -0.75, color = BLACK).scale(0.5)
+        ylabel_posterior = tools().label(text = '$P(T | X)$', x = 1.8, y = -0.75, color = BLACK).scale(0.5)
 
         self.play(ReplacementTransform(ylabel_prior, ylabel_posterior))
         self.play(ReplacementTransform(prior_plot, posterior_plot))
@@ -1187,39 +1189,69 @@ class Scene_6(Scene):
         MAP_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
 
         # Initialization of the objects and MAP indicator
-        MAP_indicator=MathTex("{\displaystyle\mu_{MAP}}", color = BLACK).scale(0.45).next_to(MAP_line, 1 * UP)
+        MAP_indicator=MathTex("{\displaystyle\hat{T}_{MAP}}", color = BLACK).scale(0.45).next_to(MAP_line, 1 * UP)
         self.add(estimator_triangle, MAP_line)
-        
+
         self.play(FadeIn(estimator_triangle),FadeIn(MAP_line))
-        self.wait(2)
         self.play(FadeIn(MAP_indicator))
+
+        # MAP explanation
+        MAP_explanation=tools().label(text=r"The mode minimizes the uniform cost", color = BLACK).scale(0.6).next_to(error_func, DOWN).align_to(error_func,LEFT)
+        self.play(FadeIn(MAP_explanation))
+        self.wait(2)
+
+        ######################################################
 
         # Median indicator
         MED_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
         self.play(estimator_triangle.animate.move_to((1.25 + 1.65) * RIGHT - 3.5 * UP),
                   MED_line.animate.shift((1.65 - 0.93) * RIGHT))
-        MED_indicator=MathTex("{\displaystyle\mu_{BM}}", color = BLACK).scale(0.45).next_to(MED_line, 1 * UP)
+        MED_indicator=MathTex("{\displaystyle\hat{T}_{BM}}", color = BLACK).scale(0.45).next_to(MED_line, 1 * UP)
 
         self.add(MED_line)
         self.wait(1)
         self.play(FadeIn(MED_indicator))
 
+        # Median explanation
+        MED_explanation=tools().label(text=r"The median minimizes the absolute cost", color = BLACK).scale(0.6).next_to(error_func, DOWN).align_to(error_func,LEFT)
+        self.play(FadeOut(MAP_explanation), FadeIn(MED_explanation))
+
+        MED_cost = MathTex("C(\hat{T},T) = |\hat{T} - T|",
+                     color = BLACK).scale(0.6).next_to(MED_explanation, DOWN).align_to(MED_explanation,LEFT)
+        self.play(FadeIn(MED_cost))
+        self.wait(1)
+
+        ######################################################
+
         # Average indicator
         AVG_line = DashedLine(estimator_triangle.get_center() + 0.25 * UP, estimator_triangle.get_center()+ 2 * UP, color = BLACK)
         self.play(estimator_triangle.animate.move_to((1.25 + 2.18) * RIGHT - 3.5 * UP),
                   AVG_line.animate.shift((2.18 - 1.65) * RIGHT))
-        AVG_indicator=MathTex("{\displaystyle\mu_{BA}}", color = BLACK).scale(0.45).next_to(AVG_line, 1 * UP)
+        AVG_indicator=MathTex("{\displaystyle\hat{T}_{BA}}", color = BLACK).scale(0.45).next_to(AVG_line, 1 * UP)
 
         self.add(AVG_line)
         self.wait(1)
         self.play(FadeIn(AVG_indicator))
 
-        # lines.append(tools().label(text = r'${\displaystyle\epsilon_{MSE}} =  {\displaystyle \int} dT P(T) {\displaystyle \int} (\hat{T}_{est} - T)^2 P(X | T) dX$', x = 0, y = -2, color = BLACK).scale(0.6))
+        # Average explanation
+        self.play(FadeOut(MED_explanation), FadeOut(MED_cost))
 
+        # Highlight box
+        result_hightlight = Rectangle(width = 7, height = 2.25, color = BLACK).next_to(error_func, DOWN).align_to(error_func,LEFT)
+        result_hightlight = result_hightlight.set_fill(royal_blue, opacity = 0.4)
+        self.play(ShowCreation(result_hightlight))
 
-        ######################################################
+        AVG_explanation=tools().label(text=r"The posterior average minimizes the squared error", color = BLACK).scale(0.6).align_to(error_func, DOWN).align_to(error_func,LEFT).shift(.1 * RIGHT - .75 * UP)
+        self.play(FadeIn(AVG_explanation))
 
-        ######################################################
+        # Bayesian mean formulae
+        AVG_cost = MathTex("C(\hat{T},T) = (\hat{T} - T)^2\\text{,and the estimator is",
+                     color = BLACK).scale(0.6).next_to(AVG_explanation, DOWN).align_to(AVG_explanation,LEFT)
+
+        AVG_estimaor = MathTex("\displaystyle{\hat{T}_{BA} = \int T P(T|X)dT}",
+                     color = BLACK).scale(0.6).next_to(AVG_cost, DOWN).align_to(AVG_cost,LEFT).shift(7/4 * RIGHT)
+
+        self.play(FadeIn(AVG_cost), FadeIn(AVG_estimaor))
 
         ######################################################
 
