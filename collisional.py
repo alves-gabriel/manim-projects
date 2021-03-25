@@ -1386,6 +1386,7 @@ class Scene_7(Scene):
         subtitle3 = tools().label(text = 'Bayesian x Frequentist', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
         self.play(FadeIn(subtitle3))
 
+        # Scients cokumn
         scientists = Group(*[ImageMobject("scientist.png").scale(0.075) for i in range (4)])
 
         for i in range(len(scientists)):
@@ -1393,6 +1394,7 @@ class Scene_7(Scene):
             self.play(FadeIn(scientists[i]))
         self.wait(2)
 
+        # Arrows and detectors
         arrows = VGroup(*[Arrow(ORIGIN, RIGHT, color = BLACK).next_to(scientists[i], RIGHT) for i in range (4)])
         detectors =  Group(*[ImageMobject("detector_img.png").scale(0.15).next_to(arrows[i], RIGHT)  for i in range (4)])
         detector_lines = VGroup(*[Line(detectors[i].get_center(), detectors[i].get_center() + 0.2*UP).set_color(RED)  for i in range (4)])
@@ -1400,23 +1402,48 @@ class Scene_7(Scene):
         for i in range(len(scientists)):
             self.play(FadeIn(arrows[i]), FadeIn(detectors[i]), FadeIn(detector_lines[i]), run_time = 0.5)
 
-
+        # Braces and arrow for the detectors
         cases = MathTex("\left]", color = BLACK).scale(5).next_to(detectors, LEFT).align_to(detectors, LEFT).shift(RIGHT)
         histogram_arrow = Arrow(ORIGIN, RIGHT, color = BLACK).scale(5).next_to(cases, RIGHT).shift(-0.25 * RIGHT)
-
         self.play(FadeIn(cases), FadeIn(histogram_arrow))
         self.wait(2)
 
+        # Histogram axis
         axis = show_axis(x0 = 1.5, y0 = -2.25, x_start = -0.1, y_start = -0.1, x_end = 3.25, y_end = 2.5)
         self.play(ShowCreation(axis[0]), ShowCreation(axis[1]))
-        xlabel = tools().label(text = '$n$', x = 5, y = -2.25, color = BLACK).scale(0.6)
-        ylabel = tools().label(text = '$\sigma^2$', x = 1.5, y = 0.5, color = BLACK).scale(0.6)
+        xlabel = tools().label(text = '$\hat{T}$', x = 5, y = -2.25, color = BLACK).scale(0.6)
+        ylabel = tools().label(text = 'Counts', x = 1.5, y = 0.5, color = BLACK).scale(0.6)
         self.play(FadeIn(xlabel), FadeIn(ylabel))
 
+        # Histogram
         histogram_img = ImageMobject("histogram.png").scale(1)
         histogram_img.move_to(3 * RIGHT - 1.425 * UP)
         self.play(FadeIn(histogram_img))
         self.wait(4)
+
+        # Variance indication
+        var_arrow = VGroup(
+                    Arrow(ORIGIN, 3*RIGHT, color = BLACK).move_to(histogram_img.get_center(), histogram_img.get_center()).shift(UP + 1.4 * RIGHT),
+                    Arrow(3*RIGHT, ORIGIN, color = BLACK).move_to(histogram_img.get_center(), histogram_img.get_center()).shift(UP + 1.1 * RIGHT)
+                    )
+        var_text = MathTex("\displaystyle{\\text{var}(\hat{T})}", color = BLACK).scale(0.6).next_to(var_arrow, UP)
+        self.play(FadeIn(var_arrow.scale(0.5)),FadeIn(var_text))
+
+        # Variance explanation
+        var_explanation1 =  tools().label(text = r'We build a histogram with the estimation $\hat{T}$ made by each scientist', y = -3.75, color = BLACK).scale(0.6)
+        self.play(FadeIn(var_explanation1))
+        self.wait(3)
+        self.play(FadeOut(var_explanation1))
+
+        var_explanation2 =  tools().label(text = r'This histogram will have variance $\text{var}(\hat{T})$', y = -3.75, color = BLACK).scale(0.6)
+        self.play(FadeIn(var_explanation2))
+        self.wait(3)
+        self.play(FadeOut(var_explanation2))
+
+        var_explanation3 =  tools().label(text = r'The CR-bround tells us how well their results agree', y = -3.75, color = BLACK).scale(0.6)
+        self.play(FadeIn(var_explanation3))
+        self.wait(3)
+        self.play(FadeOut(var_explanation3))
 
         ######################################################
 
