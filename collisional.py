@@ -1383,7 +1383,7 @@ class Scene_7(Scene):
         ######################################################
 
         # About the two approaches
-        subtitle3 = tools().label(text = 'Bayesian X Frequentist', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
+        subtitle3 = tools().label(text = 'Bayesian x Frequentist', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
         self.play(FadeIn(subtitle3))
 
         scientists = Group(*[ImageMobject("scientist.png").scale(0.075) for i in range (4)])
@@ -1392,6 +1392,38 @@ class Scene_7(Scene):
             tools().mob_pos(scientists[i], x = -4, y = -i)
             self.play(FadeIn(scientists[i]))
         self.wait(2)
+
+        arrows = VGroup(*[Arrow(ORIGIN, RIGHT, color = BLACK).next_to(scientists[i], RIGHT) for i in range (4)])
+        detectors =  Group(*[ImageMobject("detector_img.png").scale(0.15).next_to(arrows[i], RIGHT)  for i in range (4)])
+        detector_lines = VGroup(*[Line(detectors[i].get_center(), detectors[i].get_center() + 0.2*UP).set_color(RED)  for i in range (4)])
+
+        for i in range(len(scientists)):
+            self.play(FadeIn(arrows[i]), FadeIn(detectors[i]), FadeIn(detector_lines[i]), run_time = 0.5)
+
+
+        cases = MathTex("\left]", color = BLACK).scale(5).next_to(detectors, LEFT).align_to(detectors, LEFT).shift(RIGHT)
+        histogram_arrow = Arrow(ORIGIN, RIGHT, color = BLACK).scale(5).next_to(cases, RIGHT).shift(-0.25 * RIGHT)
+
+        self.play(FadeIn(cases), FadeIn(histogram_arrow))
+        self.wait(2)
+
+        axis = show_axis(x0 = 1.5, y0 = -2.25, x_start = -0.1, y_start = -0.1, x_end = 3.25, y_end = 2.5)
+        self.play(ShowCreation(axis[0]), ShowCreation(axis[1]))
+        xlabel = tools().label(text = '$n$', x = 5, y = -2.25, color = BLACK).scale(0.6)
+        ylabel = tools().label(text = '$\sigma^2$', x = 1.5, y = 0.5, color = BLACK).scale(0.6)
+        self.play(FadeIn(xlabel), FadeIn(ylabel))
+
+        histogram_img = ImageMobject("histogram.png").scale(1)
+        histogram_img.move_to(3 * RIGHT - 1.425 * UP)
+        self.play(FadeIn(histogram_img))
+        self.wait(4)
+
+        ######################################################
+
+        #  About the two approaches Deletion
+        self.play(FadeOut(subtitle3), FadeOut(scientists), FadeOut(arrows), FadeOut(detectors), FadeOut(detector_lines),
+                  FadeOut(cases), FadeOut(histogram_arrow), FadeOut(axis[0]), FadeOut(axis[1]), FadeOut(histogram_img),
+                  FadeOut(xlabel), FadeOut(ylabel))
 
         ######################################################
 
