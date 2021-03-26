@@ -1442,19 +1442,84 @@ class Scene_7(Scene):
 
         var_explanation3 =  tools().label(text = r'The CR-bround tells us how well their results agree', y = -3.75, color = BLACK).scale(0.6)
         self.play(FadeIn(var_explanation3))
-        self.wait(3)
+        self.wait(1)
         self.play(FadeOut(var_explanation3))
 
         ######################################################
 
-        #  About the two approaches Deletion
+        #  About the two approaches - Frequentist Deletion
         self.play(FadeOut(subtitle3), FadeOut(scientists), FadeOut(arrows), FadeOut(detectors), FadeOut(detector_lines),
                   FadeOut(cases), FadeOut(histogram_arrow), FadeOut(axis[0]), FadeOut(axis[1]), FadeOut(histogram_img),
-                  FadeOut(xlabel), FadeOut(ylabel))
+                  FadeOut(xlabel), FadeOut(ylabel), FadeOut(var_arrow), FadeOut(var_text))
 
         ######################################################
 
-        # About frequentist approach
+        # Scientist and detector
+        scientist = ImageMobject("scientist.png").scale(0.075)
+        tools().mob_pos(scientist, x = -4, y = -0.5)
+        arrow = Arrow(ORIGIN, RIGHT, color = BLACK).next_to(scientist, RIGHT)
+        self.play(FadeIn(scientist),FadeIn(arrow))
+
+        detector = ImageMobject("detector_img.png").scale(0.15).next_to(arrow, RIGHT)
+        detector_line = Line(detector.get_center(), detector.get_center() + 0.2*UP).set_color(RED)
+        arrow2 = CurvedArrow(detector.get_center()-0.5*UP, scientist.get_center()-0.5*UP,angle = -np.pi).set_color(BLACK).scale(0.6)
+        self.play(FadeIn(detector), FadeIn(detector_line))
+        self.wait(1)
+
+        # Repeated experiments explanation
+        bayes_explanation1 =  tools().label(text = r'A \textbf{single} scientist continuously repeats the measurements', y = -3, color = BLACK).scale(0.6)
+        self.play(Write(bayes_explanation1), FadeIn(arrow2))
+        self.wait(2)
+
+        arrow3 = Arrow(ORIGIN, RIGHT, color = BLACK).next_to(detector, RIGHT)
+        self.play(FadeIn(arrow3))
+        scientist_group = Group(scientist, arrow, detector, detector_line, arrow2, arrow3)
+
+        self.wait(2)
+
+        # Posterior axis
+        axis = show_axis(x0 = -1, y0 = -1, x_start = -0.1, y_start = -0.1, x_end = 2.25, y_end = 1.5)
+        self.play(ShowCreation(axis[0]), ShowCreation(axis[1]))
+
+        # Posterior Plot
+        posterior_plot = ParametricFunction(tools().gaussian, t_min = 0.5, t_max = 3.5, color = crimson, fill_opacity=0).scale(0.5)
+        tools().mob_pos(posterior_plot.scale(1), x = 2.25, y = -3.25)
+        posterior_plot.align_to(axis[1], LEFT).align_to(axis[0], DOWN).shift(0.2 * UP + 0.2 * RIGHT)
+        self.play(detector_line.animate.rotate(angle = -PI/4, about_point = detector.get_center()))
+        self.play(ShowCreation(posterior_plot))
+        self.wait(1)
+
+        new_posterior_plot = ParametricFunction(lambda t:np.array([t, np.exp(-(t - 2)**2/(2*0.1)), 0]), t_min = 0.5, t_max = 3.5, color = crimson, fill_opacity=0).scale(0.5)
+        tools().mob_pos(new_posterior_plot.scale(1), x = 2.25, y = -3.25)
+        new_posterior_plot.align_to(axis[1], LEFT).align_to(axis[0], DOWN).shift(0.2 * UP + 0.2 * RIGHT)
+        self.play(detector_line.animate.rotate(angle = +PI/2, about_point = detector.get_center()))
+        self.play(ReplacementTransform(posterior_plot, new_posterior_plot))
+        self.wait(1)
+
+        posterior_plot = new_posterior_plot
+        new_posterior_plot = ParametricFunction(lambda t:np.array([t, np.exp(-(t - 2)**2/(2*0.05)), 0]), t_min = 0.5, t_max = 3.5, color = crimson, fill_opacity=0).scale(0.5)
+        tools().mob_pos(new_posterior_plot.scale(1), x = 2.25, y = -3.25)
+        new_posterior_plot.align_to(axis[1], LEFT).align_to(axis[0], DOWN).shift(0.2 * UP + 0.2 * RIGHT)
+        self.play(detector_line.animate.rotate(angle = -PI/2, about_point = detector.get_center()))
+        self.play(ReplacementTransform(posterior_plot, new_posterior_plot))
+        self.wait(2)
+
+        # Repeated experiments explanation
+        bayes_explanation2 =  Tex(r'$\bullet$ The parameter $T$ is a random variable itself', color = BLACK).scale(0.6).shift(-2.5 * UP).align_to(subtitle3, LEFT)
+        bayes_explanation3 =  Tex(r'$\bullet$ And the estimator $\hat{T}$ is a random variable of $T$ and $X_1, ..., X_N$', color = BLACK).scale(0.6).next_to(bayes_explanation2, DOWN).align_to(subtitle3, LEFT)
+        self.play(FadeOut(bayes_explanation1), FadeIn(bayes_explanation2), FadeIn(bayes_explanation3))
+        self.wait(2)
+
+        bayes_group = Group(posterior_plot, new_posterior_plot, axis[0], axis[1], bayes_explanation2, bayes_explanation3)
+
+        ######################################################
+
+        #  About the two approaches - Bayesian Deletion
+        self.play(FadeOut(scientist_group), FadeOut(bayes_group))
+
+        ######################################################
+
+        # About the bayesian approach
         subtitle4 = tools().label(text = 'Bayesian Approach', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
         self.play(FadeIn(subtitle4))
         lines = []
