@@ -1570,11 +1570,19 @@ class Scene_7(Scene):
         Van_trees_explanation2[1].set_color(crimson)
         self.play(FadeOut(Van_trees_explanation1),
                   Write(fisher), Write(Van_trees_explanation2),
+<<<<<<< HEAD
                   FadeToColor(Van_trees[3], BLACK),  FadeToColor(prior_fisher, BLACK), FadeToColor(Van_trees[1],crimson))
         self.wait(2)
 
         self.play(FadeOut(Van_trees_explanation2),
                   FadeToColor(fisher, BLACK),  FadeToColor(Van_trees[1],BLACK))
+=======
+                  FadeToColor(Van_trees[3], BLACK),  FadeToColor(prior_fisher), FadeToColor(Van_trees[1],crimson))
+        self.wait(2)
+
+        self.play(FadeOut(Van_trees_explanation2),
+                  FadeToColor(fisher, BLACK), BLACK),  FadeToColor(Van_trees[1],BLACK))
+>>>>>>> cc3637f34c5cd5c40ad3fbba3cb79526b5f27d58
         self.wait(2)
 
         ######################################################
