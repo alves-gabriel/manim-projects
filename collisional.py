@@ -49,6 +49,23 @@ class tools(Scene):
     def flat(self, t):
 
         return np.array((t, 1, 0))
+'''
+###########
+##SCENE 0##
+###########
+'''
+
+class Scene_0(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Introduction}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        Underline(title)
+
+        self.play(Write(title))
+        self.wait(1)
+
+        ######################################################
 
 '''
 ###########
@@ -1340,7 +1357,7 @@ class Scene_7(Scene):
         self.wait(2)
 
         # Variance explanation
-        lines.append(tools().label(text = r'$\bullet$ $\sigma$ is outcome-dependent (in this framework)', color = BLACK).scale(0.6).next_to(CR_Bound, DOWN).align_to(subtitle2, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ $\sigma$ is parameter-dependent (in this framework)', color = BLACK).scale(0.6).next_to(CR_Bound, DOWN).align_to(subtitle2, LEFT))
         self.play(FadeIn(lines[4]))
 
         #  Several trajectories
@@ -1506,7 +1523,7 @@ class Scene_7(Scene):
 
         # Repeated experiments explanation
         bayes_explanation2 =  Tex(r'$\bullet$ The parameter $T$ is a random variable itself', color = BLACK).scale(0.6).shift(-2.5 * UP).align_to(subtitle3, LEFT)
-        bayes_explanation3 =  Tex(r'$\bullet$ And the estimator $\hat{T}$ is a random variable of $T$ and $X_1, ..., X_N$', color = BLACK).scale(0.6).next_to(bayes_explanation2, DOWN).align_to(subtitle3, LEFT)
+        bayes_explanation3 =  Tex(r'$\bullet$ And the estimator $\hat{T}$ is a random variable of $X_1, ..., X_N$', color = BLACK).scale(0.6).next_to(bayes_explanation2, DOWN).align_to(subtitle3, LEFT)
         self.play(FadeOut(bayes_explanation1), FadeIn(bayes_explanation2), FadeIn(bayes_explanation3))
         self.wait(2)
 
@@ -1529,6 +1546,55 @@ class Scene_7(Scene):
         self.play(FadeIn(lines[0]))
         self.play(FadeIn(lines[1]))
 
+        # Bayesian Cramer Rao Bound
+        Van_trees = MathTex("\displaystyle{\\epsilon_{MSE} (\hat{\\theta}) \geqslant \\frac{1}{",
+                            "\mathbb{E}_\lambda[I(\\theta)]"," +",
+                            "I(\\lambda)}}",
+                            color = BLACK).scale(0.6).align_to(lines[1], UP).shift(-.5*UP)
+
+        self.play(Write(Van_trees))
+        self.wait(1)
+
+        # Van trees explanation
+        prior_fisher = MathTex("I(\lambda) \equiv \int \\left(\\frac{\partial \\ln \lambda(\\theta)}{\partial \\theta}\\right)^2 \lambda(\\theta)d\\theta ",
+                            color = crimson).scale(0.6).align_to(Van_trees, UP).shift(-UP - 3 * RIGHT)
+
+        Van_trees_explanation1 = Tex("The bound takes into account the initial information from the", " prior", color = BLACK).scale(0.6).shift(-3 * UP)
+        Van_trees_explanation1[1].set_color(crimson)
+        self.play(Write(prior_fisher), Write(Van_trees_explanation1), FadeToColor(Van_trees[3],crimson))
+        self.wait(2)
+
+        fisher = MathTex("\mathbb{E}_\lambda[I(\\theta)] \equiv \int \lambda(\\theta)d\\theta \int \\left(\\frac{\partial \\ln P(\\theta|x)}{\partial \\theta}\\right)^2 P(\\theta|x)dx ",
+                            color = crimson).scale(0.6).align_to(Van_trees, UP).shift(-UP + 2.5 * RIGHT)
+        Van_trees_explanation2 = Tex("And the Fisher information averaged over the", " parameter", color = BLACK).scale(0.6).shift(-3 * UP)
+        Van_trees_explanation2[1].set_color(crimson)
+        self.play(FadeOut(Van_trees_explanation1),
+                  Write(fisher), Write(Van_trees_explanation2),
+                  FadeToColor(Van_trees[3], BLACK),  FadeToColor(prior_fisher), FadeToColor(Van_trees[1],crimson))
+        self.wait(2)
+
+        self.play(FadeOut(Van_trees_explanation2),
+                  FadeToColor(fisher, BLACK), BLACK),  FadeToColor(Van_trees[1],BLACK))
+        self.wait(2)
+
         ######################################################
 
         self.wait(5)
+
+'''
+###########
+##SCENE 8##
+###########
+'''
+
+class Scene_8(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Results}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        Underline(title)
+
+        self.play(Write(title))
+        self.wait(1)
+
+        ######################################################
