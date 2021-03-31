@@ -67,6 +67,43 @@ class Scene_0(Scene):
 
         ######################################################
 
+        # About estimators
+        subtitle = tools().label(text = 'How to measure temperature?', x = -3, y = 2, color = royal_blue).scale(.9)
+        self.play(FadeIn(subtitle))
+        lines = []
+
+        lines.append(tools().label(text = r'$\bullet$ The temperature is not an observable', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ It must be directly inferred', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+
+        self.play(FadeIn(lines[0]))
+        self.wait(1)
+        self.play(FadeIn(lines[1]))
+        self.wait(1)
+
+        # Draws the ancilla
+        model_rectangle = RoundedRectangle(width = 4, height = 3, color = GRAY).scale(1)
+        tools().mob_pos(model_rectangle, x = -3.5, y = -1.5)
+        model_rectangle_label = Tex("Model", color = GRAY).move_to(model_rectangle.get_center()).align_to(model_rectangle, UP).shift(-0.2*UP)
+        self.add(model_rectangle)
+        self.play(GrowFromEdge(model_rectangle, LEFT))
+        self.play(Write(model_rectangle_label))
+
+        ancilla_rectangle = RoundedRectangle(width = 2, height = 2, color = crimson).scale(1)
+        ancilla_rectangle.move_to(model_rectangle.get_center())
+        ancilla_rectangle_label = Tex("Ancilla", color = crimson).move_to(model_rectangle.get_center()).align_to(ancilla_rectangle, UP).shift(-0.2*UP)
+        temperature_label = MathTex("T", color = crimson).move_to(ancilla_rectangle.get_center())
+        self.play(GrowFromCenter(ancilla_rectangle, LEFT))
+        self.play(Write(ancilla_rectangle_label),Write(temperature_label))
+
+        ######################################################
+
+        lines.append(tools().label(text = r'$\bullet$ Commonly its dependence is encoded into operators and/or states', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The data processing in itself is a challenge', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
+
+        ######################################################
+
+        self.wait(5)
+
 '''
 ###########
 ##SCENE 1##
@@ -1570,19 +1607,11 @@ class Scene_7(Scene):
         Van_trees_explanation2[1].set_color(crimson)
         self.play(FadeOut(Van_trees_explanation1),
                   Write(fisher), Write(Van_trees_explanation2),
-<<<<<<< HEAD
                   FadeToColor(Van_trees[3], BLACK),  FadeToColor(prior_fisher, BLACK), FadeToColor(Van_trees[1],crimson))
         self.wait(2)
 
         self.play(FadeOut(Van_trees_explanation2),
                   FadeToColor(fisher, BLACK),  FadeToColor(Van_trees[1],BLACK))
-=======
-                  FadeToColor(Van_trees[3], BLACK),  FadeToColor(prior_fisher), FadeToColor(Van_trees[1],crimson))
-        self.wait(2)
-
-        self.play(FadeOut(Van_trees_explanation2),
-                  FadeToColor(fisher, BLACK), BLACK),  FadeToColor(Van_trees[1],BLACK))
->>>>>>> cc3637f34c5cd5c40ad3fbba3cb79526b5f27d58
         self.wait(2)
 
         ######################################################
