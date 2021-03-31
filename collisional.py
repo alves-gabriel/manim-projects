@@ -2,16 +2,19 @@ from manim import *
 import numpy as np
 import random
 
-# ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
-
-config.background_color = WHITE
+'''
+Command to concatenate all the scenes together:
+ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
+'''
 
 '''
 AUXILIARY FUNCTIONS
 '''
 
+# Background default color
+config.background_color = WHITE
+
 # Colors
-# https://www.w3schools.com/colors/colors_picker.asp
 mediumseagreen = '#3CB371'
 royal_blue = '#4169E1'
 crimson = '#DC143C'
@@ -74,33 +77,85 @@ class Scene_0(Scene):
 
         lines.append(tools().label(text = r'$\bullet$ The temperature is not an observable', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ It must be directly inferred', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Commonly its dependence is encoded into operators and/or states', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The data processing in itself is a challenge', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
 
+        # Diagram Explanation
         self.play(FadeIn(lines[0]))
         self.wait(1)
         self.play(FadeIn(lines[1]))
         self.wait(1)
 
-        # Draws the ancilla
-        model_rectangle = RoundedRectangle(width = 4, height = 3, color = GRAY).scale(1)
-        tools().mob_pos(model_rectangle, x = -3.5, y = -1.5)
-        model_rectangle_label = Tex("Model", color = GRAY).move_to(model_rectangle.get_center()).align_to(model_rectangle, UP).shift(-0.2*UP)
+        # Draws the digram - model
+        model_rectangle = RoundedRectangle(width = 4, height = 2.5, color = GRAY).scale(1)
+        model_rectangle.shift(-4.5 * RIGHT).align_to(lines[3], UP).shift(-UP)
+        model_rectangle_label = Tex("Model", color = GRAY).next_to(model_rectangle, UP, buff = -0.5)
+
         self.add(model_rectangle)
         self.play(GrowFromEdge(model_rectangle, LEFT))
         self.play(Write(model_rectangle_label))
 
-        ancilla_rectangle = RoundedRectangle(width = 2, height = 2, color = crimson).scale(1)
-        ancilla_rectangle.move_to(model_rectangle.get_center())
-        ancilla_rectangle_label = Tex("Ancilla", color = crimson).move_to(model_rectangle.get_center()).align_to(ancilla_rectangle, UP).shift(-0.2*UP)
-        temperature_label = MathTex("T", color = crimson).move_to(ancilla_rectangle.get_center())
-        self.play(GrowFromCenter(ancilla_rectangle, LEFT))
+        # Draws the digram - ancilla
+        ancilla_rectangle = RoundedRectangle(width = 2, height = 1.25, color = crimson).scale(1)
+        ancilla_rectangle.set_fill(color = crimson, opacity = 0.25).move_to(model_rectangle.get_center())
+        ancilla_rectangle_label = Tex("Ancilla", color = crimson).scale(0.7).next_to(ancilla_rectangle, UP, buff = -0.5)
+        temperature_label = MathTex("T", color = crimson).scale(0.5).move_to(ancilla_rectangle.get_center()).shift(-0.2*UP)
+
+        self.play(GrowFromCenter(ancilla_rectangle))
         self.play(Write(ancilla_rectangle_label),Write(temperature_label))
 
+        # Diagram Explanation
+        self.play(FadeIn(lines[2]))
+        self.wait(1)
+
         ######################################################
 
-        lines.append(tools().label(text = r'$\bullet$ Commonly its dependence is encoded into operators and/or states', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ The data processing in itself is a challenge', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
+        # Draws the digram - arrow and data
+        arrow1 = Arrow(ORIGIN, 2 * RIGHT, buff = 0.1).set_color(BLACK)
+        arrow1.next_to(model_rectangle, RIGHT)
+        arrow1_label = Tex("Protocol", color = BLACK).scale(0.75).next_to(arrow1, DOWN)
+        self.play(FadeIn(arrow1), Write(arrow1_label))
+
+        data_rectangle = RoundedRectangle(width = 2, height = 1, color = royal_blue).scale(1)
+        data_rectangle.set_fill(color = royal_blue, opacity = 0.25).next_to(arrow1, RIGHT)
+        data_rectangle_label = Tex("Data", color = royal_blue).scale(0.75).move_to(data_rectangle.get_center())
+        self.play(GrowFromCenter(data_rectangle))
+        self.play(Write(data_rectangle_label))
 
         ######################################################
+
+        # Draws the digram - arrow and results
+        arrow2 = Arrow(ORIGIN, 2 * RIGHT, buff = 0.1).set_color(BLACK)
+        arrow2.next_to(data_rectangle, RIGHT)
+        arrow2_label = Tex("Processing", color = BLACK).scale(0.75).next_to(arrow2, DOWN)
+        self.play(FadeIn(arrow2), Write(arrow2_label))
+
+        estimation_rectangle = RoundedRectangle(width = 2, height = 1, color = mediumseagreen).scale(1)
+        estimation_rectangle.set_fill(color = mediumseagreen, opacity = 0.25).next_to(arrow2, RIGHT)
+        estimation_rectangle_label = Tex("Estimation", color = mediumseagreen).scale(0.75).next_to(estimation_rectangle, UP, buff = -0.5)
+        temperature_estimation_label = MathTex("\hat{T}", color = mediumseagreen).scale(0.5).move_to(estimation_rectangle.get_center()).shift(-0.2*UP)
+
+        self.play(GrowFromCenter(estimation_rectangle))
+        self.play(Write(estimation_rectangle_label), Write(temperature_estimation_label))
+
+        ######################################################
+
+        # Rectangle highlight
+        diagram_highlight1 = Rectangle(width = 8.6, height = 3, color = crimson).scale(1)
+        tools().mob_pos(diagram_highlight1, x = -2.375, y = -2.25)
+        self.play(ShowCreation(diagram_highlight1))
+        self.wait(2)
+
+        # Diagram Explanation
+        self.play(FadeIn(lines[3]))
+        self.wait(2)
+
+        diagram_highlight2 = Rectangle(width = 6.75, height = 3, color = crimson).scale(1)
+        tools().mob_pos(diagram_highlight2, x = 3, y = -2.25)
+        self.play(ReplacementTransform(diagram_highlight1, diagram_highlight2))
+
+        highlight_label = Tex("Our main objective!", color = crimson).scale(0.5).next_to(diagram_highlight2, UP)
+        self.play(Write(highlight_label))
 
         self.wait(5)
 
