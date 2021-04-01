@@ -1769,5 +1769,15 @@ class Scene_8(Scene):
         self.wait(2)
 
         # PDF Animation
+        nPDF = 10
+        loops = 3
+        PDF_List = Group(*[ImageMobject('assets/collisional/PDFList'+str(i+1)+'.png').scale(1) for i in range(nPDF)])
+        PDF_List.next_to(PDFPlot, RIGHT)
+
+        self.play(FadeIn(PDF_List[0]))
+        for i in range(loops*nPDF - 1):
+            self.wait(0.2)
+            self.remove(PDF_List[i%nPDF])
+            self.add(PDF_List[(i+1)%nPDF])
 
         self.wait(5)
