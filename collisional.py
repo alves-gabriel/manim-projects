@@ -52,6 +52,46 @@ class tools(Scene):
     def flat(self, t):
 
         return np.array((t, 1, 0))
+
+'''
+###########
+###TITLE###
+###########
+'''
+
+class Title(Scene):
+    def construct(self):
+
+        # Title
+        title = Tex('Bayesian Quantum Thermometry', color = royal_blue).scale(1.5)
+        title.to_edge(UP, buff=1.5).to_edge(LEFT, buff=1.5)
+        self.add(title)
+
+        # Authors
+        author1 = Tex('\emph{Gabriel O. Alves}', color = BLACK).scale(0.8)
+        author2 = Tex('\emph{Gabriel T. Landi}', color = BLACK).scale(0.8)
+        author1.next_to(title, DOWN).align_to(title, LEFT)
+        author2.next_to(author1, DOWN).align_to(title, LEFT)
+        self.add(author1)
+        self.add(author2)
+
+        # Institution and Date
+        institution = Tex('\\textbf{Universidade de São Paulo}', color = BLACK).scale(0.8)
+        date = Tex('\\textbf{Date:} April 12th, 2021', color = BLACK).scale(0.8)
+
+        # Positioning
+        institution.to_edge(DOWN, buff=1.5).align_to(title, LEFT)
+        date.next_to(institution, DOWN).align_to(title, LEFT)
+        self.add(institution)
+        self.add(date)
+
+        # Group Logo
+        group_logo = ImageMobject("logo.png").scale(0.75)
+        group_logo.to_edge(DOWN, buff=0.5).to_edge(RIGHT, buff=1.5)
+        self.add(group_logo)
+
+        self.wait(5)
+
 '''
 ###########
 ##SCENE 0##
@@ -1696,10 +1736,10 @@ class Scene_8(Scene):
         self.play(FadeIn(subtitle))
         lines = []
 
-        lines.append(tools().label(text = r'Flat prior: $P(T) = 1/(T_{max} - T_{min})$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\tau_{SE} = 0.2$ ', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'Full SWAP: $\tau_{SA} = \frac{\pi}{2}$ ', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'We plot the posterior pdf:', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Flat prior: $P(T) = 1/(T_{max} - T_{min})$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ $\tau_{SE} = 0.2$ ', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Full SWAP: $\tau_{SA} = \frac{\pi}{2}$ ', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ We plot the posterior pdf:', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
 
         self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
 
