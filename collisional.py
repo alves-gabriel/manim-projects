@@ -1732,20 +1732,19 @@ class Scene_8(Scene):
         ######################################################
 
         # About the experiments
-        subtitle = tools().label(text = 'Posterior Density', x = -5, y = 2.5, color = royal_blue).scale(.9)
+        subtitle = Tex('Posterior Density',color = royal_blue).scale(.9)
+        subtitle.next_to(title, DOWN).to_edge(LEFT)
         self.play(FadeIn(subtitle))
         lines = []
 
         lines.append(tools().label(text = r'$\bullet$ Flat prior: $P(T) = 1/(T_{max} - T_{min})$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ $\tau_{SE} = 0.2$ ', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ Full SWAP: $\tau_{SA} = \frac{\pi}{2}$ ', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ We plot the posterior pdf:', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
-
         self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
 
         #PDF grid
         PDFGrid = ImageMobject("assets/collisional/PDFGrid.png").scale(1)
-        PDFGrid.next_to(lines[-1], DOWN, buff = -0.4).align_to(subtitle, LEFT)
+        PDFGrid.next_to(lines[2], DOWN).align_to(subtitle, LEFT)
         self.play(FadeIn(PDFGrid))
 
         # Arrow
@@ -1760,7 +1759,7 @@ class Scene_8(Scene):
 
         # Fist slice
         highlight1 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight1, x = -5.95, y = -.25)
+        tools().mob_pos(highlight1, x = -5.85, y = -.6)
         self.play(GrowFromEdge(highlight1, LEFT))
 
         PDFPlot1 = ImageMobject("assets/collisional/PDFPlot1.png").scale(0.75)
@@ -1771,7 +1770,7 @@ class Scene_8(Scene):
 
         # Second slice
         highlight2 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight2, x = -5.65, y = -.25)
+        tools().mob_pos(highlight2, x = -5.45, y = -.6)
         self.play(ReplacementTransform(highlight1, highlight2))
 
         PDFPlot2 = ImageMobject("assets/collisional/PDFPlot2.png").scale(0.75)
@@ -1782,7 +1781,7 @@ class Scene_8(Scene):
 
         # Third slice
         highlight3 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight3, x = -5, y = -.25)
+        tools().mob_pos(highlight3, x = -4.9, y = -.6)
         self.play(ReplacementTransform(highlight2, highlight3))
 
         PDFPlot3 = ImageMobject("assets/collisional/PDFPlot3.png").scale(0.75)
@@ -1793,7 +1792,7 @@ class Scene_8(Scene):
 
         # Fourth slice
         highlight4 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight4, x = -4, y = -.25)
+        tools().mob_pos(highlight4, x = -3.9, y = -.6)
         self.play(ReplacementTransform(highlight3, highlight4))
 
         PDFPlot4 = ImageMobject("assets/collisional/PDFPlot4.png").scale(0.75)
@@ -1804,7 +1803,7 @@ class Scene_8(Scene):
 
         # All slices
         PDFPlot = ImageMobject("assets/collisional/PDFPlotAll.png").scale(1)
-        PDFPlot.next_to(PDFGrid, DOWN).align_to(PDFGrid, LEFT)
+        PDFPlot.next_to(PDFGrid, DOWN).align_to(PDFGrid, LEFT).shift(RIGHT)
         self.play(FadeIn(PDFPlot))
         self.wait(2)
 
@@ -1819,5 +1818,45 @@ class Scene_8(Scene):
             self.wait(0.2)
             self.remove(PDF_List[i%nPDF])
             self.add(PDF_List[(i+1)%nPDF])
+
+        # Estimators
+        Estimators = ImageMobject("assets/collisional/Estimators.png").scale(1)
+        Estimators.to_edge(RIGHT).to_edge(DOWN)
+        Estimators_label =Tex("Estimated Temperature", color = BLACK).scale(0.6)
+        Estimators_label.next_to(Estimators, UP).shift(0.25 * LEFT)
+
+        self.play(FadeIn(Estimators), Write(Estimators_label))
+
+        # Erase Lines
+        self.play(FadeOut(lines[0]), FadeOut(lines[1]), FadeOut(lines[2]))
+
+        lines=[]
+        lines.append(tools().label(text = r'$\bullet$ Different estimators give different results (but converge assymptotically)', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The posterior becomes assymptotically Gaussian', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+
+        self.play(FadeIn(lines[0]), FadeIn(lines[1]))
+
+        self.wait(5)
+
+        self.play(FadeOut(PDFGrid), FadeOut(PDF_List), FadeOut(PDFPlot), FadeOut(lines[0]), FadeOut(lines[1]), FadeOut(subtitle),
+                  FadeOut(Estimators), FadeOut(Estimators_label))
+
+'''
+###########
+##SCENE 9##
+###########
+'''
+
+class Scene_9(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Results}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        Underline(title)
+
+        self.add(title)
+        self.wait(1)
+
+        ######################################################
 
         self.wait(5)
