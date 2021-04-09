@@ -211,12 +211,11 @@ class Scene_1(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{The model}', x = 0, y = 3, color = royal_blue).scale(2)
+        title = tools().label(text = '\\underline{The model}', x = 0, y = 3.5, color = royal_blue).scale(1.1)
         Underline(title)
 
         self.play(Write(title))
         self.wait(1)
-        self.play(FadeOut(title))
 
         ######################################################
 
