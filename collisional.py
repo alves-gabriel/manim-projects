@@ -1022,7 +1022,7 @@ class Scene_5(Scene):
         self.play(FadeIn(xlabel_posterior), FadeIn(ylabel_posterior))
 
         # Draws the 1st posterior
-        posterior1 = ParametricFunction(self.fermi_dirac0, t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        posterior1 = ParametricFunction(self.fermi_dirac0, t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior1.scale(1), x = -5 + 6, y = -2.5)
         posterior1.align_to(axis_posterior[1], LEFT).shift(1.2 * UP + 0.2 * RIGHT)
         self.play(ShowCreation(posterior1))
@@ -1092,7 +1092,7 @@ class Scene_5(Scene):
         self.play(FadeOut(explanation7), Write(explanation8))
 
         # Draws the 2nd posterior
-        posterior2 = ParametricFunction(lambda t: np.array([t,(1-2*1/(1+np.exp(1/t)))**2,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        posterior2 = ParametricFunction(lambda t: np.array([t,(1-2*1/(1+np.exp(1/t)))**2,0]), t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior2.scale(1), x = -5 + 6, y = -2.5)
         posterior2.align_to(axis_posterior[1], LEFT).shift(1.2 * UP + 0.2 * RIGHT)
         ylabel_posterior2 = tools().label(text = '$P(T | X_2 X_1)$', x = -5 + 6, y = 0, color = BLACK).scale(0.5)
@@ -1131,7 +1131,7 @@ class Scene_5(Scene):
         self.play(ReplacementTransform(bayes_update, bayes_update2))
 
         # Draws the 3rd posterior
-        posterior3 = ParametricFunction(lambda t: np.array([t,3*(1-1/(1+np.exp(1/t)))**2 * (1/(1+np.exp(1/t)))**1,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        posterior3 = ParametricFunction(lambda t: np.array([t,3*(1-1/(1+np.exp(1/t)))**2 * (1/(1+np.exp(1/t)))**1,0]), t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior3.scale(1), x = -5 + 6, y = -2.5)
         posterior3.align_to(axis_posterior[1], LEFT).shift(0.7 * UP + 0.2 * RIGHT)
         self.play(ReplacementTransform(posterior2, posterior3))
@@ -1165,7 +1165,7 @@ class Scene_5(Scene):
         self.wait(2)
 
         # Draws the 4th posterior
-        posterior4 = ParametricFunction(lambda t: np.array([t,5*(1-1/(1+np.exp(1/t)))**3 * (1/(1+np.exp(1/t)))**1,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        posterior4 = ParametricFunction(lambda t: np.array([t,5*(1-1/(1+np.exp(1/t)))**3 * (1/(1+np.exp(1/t)))**1,0]), t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior4.scale(1), x = -5 + 6, y = -2.5)
         posterior4.align_to(axis_posterior[1], LEFT).shift(0.5 * UP + 0.2 * RIGHT)
         self.play(ReplacementTransform(posterior3, posterior4))
@@ -1185,7 +1185,7 @@ class Scene_5(Scene):
         self.wait(2)
 
         # Draws the 5th posterior
-        posterior5 = ParametricFunction(lambda t: np.array([t,500000000000*(1-1/(1+np.exp(1/t)))**36 * (1/(1+np.exp(1/t)))**12,0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        posterior5 = ParametricFunction(lambda t: np.array([t,500000000000*(1-1/(1+np.exp(1/t)))**36 * (1/(1+np.exp(1/t)))**12,0]), t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior5.scale(1), x = -5 + 6, y = -2.5)
         posterior5.align_to(axis_posterior[1], LEFT).shift(0.25 * UP + 0.2 * RIGHT)
         self.play(ReplacementTransform(posterior4, posterior5))
@@ -1199,7 +1199,7 @@ class Scene_5(Scene):
         self.wait(2)
 
         # Draws the final posterior
-        posterior_gaussian = ParametricFunction(lambda t: np.array([t,2*np.exp(-(t-0.91)**2/(2*0.0025)),0]), t_min = 0.01, t_max = 2.5, color = crimson, fill_opacity=0).scale(1)
+        posterior_gaussian = ParametricFunction(lambda t: np.array([t,2*np.exp(-(t-0.91)**2/(2*0.0025)),0]), t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
         tools().mob_pos(posterior_gaussian.scale(1), x = -5 + 6, y = -2.5)
         posterior_gaussian.align_to(axis_posterior[1], LEFT).shift(0.75 * UP + 0.2 * RIGHT)
         self.play(ReplacementTransform(posterior5, posterior_gaussian))
