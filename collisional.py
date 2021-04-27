@@ -1736,10 +1736,18 @@ class Scene_8(Scene):
         self.play(FadeIn(subtitle))
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ Flat prior: $P(T) = 1/(T_{max} - T_{min})$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ "Flat" prior: $P(T) = 1/(T_{max} - T_{min})$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ $\tau_{SE} = 0.2$ ', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ Full SWAP: $\tau_{SA} = \frac{\pi}{2}$ ', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
+
+        # Prior
+        prior_plot = ImageMobject("assets/collisional/PriorPDF.png").scale(1)
+        prior_plot.to_edge(2*RIGHT).to_edge(3.5*UP)
+        prior_label =Tex("Prior", color = BLACK).scale(0.6)
+        prior_label.next_to(prior_plot, UP)
+
+        self.play(FadeIn(prior_plot), Write(prior_label))
 
         #PDF grid
         PDFGrid = ImageMobject("assets/collisional/PDFGrid.png").scale(1)
