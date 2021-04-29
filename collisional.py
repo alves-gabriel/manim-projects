@@ -113,10 +113,12 @@ class Scene_0(Scene):
         # About estimators
         subtitle = tools().label(text = 'How to measure temperature?', x = -3, y = 2, color = royal_blue).scale(.9)
         self.play(FadeIn(subtitle))
+        self.wait(2)
+
         lines = []
 
         lines.append(tools().label(text = r'$\bullet$ The temperature is not an observable', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ It must be directly inferred', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ It must be \emph{indirectly} inferred', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ Commonly its dependence is encoded into operators and/or states', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ The data processing in itself is a challenge', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
 
@@ -124,7 +126,7 @@ class Scene_0(Scene):
         self.play(FadeIn(lines[0]))
         self.wait(1)
         self.play(FadeIn(lines[1]))
-        self.wait(1)
+        self.wait(3)
 
         # Draws the digram - model
         model_rectangle = RoundedRectangle(width = 4, height = 2.5, color = GRAY).scale(1)
@@ -143,10 +145,11 @@ class Scene_0(Scene):
 
         self.play(GrowFromCenter(ancilla_rectangle))
         self.play(Write(ancilla_rectangle_label),Write(temperature_label))
+        self.wait(3)
 
         # Diagram Explanation
         self.play(FadeIn(lines[2]))
-        self.wait(1)
+        self.wait(3)
 
         ######################################################
 
@@ -161,6 +164,7 @@ class Scene_0(Scene):
         data_rectangle_label = Tex("Data", color = royal_blue).scale(0.75).move_to(data_rectangle.get_center())
         self.play(GrowFromCenter(data_rectangle))
         self.play(Write(data_rectangle_label))
+        self.wait(3)
 
         ######################################################
 
@@ -177,6 +181,7 @@ class Scene_0(Scene):
 
         self.play(GrowFromCenter(estimation_rectangle))
         self.play(Write(estimation_rectangle_label), Write(temperature_estimation_label))
+        self.wait(3)
 
         ######################################################
 
@@ -1745,9 +1750,9 @@ class Scene_8(Scene):
         prior_plot = ImageMobject("assets/collisional/PriorPDF.png").scale(1)
         prior_plot.to_edge(2*RIGHT).to_edge(3.5*UP)
         prior_label =Tex("Prior", color = BLACK).scale(0.6)
-        prior_label.next_to(prior_plot, UP)
+        prior_label.next_to(prior_plot, UP).shift(0.15 * RIGHT)
 
-        self.play(FadeIn(prior_plot), Write(prior_label))
+        self.play(FadeIn(prior_plot), FadeIn(prior_label))
 
         #PDF grid
         PDFGrid = ImageMobject("assets/collisional/PDFGrid.png").scale(1)
@@ -1830,7 +1835,7 @@ class Scene_8(Scene):
         Estimators = ImageMobject("assets/collisional/Estimators.png").scale(1)
         Estimators.to_edge(RIGHT).to_edge(DOWN)
         Estimators_label =Tex("Estimated Temperature", color = BLACK).scale(0.6)
-        Estimators_label.next_to(Estimators, UP).shift(0.25 * LEFT)
+        Estimators_label.next_to(Estimators, UP).shift(0.0 * RIGHT)
 
         self.play(FadeIn(Estimators), Write(Estimators_label))
 
@@ -1846,7 +1851,7 @@ class Scene_8(Scene):
         self.wait(5)
 
         self.play(FadeOut(PDFGrid), FadeOut(PDF_List), FadeOut(PDFPlot), FadeOut(lines[0]), FadeOut(lines[1]), FadeOut(subtitle),
-                  FadeOut(Estimators), FadeOut(Estimators_label))
+                  FadeOut(Estimators), FadeOut(Estimators_label), FadeOut(prior_plot), FadeOut(prior_label))
 
 '''
 ###########
