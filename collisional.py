@@ -216,10 +216,11 @@ class Scene_1(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{The model}', x = 0, y = 3.5, color = royal_blue).scale(1.1)
+        title = tools().label(text = '\\underline{The Collisional Model}', x = 0, y = 3.5, color = royal_blue).scale(1.1)
+        ref = ImageMobject("assets/collisional/ref1.png").scale(1).to_edge(0.25*DOWN).to_edge(LEFT)
         Underline(title)
 
-        self.play(Write(title))
+        self.play(Write(title), FadeIn(ref))
         self.wait(1)
 
         ######################################################
@@ -458,8 +459,8 @@ class Scene_1(Scene):
         self.play(ShowCreation(d_highlight))
 
         # Highlight
-        d_highlight = tools().label(text = 'Detection Record', x = -4.6, y = 1, color = royal_blue).scale(1)
-        self.play(Write(d_highlight))
+        d_highlight_label = tools().label(text = 'Detection Record', x = -4.6, y = 1, color = royal_blue).scale(1)
+        self.play(Write(d_highlight_label))
 
         ######################################################
 
@@ -469,13 +470,13 @@ class Scene_1(Scene):
         self.wait(1)
 
         # Hightlights the stroboscopic map
-        d_highlight = Rectangle(width = 3.75, height = .75, color = crimson)
-        tools().mob_pos(d_highlight, x = 0, y = -3)
-        self.play(ShowCreation(d_highlight))
+        map_highlight = Rectangle(width = 3.75, height = .75, color = crimson)
+        tools().mob_pos(map_highlight, x = 0, y = -3)
+        self.play(ShowCreation(map_highlight))
 
         # Highlight
-        d_highlight = tools().label(text = 'Stroboscopic Map', x = 0, y = -3.75, color = crimson).scale(.5)
-        self.play(Write(d_highlight))
+        map_highlight_label = Tex('Stroboscopic Map', color = crimson).scale(.5).next_to(map_highlight, LEFT)
+        self.play(Write(map_highlight_label))
 
         ######################################################
 
@@ -491,7 +492,7 @@ class Scene_2(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = 'The Receipt', x = 0, y = 3, color = royal_blue).scale(2)
+        title = tools().label(text = 'The Receipt', x = 0, y = 3, color = royal_blue).scale(1.1)
         title = Underline(title)
         subtitle = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
 
@@ -712,6 +713,7 @@ class Scene_4(Scene):
         question[3].set_color(royal_blue)
 
         self.play(Write(question))
+        self.wait(2)
 
         ######################################################
 
@@ -723,6 +725,7 @@ class Scene_4(Scene):
         )
 
         self.play(Write(bayes))
+        self.wait(2)
 
         # Bayes Theorem
         bayes2 = MathTex(
@@ -732,6 +735,7 @@ class Scene_4(Scene):
         )
         bayes2.align_to(bayes, DOWN).shift(2 * DOWN)
         self.play(Write(bayes2))
+        self.wait(2)
         self.play(FadeOut(bayes))
 
         # Explanation 1
@@ -742,7 +746,7 @@ class Scene_4(Scene):
 
         # Bayes Theorem
         bayes3 = MathTex(
-            "P(H|E)={ P(E|H)P(H) \\over P(H)}",
+            "P(H|E)={ P(E|H)P(H) \\over P(E)}",
             color = BLACK,
             tex_to_color_map={r"H": crimson, r"E": royal_blue}
         )
@@ -755,7 +759,7 @@ class Scene_4(Scene):
         bayes_explanation2[1].set_color(crimson)
         bayes_explanation2[3].set_color(royal_blue)
         self.play(Write(bayes_explanation2))
-        self.wait(1)
+        self.wait(2)
 
         # Explanation 3
         bayes_explanation3 = Tex(r'Here, we consider the parameter, the ', r'temperature', ' and the observed ', r'data', x = 0, y = 1, color = BLACK).scale(0.75)
@@ -797,7 +801,7 @@ class Scene_4(Scene):
         framebox2_label = Tex('Likelihood', color = crimson).scale(0.7)
         framebox2_label.next_to(framebox2, UP)
         self.play(ReplacementTransform(framebox1, framebox2), Write(framebox2_label), FadeOut(framebox1_label))
-        self.wait(1)
+        self.wait(2)
 
         bayes_explanation6 = Tex(r'How likely we are of observing D at a certain temperature T', color = BLACK).scale(0.75)
         bayes_explanation6.move_to(-3 * UP)
@@ -809,7 +813,7 @@ class Scene_4(Scene):
         framebox3_label = Tex('Normalization', color = crimson).scale(0.7)
         framebox3_label.next_to(framebox3, RIGHT)
         self.play(ReplacementTransform(framebox2, framebox3), Write(framebox3_label), FadeOut(framebox2_label))
-        self.wait(1)
+        self.wait(2)
 
         bayes_explanation7 = Tex(r'How likely we are of observing D, but \emph{irrespective} of T: a marginal distribution', color = BLACK).scale(0.75)
         bayes_explanation7.move_to(-3 * UP)
@@ -821,7 +825,7 @@ class Scene_4(Scene):
         framebox4_label = Tex('Posterior', color = crimson).scale(0.7)
         framebox4_label.next_to(framebox4, UP)
         self.play(ReplacementTransform(framebox3, framebox4), Write(framebox4_label), FadeOut(framebox3_label))
-        self.wait(1)
+        self.wait(2)
 
         bayes_explanation8 = Tex(r'Our updated state-of-knowledge of the system, after acquiring data. If we got D,\
                                  what are the chances that the temperature is T?', color = BLACK).scale(0.75)
