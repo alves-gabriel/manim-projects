@@ -857,7 +857,7 @@ class Scene_5(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{An example}', x = 0, y = 3, color = royal_blue).scale(2)
+        title = tools().label(text = '\\underline{An example}', x = 0, y = 3, color = royal_blue).scale(1.1)
         Underline(title)
         subtitle = tools().label(text = 'Qubit Thermal State', x = -4.55, y = 2, color = royal_blue).scale(1)
 
@@ -988,7 +988,7 @@ class Scene_5(Scene):
         # First outcome
         d_record = []
         d_record.append(MathTex("X_1 = 0", color = royal_blue).scale(0.7))
-        d_record[0].align_to(distribution_text, DOWN)
+        d_record[0].align_to(distribution_text, DOWN).align_to(distribution_text, LEFT)
         self.play(FadeIn(d_record[0]))
 
         # Updating explanation
@@ -1051,8 +1051,9 @@ class Scene_5(Scene):
 
         # Initialization of the objects
         estimator_triangle.move_to(1 * RIGHT -3 * UP),
-        self.add(estimator_triangle,decimal, estimator_line)
-        self.play(FadeIn(estimator_triangle),FadeIn(estimator_line),FadeIn(decimal))
+        self.add(estimator_triangle, estimator_line)
+        self.play(FadeIn(estimator_triangle),FadeIn(estimator_line))
+        # self.play(FadeIn(FadeIn(decimal))), I'm commenting the decimal out for aesthetics reasons
 
         ######################################################
 
