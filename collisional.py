@@ -987,7 +987,7 @@ class Scene_5(Scene):
 
         # First outcome
         d_record = []
-        d_record.append(MathTex("X_1 = 0", color = royal_blue).scale(0.7))
+        d_record.append(MathTex("X_1 = 0", color = ORANGE).scale(0.7))
         d_record[0].align_to(distribution_text, DOWN).align_to(distribution_text, LEFT)
         self.play(FadeIn(d_record[0]))
 
@@ -1063,7 +1063,7 @@ class Scene_5(Scene):
         self.play(FadeOut(explanation5), Write(explanation6))
 
         # Second outcome
-        d_record.append(MathTex("X_2 = 0", color = royal_blue).scale(0.7))
+        d_record.append(MathTex("X_2 = 0", color = ORANGE).scale(0.7))
         d_record[1].next_to(d_record[0], RIGHT)
         self.play(FadeIn(d_record[1]))
         self.wait(5)
@@ -1169,7 +1169,7 @@ class Scene_5(Scene):
         self.wait(2)
 
         # Third outcome
-        d_record.append(MathTex("X_4 = 0", color = royal_blue).scale(0.7))
+        d_record.append(MathTex("X_4 = 0", color = ORANGE).scale(0.7))
         d_record[3].next_to(d_record[2], RIGHT)
         self.play(FadeIn(d_record[3]))
         self.wait(2)
@@ -1501,6 +1501,7 @@ class Scene_7(Scene):
         lines.append(tools().label(text = r'$\bullet$ $\sigma$ is parameter-dependent (in this framework)', color = BLACK).scale(0.6).next_to(CR_Bound, DOWN).align_to(subtitle2, LEFT))
         self.play(FadeIn(lines[4]))
 
+        '''
         #  Several trajectories
         num_trajectories = 5
         Var_plot_random = VGroup(*[ParametricFunction(lambda t: np.array([t, 3 - np.log((t+1)/4 + abs(random.gauss(0,.1))),0]),
@@ -1515,6 +1516,7 @@ class Scene_7(Scene):
         for i in range(num_trajectories):
             self.play(ShowCreation(Var_plot_random[i]))
         self.wait(2)
+        '''
 
         lines.append(tools().label(text = r'$\bullet$ Assumes unbiased estimators - it is restrictive', color = BLACK).scale(0.6).next_to(lines[4], DOWN).align_to(subtitle2, LEFT))
         lines.append(tools().label(text = r'$\bullet$ What role does the prior plays here?', color = BLACK).scale(0.6).next_to(lines[5], DOWN).align_to(subtitle2, LEFT))
@@ -1535,7 +1537,7 @@ class Scene_7(Scene):
         self.play(FadeOut(subtitle2), FadeOut(lines[2]), FadeOut(lines[3]), FadeOut(lines[4]), FadeOut(lines[5]), FadeOut(lines[6]),
                   FadeOut(CR_Bound), FadeOut(wrong_line1), FadeOut(wrong_line2))
 
-        self.play(FadeOut(axis[0]),FadeOut(axis[1]),FadeOut(CR_plot),FadeOut(Var_plot),FadeOut(Var_plot_random),
+        self.play(FadeOut(axis[0]),FadeOut(axis[1]),FadeOut(CR_plot),FadeOut(Var_plot),
                   FadeOut(xlabel), FadeOut(ylabel))
 
         ######################################################
