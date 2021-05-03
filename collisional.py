@@ -1,6 +1,7 @@
 from manim import *
 import numpy as np
 import random
+import copy
 
 '''
 Command to concatenate all the scenes together:
@@ -1491,15 +1492,30 @@ class Scene_7(Scene):
 
         # Variance example
         variance_scaling_ex = lambda t: np.array([t, 3 - np.log((t+1)/4),0])
-        Var_plot = ParametricFunction(variance_scaling_ex, t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1)
-        tools().mob_pos(Var_plot.scale(1), x = 2.25, y = -3.25)
+        Var_plot = VGroup(ParametricFunction(variance_scaling_ex, t_min = 0.01, t_max = 3.5, color = crimson, fill_opacity=0).scale(1),
+                          ParametricFunction(variance_scaling_ex, t_min = 0.01, t_max = 3.5, color = mediumseagreen, fill_opacity=0).scale(1).shift(0.25*UP),
+                          ParametricFunction(variance_scaling_ex, t_min = 0.1, t_max = 3.5, color = ORANGE, fill_opacity=0).scale(1).shift(0.5*UP)
+        )
+
+        tools().mob_pos(Var_plot.scale(1), x = 2.25, y = -3)
         Var_plot.align_to(axis[1], LEFT).shift(UP + 0.2 * RIGHT)
-        self.play(ShowCreation(Var_plot))
+
+        Var_plot_label = VGroup(Tex("$T_0$", color = crimson).next_to(Var_plot[0], RIGHT).scale(0.3),
+                                Tex("$T_1$", color = mediumseagreen).next_to(Var_plot[1], RIGHT).scale(0.3),
+                                Tex("$T_2$", color = ORANGE).next_to(Var_plot[2], RIGHT).scale(0.3)
+        ).shift(0.75*DOWN + 0.2*LEFT)
+
+        # Draws the variance curves
+        self.play(ShowCreation(Var_plot[0]), FadeIn(Var_plot_label[0]))
         self.wait(2)
 
         # Variance explanation
         lines.append(tools().label(text = r'$\bullet$ $\sigma$ is parameter-dependent (in this framework)', color = BLACK).scale(0.6).next_to(CR_Bound, DOWN).align_to(subtitle2, LEFT))
         self.play(FadeIn(lines[4]))
+
+        self.play(ShowCreation(Var_plot[1]), FadeIn(Var_plot_label[1]))
+        self.play(ShowCreation(Var_plot[2]), FadeIn(Var_plot_label[2]))
+        self.wait(2)
 
         '''
         #  Several trajectories
@@ -1523,6 +1539,7 @@ class Scene_7(Scene):
 
         self.play(FadeIn(lines[5]))
         self.play(FadeIn(lines[6]))
+        self.wait(3)
 
         ######################################################
 
@@ -1537,7 +1554,7 @@ class Scene_7(Scene):
         self.play(FadeOut(subtitle2), FadeOut(lines[2]), FadeOut(lines[3]), FadeOut(lines[4]), FadeOut(lines[5]), FadeOut(lines[6]),
                   FadeOut(CR_Bound), FadeOut(wrong_line1), FadeOut(wrong_line2))
 
-        self.play(FadeOut(axis[0]),FadeOut(axis[1]),FadeOut(CR_plot),FadeOut(Var_plot),
+        self.play(FadeOut(axis[0]),FadeOut(axis[1]),FadeOut(CR_plot),FadeOut(Var_plot), FadeOut(Var_plot_label),
                   FadeOut(xlabel), FadeOut(ylabel))
 
         ######################################################
@@ -1546,11 +1563,11 @@ class Scene_7(Scene):
         subtitle3 = tools().label(text = 'Bayesian x Frequentist', color = royal_blue).scale(.9).next_to(lines[1], DOWN).align_to(subtitle, LEFT)
         self.play(FadeIn(subtitle3))
 
-        # Scients cokumn
+        # Scients column
         scientists = Group(*[ImageMobject("scientist.png").scale(0.075) for i in range (4)])
 
         for i in range(len(scientists)):
-            tools().mob_pos(scientists[i], x = -4, y = -i)
+            tools().mob_pos(scientists[i], x = -5, y = -i)
             self.play(FadeIn(scientists[i]))
         self.wait(2)
 
@@ -1569,16 +1586,21 @@ class Scene_7(Scene):
         self.wait(2)
 
         # Histogram axis
-        axis = show_axis(x0 = 1.5, y0 = -2.25, x_start = -0.1, y_start = -0.1, x_end = 3.25, y_end = 2.5)
+        axis = show_axis(x0 = 1.5-1, y0 = -2.25, x_start = -0.1, y_start = -0.1, x_end = 3.25, y_end = 2.5)
         self.play(ShowCreation(axis[0]), ShowCreation(axis[1]))
-        xlabel = tools().label(text = '$\hat{T}$', x = 5, y = -2.25, color = BLACK).scale(0.6)
-        ylabel = tools().label(text = 'Counts', x = 1.5, y = 0.5, color = BLACK).scale(0.6)
+        xlabel = tools().label(text = '$\hat{T}$', x = 5-1, y = -2.25, color = BLACK).scale(0.6)
+        ylabel = tools().label(text = 'Counts', x = 1.5-1, y = 0.5, color = BLACK).scale(0.6)
         self.play(FadeIn(xlabel), FadeIn(ylabel))
 
         # Histogram
         histogram_img = ImageMobject("histogram.png").scale(1)
-        histogram_img.move_to(3 * RIGHT - 1.425 * UP)
+        histogram_img.move_to(3 * RIGHT - 1.425 * UP - RIGHT)
         self.play(FadeIn(histogram_img))
+        self.wait(4)
+
+        # Integration
+        frequentist_integration = Tex("$\displaystyle{= \\int... P(\\boldsymbol{X})d\\boldsymbol{X}}$", color=BLACK).scale(.6).next_to(histogram_img, RIGHT).shift(0.75*RIGHT)
+        self.play(FadeIn(frequentist_integration))
         self.wait(4)
 
         # Variance indication
@@ -1610,7 +1632,7 @@ class Scene_7(Scene):
         #  About the two approaches - Frequentist Deletion
         self.play(FadeOut(subtitle3), FadeOut(scientists), FadeOut(arrows), FadeOut(detectors), FadeOut(detector_lines),
                   FadeOut(cases), FadeOut(histogram_arrow), FadeOut(axis[0]), FadeOut(axis[1]), FadeOut(histogram_img),
-                  FadeOut(xlabel), FadeOut(ylabel), FadeOut(var_arrow), FadeOut(var_text))
+                  FadeOut(xlabel), FadeOut(ylabel), FadeOut(var_arrow), FadeOut(var_text), FadeOut(frequentist_integration))
 
         ######################################################
 
@@ -1665,17 +1687,101 @@ class Scene_7(Scene):
         self.wait(2)
 
         # Repeated experiments explanation
-        bayes_explanation2 =  Tex(r'$\bullet$ The parameter $T$ is a random variable itself', color = BLACK).scale(0.6).shift(-2.5 * UP).align_to(subtitle3, LEFT)
-        bayes_explanation3 =  Tex(r'$\bullet$ And the estimator $\hat{T}$ is a random variable of $X_1, ..., X_N$', color = BLACK).scale(0.6).next_to(bayes_explanation2, DOWN).align_to(subtitle3, LEFT)
+        bayes_explanation2 =  Tex(r'$\bullet$ Tne posterior is conditioned on the outcomes: $P(\theta|X_N...X_1)$', color = BLACK).scale(0.6).shift(-2.5 * UP).align_to(subtitle3, LEFT)
+        bayes_explanation3 =  Tex(r'$\bullet$ We can also average over $\theta$ instead of averaging over the data', color = BLACK).scale(0.6).next_to(bayes_explanation2, DOWN).align_to(subtitle3, LEFT)
         self.play(FadeOut(bayes_explanation1), FadeIn(bayes_explanation2), FadeIn(bayes_explanation3))
         self.wait(2)
 
-        bayes_group = Group(posterior_plot, new_posterior_plot, axis[0], axis[1], bayes_explanation2, bayes_explanation3)
+        # Bayesian Integration
+        bayesian_integration = Tex("$\displaystyle{= \\int... P(\\theta|\\boldsymbol{X})d\\theta}$", color=BLACK).scale(.6).next_to(new_posterior_plot, RIGHT).shift(0.75*RIGHT)
+        self.play(FadeIn(bayesian_integration))
+        self.wait(4)
+
+        bayes_group = Group(posterior_plot, new_posterior_plot, axis[0], axis[1], bayes_explanation2, bayes_explanation3, bayesian_integration)
 
         ######################################################
 
-        #  About the two approaches - Bayesian Deletion
+        #  About the two approaches - Full Bayesian Deletion
         self.play(FadeOut(scientist_group), FadeOut(bayes_group))
+
+        ######################################################
+
+        # Bayesian Full Picture
+
+        # Scientist and detector group
+        scientist_group = Group(
+                                copy.copy(scientist),
+                                copy.copy(scientist).shift(UP),
+                                copy.copy(scientist).shift(DOWN)
+        )
+
+        tools().mob_pos(scientist_group, x = -4, y = -0.5)
+
+        arrow_group = VGroup(
+                            copy.deepcopy(arrow),
+                            copy.deepcopy(arrow).shift(UP),
+                            copy.deepcopy(arrow).shift(DOWN)
+        )
+
+        self.play(FadeIn(scientist_group),FadeIn(arrow_group))
+
+        detector_group = Group(
+                            copy.copy(detector),
+                            copy.copy(detector).shift(UP),
+                            copy.copy(detector).shift(DOWN)
+        )
+
+        detector_line = Line(detector.get_center(), detector.get_center() + 0.2*UP).set_color(RED)
+        detector_line_group = VGroup(
+                                copy.copy(detector_line),
+                                copy.copy(detector_line).shift(UP),
+                                copy.copy(detector_line).shift(DOWN)
+        )
+
+        self.play(FadeIn(detector_group), FadeIn(detector_line_group))
+        self.wait(1)
+
+        arrow3_group = VGroup(
+                            copy.deepcopy(arrow3),
+                            copy.deepcopy(arrow3).shift(UP),
+                            copy.deepcopy(arrow3).shift(DOWN)
+        )
+
+        axis = show_axis(x0 = -1, y0 = -1, x_start = -0.1, y_start = -0.1, x_end = 1.25, y_end = 1.0)
+        axis_group = Group(
+                            copy.deepcopy(axis[0]),
+                            copy.deepcopy(axis[0]).shift(1.2 * UP),
+                            copy.deepcopy(axis[0]).shift(1.2 *DOWN),
+                            copy.deepcopy(axis[1]),
+                            copy.deepcopy(axis[1]).shift(1.2 * UP),
+                            copy.deepcopy(axis[1]).shift(1.2 *DOWN),
+
+        )
+
+        posterior_plot = ParametricFunction(tools().gaussian, t_min = 0.5, t_max = 3.5, color = crimson, fill_opacity=0).scale(0.5)
+        tools().mob_pos(posterior_plot.scale(1), x = 2.25, y = -3.25)
+        posterior_plot.align_to(axis[1], LEFT).align_to(axis[0], DOWN).shift(0.2 * UP + 0.2 * RIGHT)
+
+        posterior_plot_group = Group(
+                                    copy.deepcopy(posterior_plot),
+                                    copy.deepcopy(posterior_plot).shift(1.2 * UP),
+                                    copy.deepcopy(posterior_plot).shift(1.2 *DOWN),
+        )
+
+        self.play(FadeIn(arrow3_group), FadeIn(axis_group), FadeIn(posterior_plot_group))
+        self.wait(1)
+
+        # Full Bayesian Integration
+        bayesian_integration = Tex("$\displaystyle{= \\int P(\\boldsymbol{X} ) d\\boldsymbol{X} \\int... P(\\theta|\\boldsymbol{X})d\\theta}$", color=BLACK).scale(.6).next_to(new_posterior_plot, RIGHT).shift(1.25*RIGHT)
+        self.play(FadeIn(bayesian_integration))
+        self.wait(4)
+
+        full_bayes_group = Group(scientist_group, arrow_group, detector_group, detector_line_group, arrow3_group, axis_group, posterior_plot_group)
+
+        ######################################################
+
+        #  About the two approaches - Full Bayesian Deletion
+        self.play(FadeOut(scientist_group), FadeOut(full_bayes_group))
 
         ######################################################
 
@@ -1684,7 +1790,7 @@ class Scene_7(Scene):
         self.play(FadeIn(subtitle4))
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ MSE $\rightarrow$ new figure of merit', color = BLACK).scale(0.6).next_to(subtitle4, DOWN).align_to(subtitle4, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ MSE $\rightarrow$ new figure of merit (average over $\boldsymbol{X}$ \emph{and} $\theta$)', color = BLACK).scale(0.6).next_to(subtitle4, DOWN).align_to(subtitle4, LEFT))
         lines.append(tools().label(text = r'$\bullet$ We can incorporate information from the Prior', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle4, LEFT))
         self.play(FadeIn(lines[0]))
         self.play(FadeIn(lines[1]))
