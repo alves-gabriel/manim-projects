@@ -1711,43 +1711,47 @@ class Scene_7(Scene):
         # Scientist and detector group
         scientist_group = Group(
                                 copy.copy(scientist),
-                                copy.copy(scientist).shift(UP),
-                                copy.copy(scientist).shift(DOWN)
+                                copy.copy(scientist).shift(1.2 * UP),
+                                copy.copy(scientist).shift(1.2 * DOWN)
         )
-
         tools().mob_pos(scientist_group, x = -4, y = -0.5)
 
+        # Arrows group
         arrow_group = VGroup(
                             copy.deepcopy(arrow),
-                            copy.deepcopy(arrow).shift(UP),
-                            copy.deepcopy(arrow).shift(DOWN)
+                            copy.deepcopy(arrow).shift(1.2 * UP),
+                            copy.deepcopy(arrow).shift(1.2 * DOWN)
         )
 
         self.play(FadeIn(scientist_group),FadeIn(arrow_group))
 
+        # Detector group
         detector_group = Group(
                             copy.copy(detector),
-                            copy.copy(detector).shift(UP),
-                            copy.copy(detector).shift(DOWN)
+                            copy.copy(detector).shift(1.2 * UP),
+                            copy.copy(detector).shift(1.2 * DOWN)
         )
 
+        # Detector needle group
         detector_line = Line(detector.get_center(), detector.get_center() + 0.2*UP).set_color(RED)
         detector_line_group = VGroup(
                                 copy.copy(detector_line),
-                                copy.copy(detector_line).shift(UP),
-                                copy.copy(detector_line).shift(DOWN)
+                                copy.copy(detector_line).shift(1.2 * UP),
+                                copy.copy(detector_line).shift(1.2 * DOWN)
         )
 
+        # Detector arrow group
         self.play(FadeIn(detector_group), FadeIn(detector_line_group))
         self.wait(1)
 
         arrow3_group = VGroup(
                             copy.deepcopy(arrow3),
-                            copy.deepcopy(arrow3).shift(UP),
-                            copy.deepcopy(arrow3).shift(DOWN)
+                            copy.deepcopy(arrow3).shift(1.2 * UP),
+                            copy.deepcopy(arrow3).shift(1.2 * DOWN)
         )
 
-        axis = show_axis(x0 = -1, y0 = -1, x_start = -0.1, y_start = -0.1, x_end = 1.25, y_end = 1.0)
+        # Axis group
+        axis = show_axis(x0 = -1, y0 = -1, x_start = -0.1, y_start = -0.1, x_end = 2.0, y_end = 1.0)
         axis_group = Group(
                             copy.deepcopy(axis[0]),
                             copy.deepcopy(axis[0]).shift(1.2 * UP),
@@ -1758,6 +1762,7 @@ class Scene_7(Scene):
 
         )
 
+        # Posterior Group
         posterior_plot = ParametricFunction(tools().gaussian, t_min = 0.5, t_max = 3.5, color = crimson, fill_opacity=0).scale(0.5)
         tools().mob_pos(posterior_plot.scale(1), x = 2.25, y = -3.25)
         posterior_plot.align_to(axis[1], LEFT).align_to(axis[0], DOWN).shift(0.2 * UP + 0.2 * RIGHT)
@@ -1772,16 +1777,18 @@ class Scene_7(Scene):
         self.wait(1)
 
         # Full Bayesian Integration
-        bayesian_integration = Tex("$\displaystyle{= \\int P(\\boldsymbol{X} ) d\\boldsymbol{X} \\int... P(\\theta|\\boldsymbol{X})d\\theta}$", color=BLACK).scale(.6).next_to(new_posterior_plot, RIGHT).shift(1.25*RIGHT)
-        self.play(FadeIn(bayesian_integration))
-        self.wait(4)
+        bayesian_integration = Tex("$\displaystyle{= \\int \\int... P(\\theta, \\boldsymbol{X})d\\theta d\\boldsymbol{X}}$", color=BLACK).scale(.7).next_to(new_posterior_plot, RIGHT).shift(.25*RIGHT)
+        bayes_explanation4 =  Tex(r'$\bullet$ We can also average over \emph{both} random variables $\theta$ and $\boldsymbol{X}$', color = BLACK).scale(0.6).next_to(bayes_explanation2, DOWN).align_to(subtitle3, LEFT)
 
-        full_bayes_group = Group(scientist_group, arrow_group, detector_group, detector_line_group, arrow3_group, axis_group, posterior_plot_group)
+        self.play(FadeIn(bayesian_integration), FadeIn(bayes_explanation4))
+        self.wait(4)
+        self.play(FadeOut(bayes_explanation4))
 
         ######################################################
 
         #  About the two approaches - Full Bayesian Deletion
-        self.play(FadeOut(scientist_group), FadeOut(full_bayes_group))
+        self.play(FadeOut(scientist_group), FadeOut(arrow_group), FadeOut(detector_group), FadeOut(detector_line_group), FadeOut(arrow3_group),
+                  FadeOut(axis_group), FadeOut(posterior_plot_group), FadeOut(bayesian_integration))
 
         ######################################################
 
@@ -1827,6 +1834,14 @@ class Scene_7(Scene):
         self.wait(2)
 
         ######################################################
+
+        # Highlight box
+        bayes_highlight = Rectangle(width = 12, height = 1, color = BLACK).to_edge(0.5*DOWN)
+        bayes_highlight = bayes_highlight.set_fill(royal_blue, opacity = 0.4)
+        self.play(ShowCreation(bayes_highlight))
+
+        bayes_highlight_explanation=tools().label(text=r"\textbf{Message:} we want a thermometer which is good for a wide range of temperatures $\rightarrow$ the Bayesian MSE is appropriate", color = BLACK).scale(0.6).move_to(bayes_highlight.get_center())
+        self.play(FadeIn(bayes_highlight_explanation))
 
         self.wait(5)
 
