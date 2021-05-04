@@ -1869,7 +1869,7 @@ class Scene_8(Scene):
         self.play(FadeIn(subtitle))
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ "Flat" prior: $P(T) = 1/(T_{max} - T_{min})$', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ "Flat" prior', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ $\tau_{SE} = 0.2$ ', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ Full SWAP: $\tau_{SA} = \frac{\pi}{2}$ ', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
@@ -1996,6 +1996,44 @@ class Scene_9(Scene):
 
         self.add(title)
         self.wait(1)
+
+        ######################################################
+
+        # About the experiments
+        subtitle = Tex('Plotting the error',color = royal_blue).scale(.9)
+        subtitle.next_to(title, DOWN).to_edge(LEFT)
+        self.play(FadeIn(subtitle))
+        lines = []
+
+        lines.append(tools().label(text = r'$\bullet$ The Bayesian Mean performs better than the MAP', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The expected CRB is different from the asymptotic Van Trees', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The estimator performance depends on the temperature', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
+
+        ######################################################
+
+        MSEPlot1 = ImageMobject("assets/collisional/VanTreesPlot1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
+        self.play(FadeIn(MSEPlot1))
+
+        MSEPlot2 = ImageMobject("assets/collisional/StochasticMSE1.png").scale(1).next_to(MSEPlot1, RIGHT)
+        self.play(FadeIn(MSEPlot2))
+
+        self.wait(5)
+
+        self.play(FadeOut(MSEPlot1), FadeOut(MSEPlot2))
+
+        ######################################################
+
+        lines.append(tools().label(text = r'$\bullet$ We fix the temperature for some tests $T_0 = 1.5 \Omega$', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        self.play(FadeIn(lines[-1]))
+
+        MSEPlot3 = ImageMobject("assets/collisional/mseBA1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
+        self.play(FadeIn(MSEPlot3))
+
+        MSEPlot4 = ImageMobject("assets/collisional/tSAPlot1.png").scale(1).next_to(MSEPlot3, RIGHT)
+        self.play(FadeIn(MSEPlot4))
+
+        self.wait(5)
 
         ######################################################
 
