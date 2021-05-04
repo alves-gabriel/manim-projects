@@ -9,3 +9,5 @@ file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene
 file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_7.mp4'
 file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_8.mp4'
 file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Scene_9.mp4'
+file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/Conclusion.mp4'
+file '/home/gabriel/github/manim-projects/media/videos/collisional/1080p60/References.mp4'

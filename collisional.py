@@ -493,8 +493,9 @@ class Scene_2(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = 'The Receipt', x = 0, y = 3, color = royal_blue).scale(1.1)
-        title = Underline(title)
+        title = tools().label(text = '\\underline{The Receipt}', x = 0, y = 3.5, color = royal_blue).scale(1.1)
+        Underline(title)
+
         subtitle = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
 
         # Text lines
@@ -638,7 +639,7 @@ class Scene_3(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{Thermometry}', x = 0, y = 3, color = royal_blue).scale(2)
+        title = tools().label(text = '\\underline{Thermometry}', x = 0, y = 3.0, color = royal_blue).scale(1.1)
         Underline(title)
         subtitle = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
         subtitle2 = tools().label(text = 'Parameter Estimation', x = -5, y = -2, color = royal_blue).scale(1)
@@ -700,7 +701,7 @@ class Scene_4(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{Bayes Theorem}', x = 0, y = 3, color = royal_blue).scale(2)
+        title = tools().label(text = '\\underline{Bayes Theorem}', x = 0, y = 3, color = royal_blue).scale(1.1)
         Underline(title)
         subtitle = tools().label(text = 'The Question', x = -5, y = 2, color = royal_blue).scale(1)
 
@@ -2007,8 +2008,7 @@ class Scene_9(Scene):
 
         lines.append(tools().label(text = r'$\bullet$ The Bayesian Mean performs better than the MAP', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         lines.append(tools().label(text = r'$\bullet$ The expected CRB is different from the asymptotic Van Trees', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ The estimator performance depends on the temperature', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
+        self.play(FadeIn(lines[0]), FadeIn(lines[1]))
 
         ######################################################
 
@@ -2024,17 +2024,106 @@ class Scene_9(Scene):
 
         ######################################################
 
-        lines.append(tools().label(text = r'$\bullet$ We fix the temperature for some tests $T_0 = 1.5 \Omega$', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The estimator performance depends on the temperature', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[-1]))
 
         MSEPlot3 = ImageMobject("assets/collisional/mseBA1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
         self.play(FadeIn(MSEPlot3))
 
-        MSEPlot4 = ImageMobject("assets/collisional/tSAPlot1.png").scale(1).next_to(MSEPlot3, RIGHT)
+        self.wait(5)
+
+        self.play(FadeOut(MSEPlot3))
+
+        ######################################################
+
+        lines.append(tools().label(text = r'$\bullet$ We fix the temperature for some tests $T_0 = 1.5 \Omega$', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        self.play(FadeIn(lines[-1]))
+
+        MSEPlot4 = ImageMobject("assets/collisional/tSAPlot1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
         self.play(FadeIn(MSEPlot4))
+
+        MSEPlot5 = ImageMobject("assets/collisional/tSAPlot2.png").scale(1).next_to(MSEPlot4, RIGHT)
+        self.play(FadeIn(MSEPlot5))
+
 
         self.wait(5)
 
         ######################################################
+
+        self.wait(5)
+
+'''
+##############
+##CONCLUSION##
+##############
+'''
+
+class Conclusion(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Conclusion}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        Underline(title)
+
+        self.add(title)
+        self.wait(1)
+
+        ######################################################
+
+        subtitle = Tex('---',color = WHITE).scale(.9)
+        subtitle.next_to(title, DOWN).to_edge(LEFT)
+        self.play(FadeIn(subtitle))
+        lines = []
+
+        lines.append(tools().label(text = r'$\bullet$ Collisional Models are a natural platform to perform thermometry', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ We can use Bayesian inference to explicitly construct estimators', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The bayesian framework provides a concise and practical formalism', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'to evaluate their performance', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ We can construct bayesian analogues to frequentist bounds', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'(e.g. Cramer Rao $\rightarrow$ Van Trees)', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+
+        self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]), FadeIn(lines[3]), FadeIn(lines[4]), FadeIn(lines[5]))
+
+        self.wait(5)
+
+'''
+##############
+##REFERENCES##
+##############
+'''
+
+class References(Scene):
+    def construct(self):
+
+        # Title
+        title = tools().label(text = '\\underline{Thank you!}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        Underline(title)
+
+        self.add(title)
+
+        ######################################################
+
+        # About the experiments
+        subtitle = Tex('References',color = royal_blue).scale(.9)
+        subtitle.next_to(title, DOWN).to_edge(LEFT)
+        self.add(subtitle)
+
+        #references_img = ImageMobject("assets/collisional/references.png").scale(2).next_to(subtitle, DOWN).align_to(subtitle, LEFT)
+        #self.add(references_img)
+
+        lines=[]
+        lines.append(Text('Edwin  T.  Jaynes  and  G.  Larry  Bretthorst.Probability  theory:   the  logic  ofscience.  Cambridge Univ. Press, 2019', color = BLACK).scale(0.3).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(Text('Stella  Seah,  Stefan  Nimmrichter,  Daniel  Grimmer,  Jader  P.  Santos,  ValerioScarani, and Gabriel T. Landi. Collisional quantum thermometry.Phys. Rev.Lett., 123:180602, Oct 2019', color = BLACK).scale(0.3).next_to(lines[-1], DOWN).align_to(lines[-1], LEFT))
+        lines.append(Text('MP Shutzenberger.  A generalization of the fr ́echet-cram ́er inequality to thecase of bayes estimation.Bull. Amer. Math. Soc, 63(142), 1957.', color = BLACK).scale(0.3).next_to(lines[-1], DOWN).align_to(lines[-1], LEFT))
+        lines.append(Text('Harry L. Van. Trees and Kristine L. Bell.Detection Estimation and Modula-tion Theory, 2nd Edition, Part I.  John Wiley & Sons, 2013.', color = BLACK).scale(0.3).next_to(lines[-1], DOWN).align_to(lines[-1], LEFT))
+
+        self.add(lines[0], lines[1], lines[2], lines[3])
+
+        ######################################################
+
+        # Group Logo
+        group_logo = ImageMobject("logo.png").scale(0.75)
+        group_logo.to_edge(RIGHT, buff=1.5)
+        self.add(group_logo)
 
         self.wait(5)
