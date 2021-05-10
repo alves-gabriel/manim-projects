@@ -19,6 +19,7 @@ config.background_color = WHITE
 mediumseagreen = '#3CB371'
 royal_blue = '#4169E1'
 crimson = '#DC143C'
+royal_purple = '#7851a9'
 
 class tools(Scene):
 
@@ -111,45 +112,60 @@ class Scene_0(Scene):
 
         ######################################################
 
-        # About estimators
+        # About thermometry
         subtitle = tools().label(text = 'How to measure temperature?', x = -3, y = 2, color = royal_blue).scale(.9)
         self.play(FadeIn(subtitle))
         self.wait(2)
 
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ The temperature is not an observable', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ It must be \emph{indirectly} inferred', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ Commonly its dependence is encoded into operators and/or states', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ The data processing in itself is a challenge', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Important for ultra-low temperature quantum experiments', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The temperature is not an observable', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ It must be \emph{indirectly} inferred', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Commonly its dependence is encoded into operators and states', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Data processing is a challenge in itself', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
 
         # Diagram Explanation
         self.play(FadeIn(lines[0]))
         self.wait(1)
-        self.play(FadeIn(lines[1]))
+        self.play(FadeIn(lines[1]), FadeIn(lines[2]))
         self.wait(3)
 
         # Draws the digram - model
-        model_rectangle = RoundedRectangle(width = 4, height = 2.5, color = GRAY).scale(1)
-        model_rectangle.shift(-4.5 * RIGHT).align_to(lines[3], UP).shift(-UP)
+        model_rectangle = RoundedRectangle(width = 5.5, height = 2.5, color = GRAY).scale(1)
+        model_rectangle.shift(-4.0 * RIGHT).align_to(lines[4], UP).shift(-0.5*UP)
         model_rectangle_label = Tex("Model", color = GRAY).next_to(model_rectangle, UP, buff = -0.5)
 
         self.add(model_rectangle)
         self.play(GrowFromEdge(model_rectangle, LEFT))
         self.play(Write(model_rectangle_label))
 
+        # Draws the digram - bath
+        bath_rectangle = RoundedRectangle(width = 2, height = 1.25, color = mediumseagreen).scale(1)
+        bath_rectangle.set_fill(color = mediumseagreen, opacity = 0.25).move_to(model_rectangle.get_center()).shift(1.5*LEFT)
+        bath_rectangle_label = Tex("Bath", color = mediumseagreen).move_to(bath_rectangle.get_center())
+
+        self.add(bath_rectangle)
+        self.play(GrowFromEdge(bath_rectangle, LEFT))
+        self.play(Write(bath_rectangle_label))
+
         # Draws the digram - ancilla
         ancilla_rectangle = RoundedRectangle(width = 2, height = 1.25, color = crimson).scale(1)
-        ancilla_rectangle.set_fill(color = crimson, opacity = 0.25).move_to(model_rectangle.get_center())
+        ancilla_rectangle.set_fill(color = crimson, opacity = 0.25).move_to(model_rectangle.get_center()).shift(1.5*RIGHT)
         ancilla_rectangle_label = Tex("Ancilla", color = crimson).scale(0.7).next_to(ancilla_rectangle, UP, buff = -0.5)
         temperature_label = MathTex("T", color = crimson).scale(0.5).move_to(ancilla_rectangle.get_center()).shift(-0.2*UP)
+
+        # Interaction
+        interaction = ParametricFunction(lambda t:np.array((t, np.sin(25*t)/8, 0)), t_min = 0, t_max = 1, color = BLACK, fill_opacity=0)
+        interaction.move_to(model_rectangle.get_center())
+        self.play(ShowCreation(interaction))
 
         self.play(GrowFromCenter(ancilla_rectangle))
         self.play(Write(ancilla_rectangle_label),Write(temperature_label))
         self.wait(3)
 
         # Diagram Explanation
-        self.play(FadeIn(lines[2]))
+        self.play(FadeIn(lines[3]))
         self.wait(3)
 
         ######################################################
@@ -160,7 +176,7 @@ class Scene_0(Scene):
         arrow1_label = Tex("Protocol", color = BLACK).scale(0.75).next_to(arrow1, DOWN)
         self.play(FadeIn(arrow1), Write(arrow1_label))
 
-        data_rectangle = RoundedRectangle(width = 2, height = 1, color = royal_blue).scale(1)
+        data_rectangle = RoundedRectangle(width = 1.5, height = 1, color = royal_blue).scale(1)
         data_rectangle.set_fill(color = royal_blue, opacity = 0.25).next_to(arrow1, RIGHT)
         data_rectangle_label = Tex("Data", color = royal_blue).scale(0.75).move_to(data_rectangle.get_center())
         self.play(GrowFromCenter(data_rectangle))
@@ -175,10 +191,10 @@ class Scene_0(Scene):
         arrow2_label = Tex("Processing", color = BLACK).scale(0.75).next_to(arrow2, DOWN)
         self.play(FadeIn(arrow2), Write(arrow2_label))
 
-        estimation_rectangle = RoundedRectangle(width = 2, height = 1, color = mediumseagreen).scale(1)
-        estimation_rectangle.set_fill(color = mediumseagreen, opacity = 0.25).next_to(arrow2, RIGHT)
-        estimation_rectangle_label = Tex("Estimation", color = mediumseagreen).scale(0.75).next_to(estimation_rectangle, UP, buff = -0.5)
-        temperature_estimation_label = MathTex("\hat{T}", color = mediumseagreen).scale(0.5).move_to(estimation_rectangle.get_center()).shift(-0.2*UP)
+        estimation_rectangle = RoundedRectangle(width = 2, height = 1, color = royal_purple).scale(1)
+        estimation_rectangle.set_fill(color = royal_purple, opacity = 0.25).next_to(arrow2, RIGHT)
+        estimation_rectangle_label = Tex("Estimation", color = royal_purple).scale(0.75).next_to(estimation_rectangle, UP, buff = -0.5)
+        temperature_estimation_label = MathTex("\hat{T}", color = royal_purple).scale(0.5).move_to(estimation_rectangle.get_center()).shift(-0.2*UP)
 
         self.play(GrowFromCenter(estimation_rectangle))
         self.play(Write(estimation_rectangle_label), Write(temperature_estimation_label))
@@ -187,17 +203,17 @@ class Scene_0(Scene):
         ######################################################
 
         # Rectangle highlight
-        diagram_highlight1 = Rectangle(width = 8.6, height = 3, color = crimson).scale(1)
-        tools().mob_pos(diagram_highlight1, x = -2.375, y = -2.25)
+        diagram_highlight1 = Rectangle(width = 9.5, height = 2.8, color = crimson).scale(1)
+        tools().mob_pos(diagram_highlight1, x = -2.1, y = -2.3)
         self.play(ShowCreation(diagram_highlight1))
         self.wait(2)
 
         # Diagram Explanation
-        self.play(FadeIn(lines[3]))
+        self.play(FadeIn(lines[4]))
         self.wait(2)
 
-        diagram_highlight2 = Rectangle(width = 6.75, height = 3, color = crimson).scale(1)
-        tools().mob_pos(diagram_highlight2, x = 3, y = -2.25)
+        diagram_highlight2 = Rectangle(width = 6, height = 2.0, color = crimson).scale(1)
+        tools().mob_pos(diagram_highlight2, x = 3.95, y = -2.3)
         self.play(ReplacementTransform(diagram_highlight1, diagram_highlight2))
 
         highlight_label = Tex("Our main objective!", color = crimson).scale(0.5).next_to(diagram_highlight2, UP)
