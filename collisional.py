@@ -738,9 +738,9 @@ class Scene_4(Scene):
 
         #Bayes Theorem proof
         bayes = MathTex(
-            "P(x_1,x_2)=P(x_1|x_2)P(x_2)=P(x_2|x_1)P(x_1)",
+            "P(T, D)=P(T|D)P(D)=P(D|T)P(T)",
             color = BLACK,
-            tex_to_color_map={r"x_1": crimson, r"x_2": royal_blue}
+            tex_to_color_map={r"T": crimson, r"D": royal_blue}
         )
 
         self.play(Write(bayes))
@@ -748,63 +748,30 @@ class Scene_4(Scene):
 
         # Bayes Theorem
         bayes2 = MathTex(
-            "P(x_1|x_2)={ P(x_2|x_1)P(x_1) \\over P(x_2)}",
-            color = BLACK,
-            tex_to_color_map={r"x_1": crimson, r"x_2": royal_blue}
-        )
-        bayes2.align_to(bayes, DOWN).shift(2 * DOWN)
-        self.play(Write(bayes2))
-        self.wait(2)
-        self.play(FadeOut(bayes))
-
-        # Explanation 1
-        bayes_explanation = Tex(r'We usually speak in terms of ', r'hypothesis', ' and ', r'evidence', x = 0, y = 1, color = BLACK).scale(0.75)
-        bayes_explanation[1].set_color(crimson)
-        bayes_explanation[3].set_color(royal_blue)
-        self.play(Write(bayes_explanation))
-
-        # Bayes Theorem
-        bayes3 = MathTex(
-            "P(H|E)={ P(E|H)P(H) \\over P(E)}",
-            color = BLACK,
-            tex_to_color_map={r"H": crimson, r"E": royal_blue}
-        )
-        bayes3.align_to(bayes, DOWN).shift(2 * DOWN)
-        self.play(FadeOut(bayes2), FadeIn(bayes3))
-
-        # Explanation 2
-        bayes_explanation2 = Tex(r'i.e. what are the odds of confirming the ', r'hypothesis', ' given the ', r'evidence','?', color = BLACK).scale(0.75)
-        bayes_explanation2.move_to(-3 * UP)
-        bayes_explanation2[1].set_color(crimson)
-        bayes_explanation2[3].set_color(royal_blue)
-        self.play(Write(bayes_explanation2))
-        self.wait(2)
-
-        # Explanation 3
-        bayes_explanation3 = Tex(r'Here, we consider the parameter, the ', r'temperature', ' and the observed ', r'data', x = 0, y = 1, color = BLACK).scale(0.75)
-        bayes_explanation3[1].set_color(crimson)
-        bayes_explanation3[3].set_color(royal_blue)
-        self.play(FadeOut(bayes_explanation), Write(bayes_explanation3))
-
-        # Bayes Theorem
-        bayes4 = MathTex(
             "P(T|D)","={"," P(D|T)","P(T)"," \\over"," P(D)}",
             color = BLACK,
             tex_to_color_map={r"T": crimson, r"D": royal_blue}
         )
-        bayes4.align_to(bayes, DOWN).shift(2 * DOWN)
-        self.play(FadeOut(bayes3), FadeIn(bayes4))
+        bayes2.align_to(bayes, DOWN).shift(2 * DOWN)
+        self.play(Write(bayes2))
+        self.wait(2)
+
+        # Explanation
+        bayes_explanation = Tex(r'Here, we consider the parameter - the ', r'temperature', ' - and the observed ', r'data', x = 0, y = 1, color = BLACK).scale(0.75)
+        bayes_explanation[1].set_color(crimson)
+        bayes_explanation[3].set_color(royal_blue)
+        self.play(FadeOut(bayes), Write(bayes_explanation))
 
         # Explanation 4
         bayes_explanation4 = Tex(r'What are the odds of measuring a certain ', r'temperature', ' given the ', r'data/measurement record','?', color = BLACK).scale(0.75)
         bayes_explanation4.move_to(-3 * UP)
         bayes_explanation4[1].set_color(crimson)
         bayes_explanation4[3].set_color(royal_blue)
-        self.play(FadeOut(bayes_explanation2), Write(bayes_explanation4))
+        self.play(Write(bayes_explanation4))
         self.wait(4)
 
         # Highlights - Prior
-        framebox1 = SurroundingRectangle(bayes4[11:14], buff = .05).set_color(crimson)
+        framebox1 = SurroundingRectangle(bayes2[11:14], buff = .05).set_color(crimson)
         framebox1_label = Tex('Prior', color = crimson).scale(0.7)
         framebox1_label.next_to(framebox1, UP)
         self.play(ShowCreation(framebox1), Write(framebox1_label))
@@ -816,7 +783,7 @@ class Scene_4(Scene):
         self.wait(4)
 
         # Highlights - Likelihood
-        framebox2 = SurroundingRectangle(bayes4[6:11], buff = .05).set_color(crimson)
+        framebox2 = SurroundingRectangle(bayes2[6:11], buff = .05).set_color(crimson)
         framebox2_label = Tex('Likelihood', color = crimson).scale(0.7)
         framebox2_label.next_to(framebox2, UP)
         self.play(ReplacementTransform(framebox1, framebox2), Write(framebox2_label), FadeOut(framebox1_label))
@@ -828,7 +795,7 @@ class Scene_4(Scene):
         self.wait(4)
 
         # Highlights - Normalization
-        framebox3 = SurroundingRectangle(bayes4[15:18], buff = .05).set_color(crimson)
+        framebox3 = SurroundingRectangle(bayes2[15:18], buff = .05).set_color(crimson)
         framebox3_label = Tex('Normalization', color = crimson).scale(0.7)
         framebox3_label.next_to(framebox3, RIGHT)
         self.play(ReplacementTransform(framebox2, framebox3), Write(framebox3_label), FadeOut(framebox2_label))
@@ -840,7 +807,7 @@ class Scene_4(Scene):
         self.wait(4)
 
         # Highlights - Normalization
-        framebox4 = SurroundingRectangle(bayes4[0:5], buff = .05).set_color(crimson)
+        framebox4 = SurroundingRectangle(bayes2[0:5], buff = .05).set_color(crimson)
         framebox4_label = Tex('Posterior', color = crimson).scale(0.7)
         framebox4_label.next_to(framebox4, UP)
         self.play(ReplacementTransform(framebox3, framebox4), Write(framebox4_label), FadeOut(framebox3_label))
