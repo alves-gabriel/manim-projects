@@ -509,10 +509,10 @@ class Scene_2(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{The Receipt}', x = 0, y = 3.5, color = royal_blue).scale(1.1)
+        title = tools().label(text = '\\underline{The Recipe}', x = 0, y = 3.5, color = royal_blue).scale(1.1)
         Underline(title)
 
-        subtitle = tools().label(text = 'The Model', x = -5, y = 2, color = royal_blue).scale(1)
+        subtitle = tools().label(text = 'The Model', x = -5, y = 2.25, color = royal_blue).scale(1)
 
         # Text lines
         lines = []
@@ -523,10 +523,10 @@ class Scene_2(Scene):
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r' $\bullet$ SE map + SA unitary ' + r'$\rightarrow$ Stroboscopic Map', color = BLACK).scale(0.7).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r' $\bullet$ SE map + SA unitary ' + r'$\rightarrow$ Stroboscopic Map', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[0]))
 
-        lines.append(tools().label(text = r'$\rho_S^n = \Phi(\rho) := \tr_{A_n}\{U^\dagger \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U\}$' , color = BLACK).scale(0.7).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\rho_S^n = \Phi(\rho) := \tr_{A_n}\{U \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U^\dagger\}$' , color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
         lines[1].shift(0.25*RIGHT)
         self.play(FadeIn(lines[1]))
 
@@ -580,11 +580,11 @@ class Scene_2(Scene):
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r'$\bullet$ Ancilla measurements after the', color = BLACK).scale(0.7).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'system reaches the \emph{steady state}:', color = BLACK).scale(0.7).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Ancilla measurements after the', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'system reaches the \emph{steady state}:', color = BLACK).scale(0.6).next_to(lines[2], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[2]), FadeIn(lines[3]))
 
-        lines.append(tools().label(text = r'$\rho_{S}^* = \Phi(\rho_{S}^*)$', color = BLACK).scale(0.7).next_to(lines[3], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\rho_{S}^* = \Phi(\rho_{S}^*)$', color = BLACK).scale(0.6).next_to(lines[3], DOWN).align_to(subtitle, LEFT))
         lines[4].shift(0.25*RIGHT)
         self.play(FadeIn(lines[4]))
 
@@ -595,7 +595,7 @@ class Scene_2(Scene):
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r'$\bullet$ Local or joint measurements', color = BLACK).scale(0.7).next_to(lines[4], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Both joint and local measurements are possible', color = BLACK).scale(0.6).next_to(lines[4], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[5]))
 
         # Draws the equipment
@@ -623,23 +623,24 @@ class Scene_2(Scene):
         tools().mob_pos(local_measurement, x = 4, y = -2)
         tools().mob_pos(global_measurement, x = 4, y = -2)
 
-        self.play(ShowCreation(local_measurement))
-        self.play(FadeOut(local_measurement))
-
         self.play(ShowCreation(global_measurement))
+        self.play(FadeOut(global_measurement))
+
+        self.play(ShowCreation(local_measurement))
 
         self.wait(1)
 
         ######################################################
 
         # Text
-        lines.append(tools().label(text = r'$\bullet$ Probability distribution associated with', color = BLACK).scale(0.7).next_to(lines[5], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'the measurements in the SS:', color = BLACK).scale(0.7).next_to(lines[6], DOWN).align_to(subtitle, LEFT))
-        self.play(FadeIn(lines[6]), FadeIn(lines[7]))
+        lines.append(tools().label(text = r'$\bullet$ We approximate single-ancilla i.i.d. measurements', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ Probability distribution associated with', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r' the measurements in the SS:', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        self.play(FadeIn(lines[6]), FadeIn(lines[7]), FadeIn(lines[8]))
 
-        lines.append(tools().label(text = r'$p(X_i|T) = \tr\{M_i \rho_{A_1...A_n}^* M_i^\dagger\}$', color = BLACK).scale(0.7).next_to(lines[7], DOWN).align_to(subtitle, LEFT))
-        lines[8].shift(0.25*RIGHT)
-        self.play(FadeIn(lines[8]))
+        lines.append(tools().label(text = r'$p(X_i|T) = \tr\{M_i \rho_{A_1...A_n}^* M_i^\dagger\}$', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines[9].shift(0.25*RIGHT)
+        self.play(FadeIn(lines[9]))
 
         ######################################################
 
