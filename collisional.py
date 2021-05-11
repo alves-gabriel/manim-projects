@@ -339,7 +339,7 @@ class Scene_1(Scene):
 
         # Shifts the SWAP label up and shows the corresponding unitary
         self.play(swap_label.animate.shift(0.5 * UP))
-        swap_label2 = tools().label(text = r'$U = U_{SWAP} = \exp \left( - i V \tau_{SA} \right)$', x = 2, y = -1.2, color = BLACK).scale(0.5)
+        swap_label2 = tools().label(text = r'$U = U_{PSWAP} = \exp \left( - i V \tau_{SA} \right)$', x = 2, y = -1.2, color = BLACK).scale(0.5)
         swap_label2.align_to(swap_label, LEFT)
         self.play(Write(swap_label2))
         self.wait(1)
@@ -482,7 +482,7 @@ class Scene_1(Scene):
         ######################################################
 
         # Thermal map and unitaries
-        thermal_map = tools().label(text = r'$\rho_S^n = \tr_{A_n}\{U^\dagger \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U\}$', x = 0, y = -3, color = BLACK).scale(0.5)
+        thermal_map = tools().label(text = r'$\rho_S^n = \tr_{A_n}\{U \mathcal{E}(\rho_S^{n-1} \otimes \rho_{A_n}) U^\dagger\}$', x = 0, y = -3, color = BLACK).scale(0.5)
         self.play(Write(thermal_map))
         self.wait(1)
 
