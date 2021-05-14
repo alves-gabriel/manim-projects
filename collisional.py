@@ -1547,7 +1547,7 @@ class Scene_7(Scene):
         # Conditional error
         stochastic_mse_plot = ImageMobject("assets/collisional/StochasticMSE1c.png").scale(0.875)
         stochastic_mse_plot.to_edge(LEFT).to_edge(DOWN).shift(RIGHT + 0.5*DOWN)
-        stochastic_mse_plot_label =Tex("$\\epsilon$ conditioned on $T_0 = 1.5$", color = royal_blue).scale(0.6)
+        stochastic_mse_plot_label =Tex("$\\epsilon$ conditioned on $T_0 = 1.5\Omega$", color = royal_blue).scale(0.6)
         stochastic_mse_plot_label.next_to(stochastic_mse_plot, UP)
 
         self.play(FadeIn(stochastic_mse_plot), Write(stochastic_mse_plot_label))
@@ -1800,7 +1800,7 @@ class Scene_9(Scene):
 
         ######################################################
 
-        MSEPlot1 = ImageMobject("assets/collisional/VanTreesPlot1c.png").scale(1).next_to(lines[-1], DOWN)
+        MSEPlot1 = ImageMobject("assets/collisional/VanTreesPlot1b.png").scale(1).next_to(lines[-1], DOWN)
         self.play(FadeIn(MSEPlot1))
 
         self.wait(1)
@@ -1818,10 +1818,10 @@ class Scene_9(Scene):
         self.play(FadeIn(lines[-1]))
 
         MSEPlot2 = ImageMobject("assets/collisional/tSAPlot1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
-        self.play(FadeIn(MSEPlot4))
+        self.play(FadeIn(MSEPlot2))
 
-        MSEPlot3 = ImageMobject("assets/collisional/tSAPlot2.png").scale(1).next_to(MSEPlot4, RIGHT)
-        self.play(FadeIn(MSEPlot5))
+        MSEPlot3 = ImageMobject("assets/collisional/tSAPlot2.png").scale(1).next_to(MSEPlot2, RIGHT)
+        self.play(FadeIn(MSEPlot3))
 
         ######################################################
 
