@@ -1521,7 +1521,7 @@ class Scene_7(Scene):
         ######################################################
 
         # Estimators
-        Estimators = ImageMobject("assets/collisional/Estimators_presentation.png").scale(1)
+        Estimators = ImageMobject("assets/collisional/Estimators_presentation.png").scale(0.95)
         Estimators.to_edge(RIGHT).to_edge(DOWN).shift(LEFT + 0.5*DOWN)
         Estimators_label =Tex("Estimated Temperature", color = royal_blue).scale(0.6)
         Estimators_label.next_to(Estimators, UP)
@@ -1545,7 +1545,7 @@ class Scene_7(Scene):
         ######################################################
 
         # Conditional error
-        stochastic_mse_plot = ImageMobject("assets/collisional/StochasticMSE1c.png").scale(.9)
+        stochastic_mse_plot = ImageMobject("assets/collisional/StochasticMSE1c.png").scale(0.875)
         stochastic_mse_plot.to_edge(LEFT).to_edge(DOWN).shift(RIGHT + 0.5*DOWN)
         stochastic_mse_plot_label =Tex("$\\epsilon$ conditioned on $T_0 = 1.5$", color = royal_blue).scale(0.6)
         stochastic_mse_plot_label.next_to(stochastic_mse_plot, UP)
@@ -1561,8 +1561,8 @@ class Scene_7(Scene):
 
         lines.append(Tex("The frequentist error (integrated on $\\boldsymbol{X}$) will depend on T", color = BLACK).scale(0.6).shift(0.5*DOWN))
 
-        contidional_mse_plot = ImageMobject("assets/collisional/mseBA1b.png").scale(.8)
-        contidional_mse_plot.to_edge(DOWN).shift(0.25*DOWN)
+        contidional_mse_plot = ImageMobject("assets/collisional/mseBA1b.png").scale(.75)
+        contidional_mse_plot.next_to(lines[-1], DOWN)
 
         self.play(FadeIn(lines[-1]), FadeIn(contidional_mse_plot))
 
@@ -1570,13 +1570,18 @@ class Scene_7(Scene):
 
         ######################################################
 
+        self.play(contidional_mse_plot.animate.shift(4*LEFT))
+        integration_arrow = Arrow(ORIGIN, 2 * RIGHT, buff = 0.1).set_color(BLACK)
+        integration_arrow.next_to(contidional_mse_plot, RIGHT).shift(0.6*RIGHT)
+        mse_integration = MathTex('\\displaystyle{\int...P(T)dT}', color=BLACK).next_to(integration_arrow, DOWN).scale(0.5).shift(0.5*UP)
+        self.play(ShowCreation(integration_arrow), Write(mse_integration))
+
         lines.append(Tex("We can then integrate these curves on T to find the Bayesian error", color = BLACK).scale(0.6).shift(0.5*DOWN))
         self.play(ReplacementTransform(lines[-2],lines[-1]))
 
         mse_plot = ImageMobject("assets/collisional/VanTreesPlot1b.png").scale(1)
-        mse_plot.to_edge(DOWN).shift(0.25*DOWN)
-
-        self.play(FadeOut(contidional_mse_plot), FadeIn(mse_plot))
+        mse_plot.move_to(contidional_mse_plot.get_center()).shift(8*RIGHT)
+        self.play(FadeIn(mse_plot))
 
         ######################################################
 
@@ -1712,6 +1717,10 @@ class Scene_8(Scene):
         self.play(FadeIn(subtitle4))
         lines = []
 
+        ref = Tex('{\\footnotesize Harry L. Van. Trees and Kristine L. Bell. \emph{Detection Estimation and Modulation Theory,}', color = BLACK).scale(0.4).to_edge(LEFT).to_edge(DOWN).shift(0.4*DOWN)
+        ref2 = Tex('{\\footnotesize2nd Edition, Part I. John Wiley \& Sons, 2013.}', color = BLACK).scale(0.4).next_to(ref).shift(0.1*LEFT)
+        self.play(FadeIn(ref), FadeIn(ref2))
+
         lines.append(tools().label(text = r'$\bullet$ MSE $\rightarrow$ new figure of merit (average over $\boldsymbol{X}$ \emph{and} $\theta$)', color = BLACK).scale(0.6).next_to(subtitle4, DOWN).align_to(subtitle4, LEFT))
         lines.append(tools().label(text = r'$\bullet$ We can incorporate information from the Prior', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle4, LEFT))
         self.play(FadeIn(lines[0]))
@@ -1748,6 +1757,8 @@ class Scene_8(Scene):
                   FadeToColor(fisher, BLACK),  FadeToColor(Van_trees[1],BLACK))
         self.wait(2)
 
+        self.play(FadeOut(ref2), FadeOut(ref2))
+
         ######################################################
 
         # Highlight box
@@ -1770,143 +1781,7 @@ class Scene_9(Scene):
     def construct(self):
 
         # Title
-        title = tools().label(text = '\\underline{Results}', x = 0, y = 3, color = royal_blue).scale(1.1)
-        Underline(title)
-
-        self.play(Write(title))
-        self.wait(1)
-
-        ######################################################
-
-        # About the experiments
-        subtitle = Tex('Posterior Density',color = royal_blue).scale(.9)
-        subtitle.next_to(title, DOWN).to_edge(LEFT)
-        self.play(FadeIn(subtitle))
-        lines = []
-
-        lines.append(tools().label(text = r'$\bullet$ "Flat" prior', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ $\tau_{SE} = 0.2$ ', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ Full SWAP: $\tau_{SA} = \frac{\pi}{2}$ ', color = BLACK).scale(0.6).next_to(lines[1], DOWN).align_to(subtitle, LEFT))
-        self.play(FadeIn(lines[0]), FadeIn(lines[1]), FadeIn(lines[2]))
-
-        # Prior
-        prior_plot = ImageMobject("assets/collisional/PriorPDF.png").scale(1)
-        prior_plot.to_edge(2*RIGHT).to_edge(3.5*UP)
-        prior_label =Tex("Prior", color = BLACK).scale(0.6)
-        prior_label.next_to(prior_plot, UP).shift(0.15 * RIGHT)
-
-        self.play(FadeIn(prior_plot), FadeIn(prior_label))
-
-        #PDF grid
-        PDFGrid = ImageMobject("assets/collisional/PDFGrid.png").scale(1)
-        PDFGrid.next_to(lines[2], DOWN).align_to(subtitle, LEFT)
-        self.play(FadeIn(PDFGrid))
-
-        # Arrow
-        PDFGridArrow = Arrow(ORIGIN, 7*RIGHT).set_color(crimson)
-        PDFGridArrow.next_to(PDFGrid, DOWN)
-        PDFGridArrow_Label = Tex("Number of measured ancillas", color=crimson)
-        PDFGridArrow_Label.scale(0.5).next_to(PDFGridArrow, DOWN)
-
-        self.play(ShowCreation(PDFGridArrow), Write(PDFGridArrow_Label))
-        self.wait(2)
-        self.play(FadeOut(PDFGridArrow), FadeOut(PDFGridArrow_Label))
-
-        # Fist slice
-        highlight1 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight1, x = -5.85, y = -.6)
-        self.play(GrowFromEdge(highlight1, LEFT))
-
-        PDFPlot1 = ImageMobject("assets/collisional/PDFPlot1.png").scale(0.75)
-        PDFPlot1.next_to(highlight1, DOWN)
-        self.play(FadeIn(PDFPlot1))
-        self.wait(2)
-        self.play(FadeOut(PDFPlot1))
-
-        # Second slice
-        highlight2 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight2, x = -5.45, y = -.6)
-        self.play(ReplacementTransform(highlight1, highlight2))
-
-        PDFPlot2 = ImageMobject("assets/collisional/PDFPlot2.png").scale(0.75)
-        PDFPlot2.next_to(highlight2, DOWN)
-        self.play(FadeIn(PDFPlot2))
-        self.wait(2)
-        self.play(FadeOut(PDFPlot2))
-
-        # Third slice
-        highlight3 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight3, x = -4.9, y = -.6)
-        self.play(ReplacementTransform(highlight2, highlight3))
-
-        PDFPlot3 = ImageMobject("assets/collisional/PDFPlot3.png").scale(0.75)
-        PDFPlot3.next_to(highlight3, DOWN)
-        self.play(FadeIn(PDFPlot3))
-        self.wait(2)
-        self.play(FadeOut(PDFPlot3))
-
-        # Fourth slice
-        highlight4 = Rectangle(width = 0.1, height = 2, color = crimson)
-        tools().mob_pos(highlight4, x = -3.9, y = -.6)
-        self.play(ReplacementTransform(highlight3, highlight4))
-
-        PDFPlot4 = ImageMobject("assets/collisional/PDFPlot4.png").scale(0.75)
-        PDFPlot4.next_to(highlight4, DOWN)
-        self.play(FadeIn(PDFPlot4))
-        self.wait(2)
-        self.play(FadeOut(PDFPlot4), FadeOut(highlight4))
-
-        # All slices
-        PDFPlot = ImageMobject("assets/collisional/PDFPlotAll.png").scale(1)
-        PDFPlot.next_to(PDFGrid, DOWN).align_to(PDFGrid, LEFT).shift(RIGHT)
-        self.play(FadeIn(PDFPlot))
-        self.wait(2)
-
-        # PDF Animation
-        nPDF = 10
-        loops = 3
-        PDF_List = Group(*[ImageMobject('assets/collisional/PDFList'+str(i+1)+'.png').scale(1) for i in range(nPDF)])
-        PDF_List.next_to(PDFPlot, RIGHT)
-
-        self.play(FadeIn(PDF_List[0]))
-        for i in range(loops*nPDF - 1):
-            self.wait(0.2)
-            self.remove(PDF_List[i%nPDF])
-            self.add(PDF_List[(i+1)%nPDF])
-
-        # Estimators
-        Estimators = ImageMobject("assets/collisional/Estimators_presentation.png").scale(1)
-        Estimators.to_edge(RIGHT).to_edge(DOWN)
-        Estimators_label =Tex("Estimated Temperature", color = BLACK).scale(0.6)
-        Estimators_label.next_to(Estimators, UP).shift(0.0 * RIGHT)
-
-        self.play(FadeIn(Estimators), Write(Estimators_label))
-
-        # Erase Lines
-        self.play(FadeOut(lines[0]), FadeOut(lines[1]), FadeOut(lines[2]))
-
-        lines=[]
-        lines.append(tools().label(text = r'$\bullet$ Different estimators give different results (but converge assymptotically)', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ The posterior becomes assymptotically Gaussian', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-
-        self.play(FadeIn(lines[0]), FadeIn(lines[1]))
-
-        self.wait(5)
-
-        self.play(FadeOut(PDFGrid), FadeOut(PDF_List), FadeOut(PDFPlot), FadeOut(lines[0]), FadeOut(lines[1]), FadeOut(subtitle),
-                  FadeOut(Estimators), FadeOut(Estimators_label), FadeOut(prior_plot), FadeOut(prior_label))
-
-'''
-############
-##SCENE 10##
-############
-'''
-
-class Scene_10(Scene):
-    def construct(self):
-
-        # Title
-        title = tools().label(text = '\\underline{Results}', x = 0, y = 3, color = royal_blue).scale(1.1)
+        title = tools().label(text = '\\underline{Results II}', x = 0, y = 3, color = royal_blue).scale(1.1)
         Underline(title)
 
         self.add(title)
@@ -1920,47 +1795,33 @@ class Scene_10(Scene):
         self.play(FadeIn(subtitle))
         lines = []
 
-        lines.append(tools().label(text = r'$\bullet$ The Bayesian Mean performs better than the MAP', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
-        lines.append(tools().label(text = r'$\bullet$ The expected CRB is different from the asymptotic Van Trees', color = BLACK).scale(0.6).next_to(lines[0], DOWN).align_to(subtitle, LEFT))
-        self.play(FadeIn(lines[0]), FadeIn(lines[1]))
-
-        ######################################################
-
-        MSEPlot1 = ImageMobject("assets/collisional/VanTreesPlot1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
-        self.play(FadeIn(MSEPlot1))
-
-        MSEPlot2 = ImageMobject("assets/collisional/StochasticMSE1.png").scale(1).next_to(MSEPlot1, RIGHT)
-        self.play(FadeIn(MSEPlot2))
-
-        self.wait(5)
-
-        self.play(FadeOut(MSEPlot1), FadeOut(MSEPlot2))
-
-        ######################################################
-
-        lines.append(tools().label(text = r'$\bullet$ The estimator performance depends on the temperature', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
+        lines.append(tools().label(text = r'$\bullet$ The asymptotic limit may be different from the asymptotic Van Trees', color = BLACK).scale(0.6).next_to(subtitle, DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[-1]))
 
-        MSEPlot3 = ImageMobject("assets/collisional/mseBA1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
-        self.play(FadeIn(MSEPlot3))
+        ######################################################
 
-        self.wait(5)
+        MSEPlot1 = ImageMobject("assets/collisional/VanTreesPlot1c.png").scale(1).next_to(lines[-1], DOWN)
+        self.play(FadeIn(MSEPlot1))
 
-        self.play(FadeOut(MSEPlot3))
+        self.wait(1)
+
+        MSEPlot1_bound = ImageMobject("assets/collisional/VanTreesPlot1d.png").scale(1).next_to(lines[-1], DOWN)
+        self.play(FadeOut(MSEPlot1), FadeIn(MSEPlot1_bound))
+
+        self.wait(2)
+
+        self.play(FadeOut(MSEPlot1_bound))
 
         ######################################################
 
         lines.append(tools().label(text = r'$\bullet$ We fix the temperature for some tests $T_0 = 1.5 \Omega$', color = BLACK).scale(0.6).next_to(lines[-1], DOWN).align_to(subtitle, LEFT))
         self.play(FadeIn(lines[-1]))
 
-        MSEPlot4 = ImageMobject("assets/collisional/tSAPlot1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
+        MSEPlot2 = ImageMobject("assets/collisional/tSAPlot1.png").scale(1).next_to(lines[-1], DOWN).align_to(subtitle,LEFT)
         self.play(FadeIn(MSEPlot4))
 
-        MSEPlot5 = ImageMobject("assets/collisional/tSAPlot2.png").scale(1).next_to(MSEPlot4, RIGHT)
+        MSEPlot3 = ImageMobject("assets/collisional/tSAPlot2.png").scale(1).next_to(MSEPlot4, RIGHT)
         self.play(FadeIn(MSEPlot5))
-
-
-        self.wait(5)
 
         ######################################################
 
