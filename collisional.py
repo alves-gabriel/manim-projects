@@ -1757,7 +1757,7 @@ class Scene_8(Scene):
                   FadeToColor(fisher, BLACK),  FadeToColor(Van_trees[1],BLACK))
         self.wait(2)
 
-        self.play(FadeOut(ref2), FadeOut(ref2))
+        self.play(FadeOut(ref), FadeOut(ref2))
 
         ######################################################
 
