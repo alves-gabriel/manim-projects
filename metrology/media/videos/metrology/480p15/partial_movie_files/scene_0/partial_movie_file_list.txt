@@ -1,0 +1,2 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/gabriel/github/manim-projects/metrology/media/videos/metrology/480p15/partial_movie_files/scene_0/3680823526_2839631542_772473950.mp4'
