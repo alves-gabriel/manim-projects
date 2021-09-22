@@ -8,6 +8,10 @@ Play with
 
 manim -pqh github/manim-projects/metrology/metrology.py <scene-name>
 
+Use the flag -s to preview the last framebox1
+
+manim -ps github/manim-projects/metrology/metrology.py <scene-name>
+
 Command to concatenate all the scenes together:
 ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
 
@@ -55,22 +59,65 @@ def PrettyRectangle(rec_width, rec_height, color):
     )
 
 '''
-###########
-###TITLE###
-###########
+############
+###SCENES###
+############
 '''
 
+# Metrology basic diagram
 class scene_0(Scene):
     def construct(self):
 
-        system = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/system.jpg-000001.png").scale(.5)
-        system.to_edge(LEFT, buff = 1)
-        self.play(GrowFromEdge(system, LEFT))
+        # Initial state
+        system = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/system.jpg-000001.png").scale(.45)
+        system.to_edge(LEFT, buff = 0.25)
+        system_label=Tex(r"State $\rho_0$", color = BLACK).scale(0.75).next_to(system, UP, buff = 0.5)
+        self.play(GrowFromEdge(system, LEFT), Write(system_label))
         self.wait(1)
 
+        arrow=[]
+        arrow.append(Arrow(ORIGIN, 0.75*RIGHT, buff = 0.1).set_color(BLACK))
+        arrow[-1].next_to(system, RIGHT)
+        self.play(Create(arrow[-1]))
+
+        # Dynamical part
         dynamics = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/dynamics.jpg-000001.png").scale(.25)
-        dynamics.next_to(dynamics.get_center(), RIGHT).shift(RIGHT)
-        self.play(GrowFromEdge(dynamics, LEFT))
+        dynamics.next_to(arrow[-1], RIGHT)
+        dynamics_label=Tex(r"Dynamics $U(\theta)$, $\mathcal{L}_\theta$, ...", color = BLACK).scale(0.75).next_to(dynamics, DOWN, buff = 0.5)
+        self.play(GrowFromEdge(dynamics, LEFT), Write(dynamics_label))
+        self.wait(1)
+
+        arrow.append(Arrow(ORIGIN, 0.75*RIGHT, buff = 0.1).set_color(BLACK))
+        arrow[-1].next_to(dynamics, RIGHT)
+        self.play(Create(arrow[-1]))
+
+        #  Final State
+        systemII = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/systemII.jpg-000001.png").scale(.45)
+        systemII.next_to(arrow[-1], RIGHT)
+        systemII_label=Tex(r"State $\rho_\theta$", color = BLACK).scale(0.75).next_to(systemII, UP, buff = 0.5)
+        self.play(GrowFromEdge(systemII, LEFT), Write(systemII_label))
+        self.wait(1)
+
+        arrow.append(Arrow(ORIGIN, 0.75*RIGHT, buff = 0.1).set_color(BLACK))
+        arrow[-1].next_to(systemII, RIGHT)
+        self.play(Create(arrow[-1]))
+
+        # Detector
+        detector = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/detector.jpg-000001.png").scale(.2)
+        detector.next_to(arrow[-1], RIGHT)
+        detector_label=Tex(r"Measurement $\xi$", color = BLACK).scale(0.75).next_to(detector, DOWN, buff = 0.5)
+        self.play(GrowFromEdge(detector, LEFT), Write(detector_label))
+        self.wait(1)
+
+        arrow.append(Arrow(ORIGIN, 0.75*RIGHT, buff = 0.1).set_color(BLACK))
+        arrow[-1].next_to(detector, RIGHT)
+        self.play(Create(arrow[-1]))
+
+        # Estimator
+        computer = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/computer.jpg-000001.png").scale(.2)
+        computer.next_to(arrow[-1], RIGHT)
+        computer_label=Tex(r"Estimation", color = BLACK).scale(0.75).next_to(computer, UP, buff = 0.5)
+        self.play(FadeIn(computer), Write(computer_label))
         self.wait(1)
 
         # diagram_rec_width = 2
@@ -81,57 +128,3 @@ class scene_0(Scene):
         #
         # self.add(dynamics_rectangle)
         # self.play(GrowFromEdge(dynamics_rectangle, LEFT))
-
-        systemII = ImageMobject("/home/gabriel/github/manim-projects/metrology/assets/systemII.jpg-000001.png").scale(.5)
-        systemII.next_to(dynamics.get_center(), RIGHT).shift(2*RIGHT)
-        self.play(GrowFromEdge(systemII, LEFT))
-        self.wait(1)
-
-        self.wait(2)
-
-        # # Draws the digram - ancilla
-        # ancilla_rectangle = RoundedRectangle(width = 2, height = 1.25, color = CRIMSON).scale(1)
-        # ancilla_rectangle.set_fill(color = CRIMSON, opacity = 0.25).move_to(model_rectangle.get_center()).shift(1.5*RIGHT)
-        # ancilla_rectangle_label = Tex("Ancilla", color = CRIMSON).scale(0.7).next_to(ancilla_rectangle, UP, buff = -0.5)
-        # temperature_label = MathTex("T", color = CRIMSON).scale(0.5).move_to(ancilla_rectangle.get_center()).shift(-0.2*UP)
-        #
-        # # Interaction
-        # interaction = ParametricFunction(lambda t:np.array((t, np.sin(25*t)/8, 0)), t_range = np.array([0, 1]), color = BLACK, fill_opacity=0)
-        # interaction.move_to(model_rectangle.get_center())
-        # self.play(Create(interaction))
-        #
-        # self.play(GrowFromCenter(ancilla_rectangle))
-        # self.play(Write(ancilla_rectangle_label),Write(temperature_label))
-        # self.wait(3)
-        #
-        # ######################################################
-        #
-        # # Draws the digram - arrow and data
-        # arrow1 = Arrow(ORIGIN, 2 * RIGHT, buff = 0.1).set_color(BLACK)
-        # arrow1.next_to(model_rectangle, RIGHT)
-        # arrow1_label = Tex("Protocol", color = BLACK).scale(0.75).next_to(arrow1, DOWN)
-        # self.play(FadeIn(arrow1), Write(arrow1_label))
-        #
-        # data_rectangle = RoundedRectangle(width = 1.5, height = 1, color = ROYALBLUE).scale(1)
-        # data_rectangle.set_fill(color = ROYALBLUE, opacity = 0.25).next_to(arrow1, RIGHT)
-        # data_rectangle_label = Tex("Data", color = ROYALBLUE).scale(0.75).move_to(data_rectangle.get_center())
-        # self.play(GrowFromCenter(data_rectangle))
-        # self.play(Write(data_rectangle_label))
-        # self.wait(3)
-        #
-        # ######################################################
-        #
-        # # Draws the digram - arrow and results
-        # arrow2 = Arrow(ORIGIN, 2 * RIGHT, buff = 0.1).set_color(BLACK)
-        # arrow2.next_to(data_rectangle, RIGHT)
-        # arrow2_label = Tex("Processing", color = BLACK).scale(0.75).next_to(arrow2, DOWN)
-        # self.play(FadeIn(arrow2), Write(arrow2_label))
-        #
-        # estimation_rectangle = RoundedRectangle(width = 2, height = 1, color = ROYALPURPLE).scale(1)
-        # estimation_rectangle.set_fill(color = ROYALPURPLE, opacity = 0.25).next_to(arrow2, RIGHT)
-        # estimation_rectangle_label = Tex("Estimation", color = ROYALPURPLE).scale(0.75).next_to(estimation_rectangle, UP, buff = -0.5)
-        # temperature_estimation_label = MathTex("\hat{T}", color = ROYALPURPLE).scale(0.5).move_to(estimation_rectangle.get_center()).shift(-0.2*UP)
-        #
-        # self.play(GrowFromCenter(estimation_rectangle))
-        # self.play(Write(estimation_rectangle_label), Write(temperature_estimation_label))
-        # self.wait(3)
