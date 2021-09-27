@@ -6,11 +6,11 @@ import copy
 '''
 Play with
 
-manim -pqh github/manim-projects/metrology/metrology.py <scene-name>
+manim -pqh metrology.py <scene-name>
 
 Use the flag -s to preview the last framebox1
 
-manim -ps github/manim-projects/metrology/metrology.py <scene-name>
+manim -ps metrology.py <scene-name>
 
 Command to concatenate all the scenes together:
 ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
