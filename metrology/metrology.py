@@ -128,3 +128,50 @@ class scene_0(Scene):
         #
         # self.add(dynamics_rectangle)
         # self.play(GrowFromEdge(dynamics_rectangle, LEFT))
+
+# Vectorization
+class scene_1(Scene):
+    def construct(self):
+
+        # Original matrix
+        m0=Matrix([["a", "b"], ["c", "d"]], left_bracket="(", right_bracket=")")
+        m0.get_entries().set_color(BLACK)
+        m0.get_brackets().set_color(BLACK)
+        self.play(FadeIn(m0))
+        self.wait(1)
+
+        # Vec operator
+        vec0=Tex("\\text{vec}", color=BLACK).next_to(m0, LEFT)
+        eqsign=Tex("=", color=BLACK).next_to(m0, RIGHT)
+        self.play(FadeIn(vec0), FadeIn(eqsign))
+        self.wait(1)
+
+        # First column highlight
+        rec0=SurroundingRectangle(m0.get_columns()[0], color=ROYALBLUE)
+        self.play(FadeIn(rec0))
+
+        # Vectorized matrix
+        m0vec=Matrix([["a"], ["c"], ["b"], ["d"]], left_bracket="(", right_bracket=")")
+        m0vec.get_brackets().set_color(BLACK)
+        m0vec.next_to(eqsign, RIGHT)
+        self.play(FadeIn(m0vec))
+
+        # Moves the first rectangle into the vectorized matrix
+        # and makes the first two entries appear
+        vecrec0=SurroundingRectangle(m0vec.get_entries()[0:2], color=ROYALBLUE)
+        self.play(ReplacementTransform(rec0, vecrec0), FadeIn(m0vec.get_entries()[0:2].set_color(BLACK)))
+        self.wait(1)
+        self.play(FadeOut(vecrec0))
+
+        # Second column highlight
+        rec1=SurroundingRectangle(m0.get_columns()[1], color=CRIMSON)
+        self.play(FadeIn(rec1))
+        self.wait(1)
+
+        # Second rectangle into vectorized matrix
+        vecrec1=SurroundingRectangle(m0vec.get_entries()[2:4], color=CRIMSON)
+        self.play(ReplacementTransform(rec1, vecrec1), FadeIn(m0vec.get_entries()[2:4].set_color(BLACK)))
+        self.wait(1)
+        self.play(FadeOut(vecrec1))
+
+        self.wait(1)
