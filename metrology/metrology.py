@@ -138,7 +138,6 @@ class scene_1(Scene):
         m0.get_entries().set_color(BLACK)
         m0.get_brackets().set_color(BLACK)
         self.play(FadeIn(m0))
-        self.wait(1)
 
         # Vec operator
         vec0=Tex("\\text{vec}", color=BLACK).next_to(m0, LEFT)
@@ -173,5 +172,136 @@ class scene_1(Scene):
         self.play(ReplacementTransform(rec1, vecrec1), FadeIn(m0vec.get_entries()[2:4].set_color(BLACK)))
         self.wait(1)
         self.play(FadeOut(vecrec1))
+
+        self.wait(1)
+
+# Vectorization Identity
+class scene_2(Scene):
+    def construct(self):
+
+        # Matrix B full
+        B0=Matrix([[r"B_{1,1}", r"B_{1,2}", r"\hdots"],[r"B_{2,1}", r"B_{2,2}",r"\ddots"]], left_bracket="(", right_bracket=")")
+        B0.add(MathTex("B=", color=BLACK).next_to(B0,LEFT))
+        B0.to_edge(2*RIGHT)
+        B0.get_entries().set_color(BLACK)
+        B0.get_brackets().set_color(BLACK)
+        self.play(Write(B0))
+
+        # First column highlight
+        rec0=SurroundingRectangle(B0.get_columns()[0], color=CRIMSON)
+        rec0_label=MathTex(r"\vec{B}_1", color=CRIMSON).next_to(rec0, DOWN)
+        self.play(Create(rec0))
+        self.play(Write(rec0_label))
+        self.wait(1)
+        self.play(FadeOut(rec0,rec0_label))
+
+        # Matrix B with columns
+        B1=Matrix([[r"\vec{B}_1", r"\vec{B_2}", r"\hdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        B1_label=MathTex("B=", color=BLACK).next_to(B1,LEFT)
+        B1.add(B1_label)
+        B1.to_edge(2*RIGHT)
+        B1.get_entries().set_color(BLACK)
+        B1.get_brackets().set_color(BLACK)
+        self.play(ReplacementTransform(B0, B1))
+        self.wait(1)
+
+        # Matrix A full
+        A0=Matrix([[r"A_{1,1}", r"A_{1,2}", r"\hdots"],[r"A_{2,1}", r"A_{2,2}",r"\ddots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        A0_label=MathTex("A=", color=BLACK).next_to(A0,LEFT)
+        A0.add(A0_label)
+        A0.to_edge(2*LEFT)
+        A0.get_entries().set_color(BLACK)
+        A0.get_brackets().set_color(BLACK)
+        self.play(Write(A0))
+
+        # First column highlight
+        rec0=SurroundingRectangle(A0.get_columns()[0], color=CRIMSON)
+        rec0_label=MathTex(r"\vec{A}_1", color=CRIMSON).next_to(rec0, DOWN)
+        self.play(Create(rec0))
+        self.play(Write(rec0_label))
+        self.wait(1)
+
+        # Transposition
+        A0_dagger=Matrix([[r"A_{1,1}^*", r"A_{2,1}^*", r"\hdots"],[r"A_{1,2}^*", r"A_{2,2}^*",r"\ddots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        A0_dagger_label=MathTex("A^\dagger=", color=BLACK).next_to(A0_dagger,LEFT)
+        A0_dagger.add(A0_dagger_label)
+        A0_dagger.to_edge(2*LEFT)
+        A0_dagger.get_entries().set_color(BLACK)
+        A0_dagger.get_brackets().set_color(BLACK)
+
+        # First row highlight
+        rec1=SurroundingRectangle(A0_dagger.get_rows()[0], color=CRIMSON)
+        rec1_label=MathTex(r"\vec{A}_1^\dagger", color=CRIMSON).next_to(rec1, UP)
+
+        # Transposition animation
+        self.play(ReplacementTransform(A0, A0_dagger),\
+        ReplacementTransform(rec0, rec1),\
+        ReplacementTransform(rec0_label, rec1_label))
+        self.wait(1)
+        self.play(FadeOut(rec1, rec1_label))
+
+        # Matrix B with columns
+        A1=Matrix([[r"\vec{A}_1^\dagger"], [r"\vec{A}_2^\dagger"], [r"\vdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        A1_label=MathTex("A^\dagger=", color=BLACK).next_to(A1,LEFT)
+        A1.add(A1_label)
+        A1.to_edge(2*LEFT)
+        A1.get_entries().set_color(BLACK)
+        A1.get_brackets().set_color(BLACK)
+        self.play(ReplacementTransform(A0_dagger, A1))
+        self.wait(1)
+
+        # Removes the "A=" and the "B="
+        self.play(FadeOut(B1_label),FadeOut(A1_label))
+        B1.remove(B1_label)
+        A1.remove(A1_label)
+
+        # AB product
+        AB_prod_label=MathTex("A^\dagger B=", color=BLACK).to_edge(LEFT)
+        self.play(A1.animate.next_to(AB_prod_label, RIGHT),
+            B1.animate.next_to(A1, RIGHT),\
+            Write(AB_prod_label))
+
+        # Product Matrix
+        AB_equal_sign=MathTex("=", color=BLACK).next_to(B1, RIGHT)
+        AB=Matrix([
+            [r"\vec{A}_1^\dagger \vec{B}_1^\dagger", r"\vec{A}_1^\dagger \vec{B}_2^\dagger", r"\hdots"],\
+            [r"\vec{A}_2^\dagger \vec{B}_1^\dagger", r"\vec{A}_2^\dagger \vec{B}_2^\dagger", "."],\
+            [r"\vdots", r".",r"\ddots"]],\
+            left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        AB.next_to(AB_equal_sign, RIGHT)
+        AB.get_brackets().set_color(BLACK)
+        self.play(Write(AB_equal_sign), Write(AB))
+
+        # Multiplication - elements are highlighted using Indicete(...)
+        AB_elem=AB.get_entries()
+        A_elem=A1.get_entries()
+        B_elem=B1.get_entries()
+
+        # AB11
+        self.play(Indicate(A_elem[0], color=CRIMSON), Indicate(B_elem[0], color=CRIMSON))
+        self.play(AB_elem[0].animate.set_color(BLACK))
+
+        # AB12
+        self.play(Indicate(A_elem[0], color=CRIMSON), Indicate(B_elem[1], color=CRIMSON))
+        self.play(AB_elem[1].animate.set_color(BLACK))
+
+        # AB21
+        self.play(Indicate(A_elem[1], color=CRIMSON), Indicate(B_elem[0], color=CRIMSON))
+        self.play(AB_elem[3].animate.set_color(BLACK))
+
+        # AB22
+        self.play(Indicate(A_elem[1], color=CRIMSON), Indicate(B_elem[1], color=CRIMSON))
+        self.play(AB_elem[4].animate.set_color(BLACK))
+
+        # All of them
+        el_group=VGroup()
+        for el in AB_elem:
+            #Phantom is not working so I want to keep some elements white -> If
+            if el!=AB_elem[5] and el!=AB_elem[7]:
+                 el_group.add(el)
+
+        self.play(el_group.animate.set_color(BLACK))
+
+        # Trace
 
         self.wait(1)
