@@ -180,7 +180,7 @@ class scene_2(Scene):
     def construct(self):
 
         # Matrix B full
-        B0=Matrix([[r"B_{1,1}", r"B_{1,2}", r"\hdots"],[r"B_{2,1}", r"B_{2,2}",r"\ddots"]], left_bracket="(", right_bracket=")")
+        B0=Matrix([[r"B_{1,1}", r"B_{1,2}", r"\hdots"],[r"B_{2,1}", r"B_{2,2}",r"\ddots"]], left_bracket="(", right_bracket=")").scale(0.75)
         B0.add(MathTex("B=", color=BLACK).next_to(B0,LEFT))
         B0.to_edge(2*RIGHT)
         B0.get_entries().set_color(BLACK)
@@ -189,14 +189,14 @@ class scene_2(Scene):
 
         # First column highlight
         rec0=SurroundingRectangle(B0.get_columns()[0], color=CRIMSON)
-        rec0_label=MathTex(r"\vec{B}_1", color=CRIMSON).next_to(rec0, DOWN)
+        rec0_label=MathTex(r"\vec{B}_1", color=CRIMSON).next_to(rec0, DOWN).scale(0.75)
         self.play(Create(rec0))
         self.play(Write(rec0_label))
         self.wait(1)
         self.play(FadeOut(rec0,rec0_label))
 
         # Matrix B with columns
-        B1=Matrix([[r"\vec{B}_1", r"\vec{B_2}", r"\hdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        B1=Matrix([[r"\vec{B}_1", r"\vec{B_2}", r"\hdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
         B1_label=MathTex("B=", color=BLACK).next_to(B1,LEFT)
         B1.add(B1_label)
         B1.to_edge(2*RIGHT)
@@ -206,8 +206,8 @@ class scene_2(Scene):
         self.wait(1)
 
         # Matrix A full
-        A0=Matrix([[r"A_{1,1}", r"A_{1,2}", r"\hdots"],[r"A_{2,1}", r"A_{2,2}",r"\ddots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
-        A0_label=MathTex("A=", color=BLACK).next_to(A0,LEFT)
+        A0=Matrix([[r"A_{1,1}", r"A_{1,2}", r"\hdots"],[r"A_{2,1}", r"A_{2,2}",r"\ddots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
+        A0_label=MathTex("A=", color=BLACK).next_to(A0,LEFT).scale(0.75)
         A0.add(A0_label)
         A0.to_edge(2*LEFT)
         A0.get_entries().set_color(BLACK)
@@ -231,7 +231,7 @@ class scene_2(Scene):
 
         # First row highlight
         rec1=SurroundingRectangle(A0_dagger.get_rows()[0], color=CRIMSON)
-        rec1_label=MathTex(r"\vec{A}_1^\dagger", color=CRIMSON).next_to(rec1, UP)
+        rec1_label=MathTex(r"\vec{A}_1^\dagger", color=CRIMSON).next_to(rec1, UP).scale(0.75)
 
         # Transposition animation
         self.play(ReplacementTransform(A0, A0_dagger),\
@@ -241,8 +241,8 @@ class scene_2(Scene):
         self.play(FadeOut(rec1, rec1_label))
 
         # Matrix B with columns
-        A1=Matrix([[r"\vec{A}_1^\dagger"], [r"\vec{A}_2^\dagger"], [r"\vdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
-        A1_label=MathTex("A^\dagger=", color=BLACK).next_to(A1,LEFT)
+        A1=Matrix([[r"\vec{A}_1^\dagger"], [r"\vec{A}_2^\dagger"], [r"\vdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
+        A1_label=MathTex("A^\dagger=", color=BLACK).next_to(A1,LEFT).scale(0.75)
         A1.add(A1_label)
         A1.to_edge(2*LEFT)
         A1.get_entries().set_color(BLACK)
@@ -256,7 +256,7 @@ class scene_2(Scene):
         A1.remove(A1_label)
 
         # AB product
-        AB_prod_label=MathTex("A^\dagger B=", color=BLACK).to_edge(LEFT)
+        AB_prod_label=MathTex("A^\dagger B=", color=BLACK).to_edge(2*LEFT).scale(0.75)
         self.play(A1.animate.next_to(AB_prod_label, RIGHT),
             B1.animate.next_to(A1, RIGHT),\
             Write(AB_prod_label))
@@ -268,7 +268,7 @@ class scene_2(Scene):
             [r"\vec{A}_2^\dagger \vec{B}_1^\dagger", r"\vec{A}_2^\dagger \vec{B}_2^\dagger", "."],\
             [r"\vdots", r".",r"\ddots"]],\
             left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
-        AB.next_to(AB_equal_sign, RIGHT)
+        AB.next_to(AB_equal_sign, RIGHT).scale(0.75)
         AB.get_brackets().set_color(BLACK)
         self.play(Write(AB_equal_sign), Write(AB))
 
@@ -303,5 +303,33 @@ class scene_2(Scene):
         self.play(el_group.animate.set_color(BLACK))
 
         # Trace
+        AB_Tr=MathTex(r"\text{tr}(A^\dagger B)=", color=BLACK).scale(0.75)
+        AB_Tr.to_edge(2*DOWN).to_edge(LEFT)
+        self.play(Write(AB_Tr))
+
+        # Summation
+        AB_Tr_sum=MathTex(r"\vec{A}_1^\dagger \vec{B}_1+\vec{A}_2^\dagger \vec{B}_2+...=", color=BLACK).scale(0.75)
+        AB_Tr_sum.next_to(AB_Tr, RIGHT)
+        self.play(Write(AB_Tr_sum))
+        self.wait(1)
+
+        # Vector form of sum
+        AB_inner0=Matrix([[r"\vec{A}_1^\dagger", r"\vec{A}_2^\dagger", r"\hdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
+        AB_inner0.next_to(AB_Tr_sum, RIGHT)
+        AB_inner1=Matrix([[r"\vec{B}_1"], [r"\vec{B}_2"], [r"\vdots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
+        AB_inner1.next_to(AB_inner0, RIGHT)
+
+        AB_inner0.get_entries().set_color(BLACK)
+        AB_inner0.get_brackets().set_color(BLACK)
+        AB_inner1.get_entries().set_color(BLACK)
+        AB_inner1.get_brackets().set_color(BLACK)
+
+        self.play(Write(AB_inner0), Write(AB_inner1))
+        self.wait(1)
+
+        # Vec procuct
+        AB_vec_prod=MathTex(r"=\text{vec}(A)^\dagger \text{vec}(B)", color=BLACK).scale(0.75)
+        AB_vec_prod.next_to(AB_inner1)
+        self.play(Write(AB_vec_prod))
 
         self.wait(1)
