@@ -222,7 +222,7 @@ class scene_2(Scene):
         self.wait(1)
 
         # Transposition
-        A0_dagger=Matrix([[r"A_{1,1}^*", r"A_{2,1}^*", r"\hdots"],[r"A_{1,2}^*", r"A_{2,2}^*",r"\ddots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
+        A0_dagger=Matrix([[r"A_{1,1}^*", r"A_{2,1}^*", r"\hdots"],[r"A_{1,2}^*", r"A_{2,2}^*",r"\ddots"]], left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
         A0_dagger_label=MathTex("A^\dagger=", color=BLACK).next_to(A0_dagger,LEFT)
         A0_dagger.add(A0_dagger_label)
         A0_dagger.to_edge(2*LEFT)
@@ -256,19 +256,19 @@ class scene_2(Scene):
         A1.remove(A1_label)
 
         # AB product
-        AB_prod_label=MathTex("A^\dagger B=", color=BLACK).to_edge(2*LEFT).scale(0.75)
-        self.play(A1.animate.next_to(AB_prod_label, RIGHT),
-            B1.animate.next_to(A1, RIGHT),\
-            Write(AB_prod_label))
+        AB_prod_label=MathTex("A^\dagger B=", color=BLACK).to_edge(3*LEFT).scale(0.75)
+        self.play(A1.animate.next_to(AB_prod_label, RIGHT))
+        self.play(B1.animate.next_to(A1, RIGHT))
+        self.play(Write(AB_prod_label))
 
         # Product Matrix
-        AB_equal_sign=MathTex("=", color=BLACK).next_to(B1, RIGHT)
+        AB_equal_sign=MathTex("=", color=BLACK).next_to(B1, RIGHT).scale(0.75)
         AB=Matrix([
             [r"\vec{A}_1^\dagger \vec{B}_1^\dagger", r"\vec{A}_1^\dagger \vec{B}_2^\dagger", r"\hdots"],\
             [r"\vec{A}_2^\dagger \vec{B}_1^\dagger", r"\vec{A}_2^\dagger \vec{B}_2^\dagger", "."],\
             [r"\vdots", r".",r"\ddots"]],\
-            left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.]))
-        AB.next_to(AB_equal_sign, RIGHT).scale(0.75)
+            left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
+        AB.next_to(AB_equal_sign, RIGHT)
         AB.get_brackets().set_color(BLACK)
         self.play(Write(AB_equal_sign), Write(AB))
 
