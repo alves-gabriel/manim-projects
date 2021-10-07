@@ -264,8 +264,8 @@ class scene_2(Scene):
         # Product Matrix
         AB_equal_sign=MathTex("=", color=BLACK).next_to(B1, RIGHT).scale(0.75)
         AB=Matrix([
-            [r"\vec{A}_1^\dagger \vec{B}_1^\dagger", r"\vec{A}_1^\dagger \vec{B}_2^\dagger", r"\hdots"],\
-            [r"\vec{A}_2^\dagger \vec{B}_1^\dagger", r"\vec{A}_2^\dagger \vec{B}_2^\dagger", "."],\
+            [r"\vec{A}_1^\dagger \vec{B}_1", r"\vec{A}_1^\dagger \vec{B}_2", r"\hdots"],\
+            [r"\vec{A}_2^\dagger \vec{B}_1", r"\vec{A}_2^\dagger \vec{B}_2", "."],\
             [r"\vdots", r".",r"\ddots"]],\
             left_bracket="(", right_bracket=")", element_alignment_corner=np.array([ 0., 0., 0.])).scale(0.75)
         AB.next_to(AB_equal_sign, RIGHT)
@@ -333,3 +333,8 @@ class scene_2(Scene):
         self.play(Write(AB_vec_prod))
 
         self.wait(1)
+
+# Vectorization Identity
+class scene_3(Scene):
+    def construct(self):
+        pass
