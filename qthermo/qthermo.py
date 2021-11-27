@@ -76,33 +76,53 @@ class scene_0(Scene):
 
         # Cold qubit
         qubit_cold=PrettyQubit(.5, ROYALBLUE_RGB)
-        qubit_cold.shift(3*LEFT + 2*UP)
+        qubit_cold.shift(4*LEFT + 2*UP)
 
         # Hot qubit
         qubit_hot=PrettyQubit(.5, CRIMSON_RGB)
-        qubit_hot.shift(3*LEFT + 2*DOWN)
+        qubit_hot.shift(4*LEFT + 2*DOWN)
 
         # Adding them
         self.play(FadeIn(qubit_cold), FadeIn(qubit_hot))
         self.wait(1)
 
+        # Qubit label
+        qubit_labelA = Tex(r'$\rho_{th, A} = \frac{e^{-\beta_A H_A}}{Z}$', color = BLACK).scale(1)
+        qubit_labelB = Tex(r'$\rho_{th, B} = \frac{e^{-\beta_B H_B}}{Z}$', color = BLACK).scale(1)
+        qubit_labelA.next_to(qubit_cold, UP)
+        qubit_labelB.next_to(qubit_hot, DOWN)
+        self.play(FadeIn(qubit_labelA), FadeIn(qubit_labelB))
+        self.wait(1)
+        self.play(FadeOut(qubit_labelA), FadeOut(qubit_labelB))
+
+        qubit_label = Tex(r'$\rho_{A, B} = \rho_A \otimes \rho_B$', color = BLACK).scale(1)
+        qubit_label.next_to(qubit_hot, DOWN)
+        self.play(FadeIn(qubit_label))
+        self.wait(1)
+
         # Qubit movement
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
         self.play(qubit_cold.animate.next_to(ORIGIN, 1.5*UP),qubit_hot.animate.next_to(ORIGIN, 1.5*DOWN), run_time=2)
         self.wait(1)
 
-        # Interaction label
-        int_label = Tex(r'$H_{AB} = $', color = BLACK).scale(0.75)
-        int_label.shift(0.75*RIGHT)
-        self.play(FadeIn(int_label))
-        self.wait(1)
-
-        # Intecration
-        int = ParametricFunction(lambda t:np.array([np.sin(25*t/8), t, 0]), t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+        # Interaction
+        int = ParametricFunction(lambda t:np.array([np.sin(25*t)/8, t, 0]), t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
         int.shift(0.5*DOWN)
         self.play(FadeIn(int))
 
+        # Interaction label
+        int_label = Tex(r'$H_{AB}$', color = BLACK).scale(0.75)
+        int_label.next_to(int, RIGHT)
+        self.play(FadeIn(int_label))
+        self.wait(1)
+
         # Draws the qubit interaction animation
         for i in range(20):
+
+            # Removes the interaction
+            self.wait(0.1)
+            self.remove(int)
 
             # Sine with variable phase
             def ysin(t):
@@ -113,26 +133,48 @@ class scene_0(Scene):
             self.add(int)
             int.shift(0.5*DOWN)
 
-            # Animation interval
-            self.wait(0.1)
-            self.remove(int)
-
-        # Renders the wave one last time otherwise it disappears
-        self.add(int)
-
-        # Disappears
-        self.play(FadeOut(int), FadeOut(int_label))
+        # Copies the qubits again and creates a mobject so we can highlight it later
+        dynamics_group = VGroup(qubit_cold.copy(), qubit_hot.copy(), int, int_label)
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
         self.wait(1)
 
-        # Qubit getting warmer
+        # Qubit getting warmer and movement
         qubit_coldII=PrettyQubit(.5, BURNTORANGE_RGB).next_to(ORIGIN, 1.5*UP)
         qubit_hotII=PrettyQubit(.5, BURNTORANGE_RGB).next_to(ORIGIN, 1.5*DOWN)
+
+        qubit_coldII.shift(4*RIGHT + UP)
+        qubit_hotII.shift(4*RIGHT + DOWN)
+
         self.play(ReplacementTransform(qubit_cold, qubit_coldII), \
         ReplacementTransform(qubit_hot, qubit_hotII), \
         run_time=2)
-
-        # Qubit movement II
-        self.play(qubit_coldII.animate.shift(3*RIGHT + 1.5*UP), qubit_hotII.animate.shift(3*RIGHT + 1.5*DOWN), run_time=2)
         self.wait(1)
 
+        # Qubit label II
+        qubit_labelA2 = Tex(r'$\Delta Q_{A} > 0$', color = BLACK).scale(1)
+        qubit_labelB2 = Tex(r'$\Delta Q_{B} < 0$', color = BLACK).scale(1)
+        qubit_labelA2.next_to(qubit_coldII, DOWN)
+        qubit_labelB2.next_to(qubit_hotII, UP)
+        self.play(FadeIn(qubit_labelA2), FadeIn(qubit_labelB2))
+        self.wait(1)
+
+        # Surrounding rectangles
+        question1 = SurroundingRectangle(qubit_label, color=BLACK)
+        question1_label = Text('i) Role of the initial state?', color=BLACK).scale(0.5)
+        question1_label.next_to(question1, DOWN)
+        self.play(Create(question1), Write(question1_label))
+        self.wait(1)
+
+        question2 = SurroundingRectangle(dynamics_group, color=BLACK)
+        question2_label = Text('ii) How to describe the dynamics?', color=BLACK).scale(0.5)
+        question2_label.next_to(question2, UP)
+        self.play(Create(question2), Write(question2_label))
+        self.wait(1)
+
+        final_group = VGroup(qubit_hotII, qubit_labelB2)
+        question3 = SurroundingRectangle(final_group, color=BLACK)
+        question3_label = Text('iii) Thermodynamical quantities?', color=BLACK).scale(0.5)
+        question3_label.next_to(question3, DOWN)
+        self.play(Create(question3), Write(question3_label))
         self.wait(1)
