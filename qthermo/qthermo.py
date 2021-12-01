@@ -6,11 +6,11 @@ import copy
 '''
 Play with
 
-manim -pqh metrology.py <scene-name>
+manim -pqh qthermo.py <scene-name>
 
 Use the flag -s to preview the last framebox1
 
-manim -ps metrology.py <scene-name>
+manim -ps qthermo.py <scene-name>
 
 Command to concatenate all the scenes together:
 ffmpeg -f concat -safe 0 -i files.txt -c copy output.mp4
@@ -42,6 +42,7 @@ CRIMSON_RGB = np.array([220, 20, 60])/255
 ROYALPURPLE = '#7851a9'
 BURNTORANGE = '#cc5500'
 BURNTORANGE_RGB = np.array([204, 85, 0])/255
+GOLDENROD = '#daa520'
 
 # Convex combination in the hue to lighten the colors. Factor should be between 0 and 1
 def tint(rgb, factor):
@@ -70,7 +71,7 @@ def PrettyQubit(qradius, color):
 ############
 '''
 
-# Metrology basic diagram
+# Qubits interacting
 class scene_0(Scene):
     def construct(self):
 
@@ -177,4 +178,62 @@ class scene_0(Scene):
         question3_label = Text('iii) Thermodynamical quantities?', color=BLACK).scale(0.5)
         question3_label.next_to(question3, DOWN)
         self.play(Create(question3), Write(question3_label))
+        self.wait(1)
+
+# Thermal operation
+class scene_1(Scene):
+    def construct(self):
+
+        # Parabolas
+        osc1 = ParametricFunction(lambda t:np.array([t, t**2, 0]), t_range = np.array([-1.5, 1.5, 0.02]), color = BLACK, fill_opacity=0)
+        osc2 = ParametricFunction(lambda t:np.array([t, t**2, 0]), t_range = np.array([1.5, -1.5, 0.02]), color = BLACK, fill_opacity=0)
+        osc1.shift(4*LEFT)
+        osc2.shift(4*RIGHT)
+
+        # Energy levels
+        osc_center1, osc_center2=osc1.get_center(), osc2.get_center()
+        energy_levels = VGroup(\
+         DashedLine(osc_center1 - 0.4*UP - 2*LEFT, osc_center1 - 0.4*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center1 + 0.0*UP - 2*LEFT, osc_center1 + 0.0*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center1 + 0.4*UP - 2*LEFT, osc_center1 + 0.4*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center1 + 0.8*UP - 2*LEFT, osc_center1 + 0.8*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center2 - 0.4*UP - 2*LEFT, osc_center2 - 0.4*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center2 + 0.0*UP - 2*LEFT, osc_center2 + 0.0*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center2 + 0.4*UP - 2*LEFT, osc_center2 + 0.4*UP + 2*LEFT, color = GRAY),\
+         DashedLine(osc_center2 + 0.8*UP - 2*LEFT, osc_center2 + 0.8*UP + 2*LEFT, color = GRAY),\
+        )
+
+        # Creates
+        self.play(Create(energy_levels))
+        self.play(Create(osc1), Create(osc2))
+
+        # First boson group
+        bosonA_swap=Circle(radius=.5, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1+0.55*UP+0.5*RIGHT)
+        bosonAgroup=VGroup(\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1-0.5*UP),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1-0.1*UP+0.3*LEFT),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1+0.2*UP+0.1*RIGHT),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1+0.7*UP),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1+0.6*UP+0.5*LEFT),\
+        )
+
+        # Second boson group
+        bosonB_swap=Circle(radius=.5, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2+0.6*UP+0.5*LEFT)
+        bosonBgroup=VGroup(\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2-0.65*UP),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2+0.1*UP+0.45*LEFT),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2+0.3*UP+0.1*RIGHT),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2-0.4*UP+0.4*LEFT),\
+          Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2-0.4*UP+0.5*RIGHT),\
+        )
+
+        # Hamiltonians
+        HA_label = Tex(r'$H_A = \omega a^\dagger a$', color = BLACK).next_to(osc1, DOWN)
+        HB_label = Tex(r'$H_B = \omega b^\dagger b$', color = BLACK).next_to(osc2, DOWN)
+
+        self.play(Create(bosonAgroup), Create(bosonA_swap), Create(bosonBgroup), Create(bosonB_swap))
+        self.play(Write(HA_label), Write(HB_label))
+
+        # Interaction
+
         self.wait(1)
