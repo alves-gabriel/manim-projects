@@ -208,7 +208,7 @@ class scene_1(Scene):
         self.play(Create(osc1), Create(osc2))
 
         # First boson group
-        bosonA_swap=Circle(radius=.5, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1+0.55*UP+0.5*RIGHT)
+        bosonA_swap=Circle(radius=.5, color = BLACK).scale(0.5).set_fill(MSEAGREEN, opacity=0.9).move_to(osc_center1+0.55*UP+0.5*RIGHT)
         bosonAgroup=VGroup(\
           Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1-0.5*UP),\
           Circle(radius=.45, color = BLACK).scale(0.5).set_fill(CRIMSON, opacity=0.9).move_to(osc_center1-0.1*UP+0.3*LEFT),\
@@ -218,7 +218,7 @@ class scene_1(Scene):
         )
 
         # Second boson group
-        bosonB_swap=Circle(radius=.5, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2+0.6*UP+0.5*LEFT)
+        # bosonB_swap=Circle(radius=.5, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2+0.6*UP+0.5*LEFT)
         bosonBgroup=VGroup(\
           Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2-0.65*UP),\
           Circle(radius=.45, color = BLACK).scale(0.5).set_fill(GOLDENROD, opacity=0.9).move_to(osc_center2+0.1*UP+0.45*LEFT),\
@@ -228,12 +228,60 @@ class scene_1(Scene):
         )
 
         # Hamiltonians
-        HA_label = Tex(r'$H_A = \omega a^\dagger a$', color = BLACK).next_to(osc1, DOWN)
-        HB_label = Tex(r'$H_B = \omega b^\dagger b$', color = BLACK).next_to(osc2, DOWN)
+        HA_label = Tex(r'$H_A = n_A = \omega a^\dagger a$', color = BLACK).next_to(osc1, DOWN)
+        HB_label = Tex(r'$H_B = n_B = \omega b^\dagger b$', color = BLACK).next_to(osc2, DOWN)
 
-        self.play(Create(bosonAgroup), Create(bosonA_swap), Create(bosonBgroup), Create(bosonB_swap))
-        self.play(Write(HA_label), Write(HB_label))
+        self.play(ShowIncreasingSubsets(bosonAgroup), ShowIncreasingSubsets(bosonBgroup), animation_rate=2)
+        self.wait(1)
+
+        self.play(Create(bosonA_swap), Write(HA_label), Write(HB_label))
+        self.wait(1)
 
         # Interaction
+        # Draws the SWAP interaction with two arrows
+        SWAP1 = CurvedArrow(LEFT, RIGHT, angle = np.pi/2).set_color(BLACK).scale(.75)
+        SWAP2 = CurvedArrow(RIGHT, LEFT, angle = np.pi/2).set_color(BLACK).scale(.75)
+        SWAP1.shift(UP)
+        SWAP2.shift(UP)
+
+        #  SWAP label, aligned to the SE interaction label
+        swap_label = Tex(r'$V = $','$a$', '$\otimes$', '$b^\dagger$', '$+ a^\dagger \otimes b$', color = BLACK)
+        swap_label.next_to(SWAP2, 3*UP)
+        self.play(Write(swap_label))
+        self.wait(1)
+
+        self.play(FadeIn(SWAP1), FadeIn(SWAP2))
+        self.wait(1)
+
+        # Highlights the first term by growing it
+        self.play(swap_label[1].animate.scale(1.5).set_color(CRIMSON))
+        self.play(swap_label[1].animate.scale(.66).set_color(BLACK))
+        self.wait(.5)
+
+        self.play(swap_label[3].animate.scale(1.5).set_color(CRIMSON))
+        self.play(swap_label[3].animate.scale(.66).set_color(BLACK))
+        self.wait(.5)
+
+        # Flips the SWAP arrows
+        self.play(bosonA_swap.animate.move_to(osc_center2+0.6*UP+0.5*LEFT),\
+        SWAP1.animate.rotate(np.pi, axis = UP), SWAP2.animate.rotate(np.pi, axis = UP))
+        self.wait(1)
+
+        # No work!
+        work_indication = Arrow(DOWN, 3*DOWN, color = BLACK)
+        work_indication.next_to(SWAP2, DOWN).shift(DOWN)
+        work_label = Text('No energy is stored in the interaction!', color = BLACK).scale(0.5)
+        work_label.next_to(work_indication, DOWN).shift(0.2*DOWN)
+        self.play(Create(work_indication))
+        self.play(Write(work_label))
+        self.wait(1)
+        self.play(FadeOut(work_indication), FadeOut(work_label))
+
+        # Heat flow
+        heat_arrow = CurvedArrow(3*LEFT, 3*RIGHT, angle = np.pi/2).set_color(BLACK).scale(.75).shift(DOWN)
+        heat_label = Tex(r'$Q_A = - Q_B$', color = BLACK)
+        heat_label.next_to(heat_arrow, DOWN)
+        self.play(Create(heat_arrow))
+        self.play(Write(heat_label))
 
         self.wait(1)
