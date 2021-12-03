@@ -65,6 +65,26 @@ def PrettyQubit(qradius, color):
         color = rgb_to_color(tint(color, 0.2))).set_fill(rgb_to_color(tint(color, 0.3)), opacity=1).shift(0.1*qradius*UP + 0.1*qradius*LEFT)
     )
 
+# Draws a cassini oval, with background and dashed contour
+def cassini_oval(b2, scale_size):
+
+        # Parameters
+        a2=2.0
+
+        # Background
+        corr2_back = ParametricFunction(lambda t:\
+        np.sqrt(a2**2*np.cos(2*t)+np.sqrt((b2**4-a2**4)+a2**4*np.cos(2*t)**2))*\
+        np.array([np.sin(t), np.cos(t), 0]),\
+        t_range = np.array([0, 2*np.pi, 0.01]), color = WHITE)
+        corr2_back=corr2_back.set_fill(color=GOLDENROD, opacity=.25)
+        corr2_back.scale(scale_size)
+
+        # Dashed contour
+        corr2 = copy.deepcopy(corr2_back).set_color(color=GOLDENROD)
+        corr2 = DashedVMobject(corr2).scale(1.01)
+
+        return VGroup(corr2, corr2_back)
+
 '''
 ############
 ###SCENES###
@@ -353,27 +373,8 @@ class scene_3(Scene):
         info1.next_to(corr1, DOWN)
         self.play(Write(info1))
 
-        # Cassini Ovals
-        b2=ValueTracker(2.2)
-        a2=2.0
-
-        # Background
-        corr2_back = ParametricFunction(lambda t:\
-        np.sqrt(a2**2*np.cos(2*t)+np.sqrt((b2.get_value()**4-a**4)+a2**4*np.cos(2*t)**2))*\
-        np.array([np.sin(t), np.cos(t), 0]),\
-        t_range = np.array([0, 2*np.pi, 0.01]), color = WHITE)
-        corr2_back=corr2_back.set_fill(color=GOLDENROD, opacity=.25)
-
-        x=ValueTracker(1)
-        corr2_back.add_updater(lambda z: z.scale(x.get_value()))
-        corr2_back.add_updater(lambda z: z.scale(x.get_value()))
-
-        # Dashed contour
-        corr2 = copy.deepcopy(corr2_back).set_color(color=GOLDENROD)
-        corr2 = DashedVMobject(corr2)
-        corr2.add_updater(lambda z: z.scale(x.get_value()))
-
-        self.play(FadeIn(corr2_back), Create(corr2))
+        # Adds second correlation drawing
+        corr_old=cassini_oval(2.2, 1)
 
         # Saves old qubits in initial position
         self.add(qubit_cold.copy())
@@ -384,8 +385,7 @@ class scene_3(Scene):
         qubit_hot=qubit_hot.copy()
 
         # Qubit movement
-        self.play(qubit_cold.animate.next_to(ORIGIN, 1.5*UP),qubit_hot.animate.next_to(ORIGIN, 1.5*DOWN), run_time=2)
-
+        self.play(FadeIn(corr_old), qubit_cold.animate.next_to(ORIGIN, 1.5*UP),qubit_hot.animate.next_to(ORIGIN, 1.5*DOWN), run_time=2)
         self.wait(1)
 
         # Interaction
@@ -400,7 +400,7 @@ class scene_3(Scene):
         self.wait(1)
 
         # Draws the qubit interaction animation
-        for i in range(20):
+        for i in range(30):
 
             # Removes the interaction
             self.wait(0.1)
@@ -415,7 +415,30 @@ class scene_3(Scene):
             self.add(int)
             int.shift(0.5*DOWN)
 
-            x.set_value(1-0.0025*i)
-            b2.set_value(2.2-0.2*i/20)
+            # Updates the correlations
+            self.remove(corr_old)
+            corr=cassini_oval(2.2-0.2*i/30, 1-0.2*i/30)
+            self.add(corr)
+            corr_old=corr
+
+            # Sends the qubits to the foreground
+            self.add(qubit_cold.copy())
+            self.add(qubit_hot.copy())
+            self.add(int_label)
+
+        self.wait(1)
+
+        # Mutual Information 2
+        info2=Tex(r'$I_\tau(A:B)$', color=BLACK)
+        info2.next_to(corr_old, DOWN)
+        self.play(Write(info2))
+
+        # Mutual Info change. Arrow and deltas
+        info_indication = Arrow(3*LEFT, 0.75*LEFT, color = BLACK)
+        self.play(Create(info_indication))
+
+        info_change=Tex(r'$\Delta I(A:B)$', color=BLACK)
+        info_change.next_to(info_indication, DOWN).scale(0.7)
+        self.play(Write(info_change))
 
         self.wait(2)
