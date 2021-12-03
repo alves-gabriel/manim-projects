@@ -113,7 +113,7 @@ class scene_0(Scene):
         self.play(FadeIn(int))
 
         # Interaction label
-        int_label = Tex(r'$H_{AB}$', color = BLACK).scale(0.75)
+        int_label = Tex(r'$V$', color = BLACK).scale(0.75)
         int_label.next_to(int, RIGHT)
         self.play(FadeIn(int_label))
         self.wait(1)
@@ -285,3 +285,137 @@ class scene_1(Scene):
         self.play(Write(heat_label))
 
         self.wait(1)
+
+# Relative entropy
+class scene_2(Scene):
+    def construct(self):
+
+        # Thermal state
+        thermal_dot = VGroup(Circle(radius=.2, color = CRIMSON), \
+        Circle(radius=.1, color = CRIMSON).set_fill(CRIMSON,  opacity=1))
+        thermal_label=Tex(r'$\rho_{th} = \frac{e^{-\beta H}}{Z}$', color=BLACK)
+        thermal_label.next_to(thermal_dot, DOWN)
+
+        # Arbitrary state
+        state_dot = Circle(radius=.1, color = BLACK).set_fill(BLACK,  opacity=1)
+        state_dot.move_to(LEFT + 2*UP)
+        state_label=Tex(r'$\rho_\tau$', color=BLACK)
+        state_label.next_to(state_dot, UP)
+
+        # Dashed line evolution
+        dashline=DashedLine(thermal_dot.get_center(), state_dot.get_center(), color=BLACK)
+
+        # Animations
+        self.play(Create(dashline), GrowFromCenter(thermal_dot))
+        self.play(GrowFromCenter(state_dot))
+        self.play(Write(thermal_label))
+        self.play(Write(state_label))
+
+        self.wait(2)
+
+# Mutual information. Leminstica and Cassini ovals are used here.
+# See:  https://mathworld.wolfram.com/Lemniscate.html and https://github.com/3b1b/manim/issues/1100
+# and also https://www.researchgate.net/publication/329186459_A_Multi_Foci_Closed_Curve_Cassini_Oval_its_Properties_and_Applications
+class scene_3(Scene):
+    def construct(self):
+
+        # Cassini Ovals
+        b=2.2
+        a=2.0
+
+        # Background
+        corr1_back = ParametricFunction(lambda t:\
+        np.sqrt(a**2*np.cos(2*t)+np.sqrt((b**4-a**4)+a**4*np.cos(2*t)**2))*\
+        np.array([np.sin(t), np.cos(t), 0]),\
+        t_range = np.array([0, 2*np.pi, 0.01]), color = WHITE)
+        corr1_back=corr1_back.set_fill(color=GOLDENROD, opacity=.25)
+        corr1_back.shift(4*LEFT)
+
+        # Dashed contour
+        corr1 = copy.deepcopy(corr1_back).set_color(color=GOLDENROD)
+        corr1 = DashedVMobject(corr1)
+
+        # Cold qubit
+        qubit_cold=PrettyQubit(.5, ROYALBLUE_RGB)
+        qubit_cold.shift(4*LEFT + 2*UP)
+
+        # Hot qubit
+        qubit_hot=PrettyQubit(.5, CRIMSON_RGB)
+        qubit_hot.shift(4*LEFT + 2*DOWN)
+
+        # Animates
+        self.play(FadeIn(corr1_back), Create(corr1), FadeIn(qubit_cold), FadeIn(qubit_hot))
+        self.wait(1)
+
+        # Mutual Information 1
+        #info1=Tex(r'$I(A:B)$','$=S(\rho_A)+S(\rho_B)-S(\rho_{AB})$', color=BLACK)
+        info1=Tex(r'$I(A:B)$', color=BLACK)
+        info1.next_to(corr1, DOWN)
+        self.play(Write(info1))
+
+        # Cassini Ovals
+        b2=ValueTracker(2.2)
+        a2=2.0
+
+        # Background
+        corr2_back = ParametricFunction(lambda t:\
+        np.sqrt(a2**2*np.cos(2*t)+np.sqrt((b2.get_value()**4-a**4)+a2**4*np.cos(2*t)**2))*\
+        np.array([np.sin(t), np.cos(t), 0]),\
+        t_range = np.array([0, 2*np.pi, 0.01]), color = WHITE)
+        corr2_back=corr2_back.set_fill(color=GOLDENROD, opacity=.25)
+
+        x=ValueTracker(1)
+        corr2_back.add_updater(lambda z: z.scale(x.get_value()))
+        corr2_back.add_updater(lambda z: z.scale(x.get_value()))
+
+        # Dashed contour
+        corr2 = copy.deepcopy(corr2_back).set_color(color=GOLDENROD)
+        corr2 = DashedVMobject(corr2)
+        corr2.add_updater(lambda z: z.scale(x.get_value()))
+
+        self.play(FadeIn(corr2_back), Create(corr2))
+
+        # Saves old qubits in initial position
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
+
+        # Save qubits as copy of themselves so we can "send them to foreground"
+        qubit_cold=qubit_cold.copy()
+        qubit_hot=qubit_hot.copy()
+
+        # Qubit movement
+        self.play(qubit_cold.animate.next_to(ORIGIN, 1.5*UP),qubit_hot.animate.next_to(ORIGIN, 1.5*DOWN), run_time=2)
+
+        self.wait(1)
+
+        # Interaction
+        int = ParametricFunction(lambda t:np.array([np.sin(25*t)/8, t, 0]), t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+        int.shift(0.5*DOWN)
+        self.play(FadeIn(int))
+
+        # Interaction label
+        int_label = Tex(r'$V$', color = BLACK).scale(0.75)
+        int_label.next_to(int, RIGHT)
+        self.play(FadeIn(int_label))
+        self.wait(1)
+
+        # Draws the qubit interaction animation
+        for i in range(20):
+
+            # Removes the interaction
+            self.wait(0.1)
+            self.remove(int)
+
+            # Sine with variable phase
+            def ysin(t):
+                return np.array((np.sin(25*(t + i*np.pi/80))/8, t, 0))
+
+            # Draws the sine function for the given phase
+            int = ParametricFunction(ysin, t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+            self.add(int)
+            int.shift(0.5*DOWN)
+
+            x.set_value(1-0.0025*i)
+            b2.set_value(2.2-0.2*i/20)
+
+        self.wait(2)

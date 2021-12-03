@@ -1,3 +1,5 @@
+from manim import *
+
 class AddUpdater1(Scene):
     def construct(self):
         dot = Dot().set_color(BLACK)
