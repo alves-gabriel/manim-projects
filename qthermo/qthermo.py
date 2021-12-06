@@ -43,6 +43,10 @@ ROYALPURPLE = '#7851a9'
 BURNTORANGE = '#cc5500'
 BURNTORANGE_RGB = np.array([204, 85, 0])/255
 GOLDENROD = '#daa520'
+DARKRED = '##990000'
+DARKRED_RGB = np.array([153, 0, 0])/255
+LIGHTBLUE= '#ADD8E6'
+LIGHTBLUE_RGB= np.array([173, 216, 230])/255
 
 # Convex combination in the hue to lighten the colors. Factor should be between 0 and 1
 def tint(rgb, factor):
@@ -440,5 +444,220 @@ class scene_3(Scene):
         info_change=Tex(r'$\Delta I(A:B)$', color=BLACK)
         info_change.next_to(info_indication, DOWN).scale(0.7)
         self.play(Write(info_change))
+
+        self.wait(2)
+
+# Normal flow
+# Reversal of flow
+class scene_4(Scene):
+    def construct(self):
+
+        # Cold qubit
+        qubit_cold=PrettyQubit(.5, ROYALBLUE_RGB)
+        qubit_cold.shift(4*LEFT + 2*UP)
+
+        # Hot qubit
+        qubit_hot=PrettyQubit(.5, CRIMSON_RGB)
+        qubit_hot.shift(4*LEFT + 2*DOWN)
+
+        # Animates
+        self.play(FadeIn(qubit_cold), FadeIn(qubit_hot))
+
+        # Mutual Information 1
+        #info1=Tex(r'$I(A:B)$','$=S(\rho_A)+S(\rho_B)-S(\rho_{AB})$', color=BLACK)
+        info1=Tex(r'$I(A:B) = 0$', color=BLACK)
+        info1.next_to(qubit_hot, DOWN)
+        self.play(Write(info1))
+
+        # Adds second correlation drawing
+        corr_old=cassini_oval(2.0, 0)
+
+        # Saves old qubits in initial position
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
+
+        # Save qubits as copy of themselves so we can "send them to foreground"
+        qubit_cold=qubit_cold.copy()
+        qubit_hot=qubit_hot.copy()
+
+        # Qubit movement
+        self.play(FadeIn(corr_old), qubit_cold.animate.next_to(ORIGIN, 1.5*UP),qubit_hot.animate.next_to(ORIGIN, 1.5*DOWN), run_time=2)
+        self.wait(1)
+
+        # Interaction
+        int = ParametricFunction(lambda t:np.array([np.sin(25*t)/8, t, 0]), t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+        int.shift(0.5*DOWN)
+
+        # Interaction label
+        int_label = Tex(r'$V$', color = BLACK).scale(0.75)
+        int_label.next_to(int, RIGHT)
+        self.play(FadeIn(int), FadeIn(int_label))
+        self.wait(1)
+
+        # Draws the qubit interaction animation
+        for i in range(30):
+
+            # Removes the interaction
+            self.wait(0.1)
+            self.remove(int)
+
+            # Sine with variable phase
+            def ysin(t):
+                return np.array((np.sin(25*(t + i*np.pi/80))/8, t, 0))
+
+            # Draws the sine function for the given phase
+            int = ParametricFunction(ysin, t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+            self.add(int)
+            int.shift(0.5*DOWN)
+
+            # Updates the correlations
+            self.remove(corr_old)
+            corr=cassini_oval(2.0+0.2*i/30, i/30)
+            self.add(corr)
+            corr_old=corr
+
+            # Sends the qubits to the foreground
+            self.add(qubit_cold.copy())
+            self.add(qubit_hot.copy())
+            self.add(int_label)
+
+        self.wait(1)
+
+        # Mutual Information 2
+        info2=Tex(r'$I_\tau(A:B) > 0$', color=BLACK)
+        info2.next_to(corr_old, DOWN)
+        self.play(FadeIn(info2))
+
+        # Copies the qubits again and creates a mobject so we can highlight it later
+        dynamics_group = VGroup(qubit_cold.copy(), qubit_hot.copy(), int, int_label)
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
+        self.wait(1)
+
+        # Qubit getting warmer and movement
+        qubit_coldII=PrettyQubit(.5, BURNTORANGE_RGB).next_to(ORIGIN, 1.5*UP)
+        qubit_hotII=PrettyQubit(.5, BURNTORANGE_RGB).next_to(ORIGIN, 1.5*DOWN)
+
+        qubit_coldII.shift(4*RIGHT + UP)
+        qubit_hotII.shift(4*RIGHT + DOWN)
+
+        self.play(ReplacementTransform(qubit_cold, qubit_coldII), \
+        ReplacementTransform(qubit_hot, qubit_hotII), \
+        run_time=2)
+
+        self.wait(2)
+
+# Reversal of flow
+class scene_5(Scene):
+    def construct(self):
+
+        # Cassini Ovals
+        b=2.2
+        a=2.0
+
+        # Background
+        corr1_back = ParametricFunction(lambda t:\
+        np.sqrt(a**2*np.cos(2*t)+np.sqrt((b**4-a**4)+a**4*np.cos(2*t)**2))*\
+        np.array([np.sin(t), np.cos(t), 0]),\
+        t_range = np.array([0, 2*np.pi, 0.01]), color = WHITE)
+        corr1_back=corr1_back.set_fill(color=GOLDENROD, opacity=.25)
+        corr1_back.shift(4*LEFT)
+
+        # Dashed contour
+        corr1 = copy.deepcopy(corr1_back).set_color(color=GOLDENROD)
+        corr1 = DashedVMobject(corr1)
+
+        # Cold qubit
+        qubit_cold=PrettyQubit(.5, ROYALBLUE_RGB)
+        qubit_cold.shift(4*LEFT + 2*UP)
+
+        # Hot qubit
+        qubit_hot=PrettyQubit(.5, CRIMSON_RGB)
+        qubit_hot.shift(4*LEFT + 2*DOWN)
+
+        # Animates
+        self.play(FadeIn(corr1_back), FadeIn(corr1), FadeIn(qubit_cold), FadeIn(qubit_hot))
+
+        # Mutual Information 1
+        #info1=Tex(r'$I(A:B)$','$=S(\rho_A)+S(\rho_B)-S(\rho_{AB})$', color=BLACK)
+        info1=Tex(r'$I(A:B)$', color=BLACK)
+        info1.next_to(corr1, DOWN)
+        self.play(Write(info1))
+
+        # Adds second correlation drawing
+        corr_old=cassini_oval(2.2, 1)
+
+        # Saves old qubits in initial position
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
+
+        # Save qubits as copy of themselves so we can "send them to foreground"
+        qubit_cold=qubit_cold.copy()
+        qubit_hot=qubit_hot.copy()
+
+        # Qubit movement
+        self.play(FadeIn(corr_old), qubit_cold.animate.next_to(ORIGIN, 1.5*UP),qubit_hot.animate.next_to(ORIGIN, 1.5*DOWN), run_time=2)
+        self.wait(1)
+
+        # Interaction
+        int = ParametricFunction(lambda t:np.array([np.sin(25*t)/8, t, 0]), t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+        int.shift(0.5*DOWN)
+
+        # Interaction label
+        int_label = Tex(r'$V$', color = BLACK).scale(0.75)
+        int_label.next_to(int, RIGHT)
+        self.play(FadeIn(int), FadeIn(int_label))
+        self.wait(1)
+
+        # Draws the qubit interaction animation
+        for i in range(30):
+
+            # Removes the interaction
+            self.wait(0.1)
+            self.remove(int)
+
+            # Sine with variable phase
+            def ysin(t):
+                return np.array((np.sin(25*(t + i*np.pi/80))/8, t, 0))
+
+            # Draws the sine function for the given phase
+            int = ParametricFunction(ysin, t_range = np.array([.1, .9, 0.01]), color = BLACK, fill_opacity=0)
+            self.add(int)
+            int.shift(0.5*DOWN)
+
+            # Updates the correlations
+            self.remove(corr_old)
+            corr=cassini_oval(2.2-0.2*i/30, 1-0.2*i/30)
+            self.add(corr)
+            corr_old=corr
+
+            # Sends the qubits to the foreground
+            self.add(qubit_cold.copy())
+            self.add(qubit_hot.copy())
+            self.add(int_label)
+
+        self.wait(1)
+
+        # Mutual Information 2
+        info2=Tex(r'$I_\tau(A:B) < I(A:B)$', color=BLACK)
+        info2.next_to(corr_old, DOWN)
+        self.play(FadeIn(info2))
+
+        # Copies the qubits again and creates a mobject so we can highlight it later
+        dynamics_group = VGroup(qubit_cold.copy(), qubit_hot.copy(), int, int_label)
+        self.add(qubit_cold.copy())
+        self.add(qubit_hot.copy())
+        self.wait(1)
+
+        # Qubit getting warmer and movement
+        qubit_coldII=PrettyQubit(.5, LIGHTBLUE_RGB).next_to(ORIGIN, 1.5*UP)
+        qubit_hotII=PrettyQubit(.5, DARKRED_RGB).next_to(ORIGIN, 1.5*DOWN)
+
+        qubit_coldII.shift(4*RIGHT + UP)
+        qubit_hotII.shift(4*RIGHT + DOWN)
+
+        self.play(ReplacementTransform(qubit_cold, qubit_coldII), \
+        ReplacementTransform(qubit_hot, qubit_hotII), \
+        run_time=2)
 
         self.wait(2)
