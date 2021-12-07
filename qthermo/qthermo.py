@@ -199,7 +199,7 @@ class scene_0(Scene):
 
         final_group = VGroup(qubit_hotII, qubit_labelB2)
         question3 = SurroundingRectangle(final_group, color=BLACK)
-        question3_label = Text('iii) Thermodynamical quantities?', color=BLACK).scale(0.5)
+        question3_label = Text('iii) Thermodynamic quantities?', color=BLACK).scale(0.5)
         question3_label.next_to(question3, DOWN)
         self.play(Create(question3), Write(question3_label))
         self.wait(1)
