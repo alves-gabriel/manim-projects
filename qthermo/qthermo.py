@@ -177,8 +177,8 @@ class scene_0(Scene):
         self.wait(1)
 
         # Qubit label II
-        qubit_labelA2 = Tex(r'$\Delta Q_{A} > 0$', color = BLACK).scale(1)
-        qubit_labelB2 = Tex(r'$\Delta Q_{B} < 0$', color = BLACK).scale(1)
+        qubit_labelA2 = Tex(r'$\Delta E_{A} > 0$', color = BLACK).scale(1)
+        qubit_labelB2 = Tex(r'$\Delta E_{B} < 0$', color = BLACK).scale(1)
         qubit_labelA2.next_to(qubit_coldII, DOWN)
         qubit_labelB2.next_to(qubit_hotII, UP)
         self.play(FadeIn(qubit_labelA2), FadeIn(qubit_labelB2))
